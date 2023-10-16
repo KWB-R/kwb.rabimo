@@ -19,6 +19,39 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/news/index.html</loc>
   </url>
   <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/actualEvaporation.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/call_with_data.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/getPotentialEvaporation.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/getPrecipitation.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/getSoilProperties.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/getUsageTuple.html</loc>
+  </url>
+  <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/range_to_seq.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/realEvapoTranspiration.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/yearlyHeightToVolumeFlow.html</loc>
   </url>
 </urlset>
