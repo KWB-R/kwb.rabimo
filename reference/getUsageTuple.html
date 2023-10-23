@@ -51,7 +51,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getUsageTuple</span><span class="op">(</span><span class="va">usage</span>, <span class="va">type</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getUsageTuple</span><span class="op">(</span><span class="va">usage</span>, <span class="va">type</span>, include_inputs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,6 +62,11 @@
 
 <dt>type</dt>
 <dd><p>value of column TYP in input data frame</p></dd>
+
+
+<dt>include_inputs</dt>
+<dd><p>logical indicating whether or not to include the
+input values in the output</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -78,6 +83,11 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">getUsageTuple</span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            usage yield irrigation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 agricultural_L    40          0</span>
+<span class="r-in"><span><span class="fu">getUsageTuple</span><span class="op">(</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            usage yield irrigation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 agricultural_L    35          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 agricultural_L    35          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 agricultural_L    45          0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
