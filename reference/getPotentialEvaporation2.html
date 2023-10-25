@@ -51,7 +51,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation2</span><span class="op">(</span><span class="va">isWaterbody</span>, <span class="va">district</span>, <span class="va">abimo_config</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation2</span><span class="op">(</span><span class="va">isWaterbody</span>, <span class="va">district</span>, <span class="va">config</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,20 +66,20 @@ of type (from the type/yield/irrigation tuple) "waterbody"</p></dd>
 plot area (from the original input column "BEZIRK")</p></dd>
 
 
-<dt>abimo_config</dt>
+<dt>config</dt>
 <dd><p>list structure as returned by
-<code>kwb.abimo:::read_config</code></p></dd>
+<code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code></p></dd>
 
 </dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">abimo_config</span> <span class="op">&lt;-</span> <span class="fu">kwb.abimo</span><span class="fu">:::</span><span class="fu">read_config</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="abimo_config_to_config.html">abimo_config_to_config</a></span><span class="op">(</span><span class="fu">kwb.abimo</span><span class="fu">:::</span><span class="fu">read_config</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="getPotentialEvaporation.html">getPotentialEvaporation</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  is_waterbody <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  district <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  abimo_config <span class="op">=</span> <span class="va">abimo_config</span></span></span>
+<span class="r-in"><span>  config <span class="op">=</span> <span class="va">config</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
