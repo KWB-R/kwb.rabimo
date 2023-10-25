@@ -51,53 +51,37 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span></span>
-<span>  <span class="va">input</span>,</span>
-<span>  <span class="va">config</span>,</span>
-<span>  default_etp <span class="op">=</span> <span class="fl">660L</span>,</span>
-<span>  default_etps <span class="op">=</span> <span class="fl">530L</span>,</span>
-<span>  default_etp_waterbody <span class="op">=</span> <span class="fl">775L</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span><span class="va">isWaterbody</span>, <span class="va">district</span>, <span class="va">config</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>input</dt>
-<dd><p>data frame with columns <code>usage</code>, <code>district</code></p></dd>
+    <dl><dt>isWaterbody</dt>
+<dd><p>(vector of) logical indicating whether a block area is
+of type (from the type/yield/irrigation tuple) "waterbody"</p></dd>
+
+
+<dt>district</dt>
+<dd><p>(vector of) integer indicating the district number of the
+plot area (from the original input column "BEZIRK")</p></dd>
 
 
 <dt>config</dt>
-<dd><p>list with entry <code>potentialEvaporation</code></p></dd>
-
-
-<dt>default_etp</dt>
-<dd><p>default value for etp</p></dd>
-
-
-<dt>default_etps</dt>
-<dd><p>default value for etps</p></dd>
-
-
-<dt>default_etp_waterbody</dt>
-<dd><p>default value for etp for usage = 110
-(waterbody)</p></dd>
+<dd><p>list structure as returned by
+<code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code></p></dd>
 
 </dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>usage <span class="op">=</span> <span class="fl">10</span>, district <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span> potentialEvaporation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>district_1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>etp <span class="op">=</span> <span class="fl">100</span>, etps <span class="op">=</span> <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $perYearInteger</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $inSummerInteger</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $perYearFloat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="abimo_config_to_config.html">abimo_config_to_config</a></span><span class="op">(</span><span class="fu">kwb.abimo</span><span class="fu">:::</span><span class="fu">read_config</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  is_waterbody <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  district <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  config <span class="op">=</span> <span class="va">config</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
