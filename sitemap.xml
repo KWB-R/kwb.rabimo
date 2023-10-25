@@ -19,6 +19,9 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/news/index.html</loc>
   </url>
   <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/abimo_config_to_config.html</loc>
+  </url>
+  <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/actualEvaporation.html</loc>
   </url>
   <url>
@@ -34,6 +37,9 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/getPotentialEvaporation.html</loc>
   </url>
   <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/getPotentialEvaporation2.html</loc>
+  </url>
+  <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/getPrecipitation.html</loc>
   </url>
   <url>
@@ -44,6 +50,12 @@
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/index_string_to_integers.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/list_to_data_frame_with_keys.html</loc>
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/pipe.html</loc>
