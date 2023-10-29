@@ -51,7 +51,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span><span class="va">isWaterbody</span>, <span class="va">district</span>, <span class="va">config</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span><span class="va">isWaterbody</span>, <span class="va">district</span>, <span class="va">lookup</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,9 +66,11 @@ of type (from the type/yield/irrigation tuple) "waterbody"</p></dd>
 plot area (from the original input column "BEZIRK")</p></dd>
 
 
-<dt>config</dt>
-<dd><p>list structure as returned by
-<code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code></p></dd>
+<dt>lookup</dt>
+<dd><p>data frame with key columns <code>isWaterbody</code>, <code>district</code>
+and value columns <code>etp</code>, <code>etps</code>. A data frame of the required
+structure is returned by <code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code> in list
+element <code>"potentialEvaporation"</code></p></dd>
 
 </dl></div>
 
@@ -79,7 +81,7 @@ plot area (from the original input column "BEZIRK")</p></dd>
 <span class="r-in"><span><span class="fu">getPotentialEvaporation</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  is_waterbody <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  district <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  config <span class="op">=</span> <span class="va">config</span></span></span>
+<span class="r-in"><span>  lookup <span class="op">=</span> <span class="va">config</span><span class="op">$</span><span class="va">potentialEvaporation</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
