@@ -51,7 +51,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">realEvapoTranspiration</span><span class="op">(</span><span class="va">precipitation</span>, <span class="va">potentialEvaporation</span>, <span class="va">efficiency</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">realEvapoTranspiration</span><span class="op">(</span></span>
+<span>  <span class="va">precipitation</span>,</span>
+<span>  <span class="va">potentialEvaporation</span>,</span>
+<span>  <span class="va">bagrovParameter</span>,</span>
+<span>  xRatio <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -64,8 +69,15 @@
 <dd><p>potential evaporation in mm</p></dd>
 
 
-<dt>efficiency</dt>
+<dt>bagrovParameter</dt>
 <dd><p>so-called Bagrov value</p></dd>
+
+
+<dt>xRatio</dt>
+<dd><p>optional. Instead of <code>precipitation</code> and
+<code>potentialEvaporation</code> the quotient of both may be passed to this
+function. The idea is to calculate the quotient out of the function and to
+reuse the quotient instead of recalculating it.</p></dd>
 
 </dl></div>
     <div class="section level2">
