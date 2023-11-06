@@ -22,7 +22,7 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/abimo_config_to_config.html</loc>
   </url>
   <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/actualEvaporation.html</loc>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/actualEvaporationWaterbodyOrPervious.html</loc>
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION.html</loc>
@@ -64,6 +64,12 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/realEvapoTranspiration.html</loc>
   </url>
   <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/run_rabimo.html</loc>
+  </url>
+  <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/reference/yearlyHeightToVolumeFlow.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/reference/yRatio_3.html</loc>
   </url>
 </urlset>

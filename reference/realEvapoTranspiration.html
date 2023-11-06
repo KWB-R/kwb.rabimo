@@ -55,7 +55,9 @@
 <span>  <span class="va">precipitation</span>,</span>
 <span>  <span class="va">potentialEvaporation</span>,</span>
 <span>  <span class="va">bagrovParameter</span>,</span>
-<span>  xRatio <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  xRatio <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  FUN_yRatio <span class="op">=</span> <span class="va">yRatio_3</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -70,7 +72,7 @@
 
 
 <dt>bagrovParameter</dt>
-<dd><p>so-called Bagrov value</p></dd>
+<dd><p>Bagrov parameter (n-value)</p></dd>
 
 
 <dt>xRatio</dt>
@@ -78,6 +80,15 @@
 <code>potentialEvaporation</code> the quotient of both may be passed to this
 function. The idea is to calculate the quotient out of the function and to
 reuse the quotient instead of recalculating it.</p></dd>
+
+
+<dt>FUN_yRatio</dt>
+<dd><p>function to be called to calculate the yRatio(s) from the
+given xRatio(s). Default: <code>kwb.rabimo:::yRatio_3</code></p></dd>
+
+
+<dt>...</dt>
+<dd><p>further arguments passed to <code>FUN_yRatio</code></p></dd>
 
 </dl></div>
     <div class="section level2">
