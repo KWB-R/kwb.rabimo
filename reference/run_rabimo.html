@@ -51,7 +51,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">input_data</span>, <span class="va">config</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">input_data</span>, <span class="va">config</span>, simulate_abimo <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,12 @@
 <dt>config</dt>
 <dd><p>configuration object (list) as returned by
 <code>kwb.abimo:::read_config()</code></p></dd>
+
+
+<dt>simulate_abimo</dt>
+<dd><p>logical of length one indicating whether or not to
+simulate exactly what Abimo does (including obvious errors!).
+Default: <code>TRUE</code>!</p></dd>
 
 </dl></div>
     <div class="section level2">
