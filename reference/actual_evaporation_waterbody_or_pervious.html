@@ -53,9 +53,8 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">actual_evaporation_waterbody_or_pervious</span><span class="op">(</span></span>
 <span>  <span class="va">usage_tuple</span>,</span>
-<span>  <span class="va">potential_evaporation</span>,</span>
+<span>  <span class="va">climate</span>,</span>
 <span>  <span class="va">soil_properties</span>,</span>
-<span>  <span class="va">precipitation</span>,</span>
 <span>  dbg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  digits <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -68,16 +67,15 @@
 <dd><p>list as returned by <code><a href="get_usage_tuple.html">get_usage_tuple</a></code></p></dd>
 
 
-<dt>potential_evaporation</dt>
-<dd><p>potential evaporation in mm</p></dd>
+<dt>climate</dt>
+<dd><p>list with elements <code>epot.year</code>, <code>epot.summer</code>
+(potential evaporation in mm per year and in the summer period,
+respecively), <code>prec.year</code>, <code>prec.summer</code> (precipitation in mm
+per year and in the summer period, respectively).</p></dd>
 
 
 <dt>soil_properties</dt>
 <dd><p>list as returned by <code><a href="get_soil_properties.html">get_soil_properties</a></code></p></dd>
-
-
-<dt>precipitation</dt>
-<dd><p>precipitation in mm</p></dd>
 
 
 <dt>dbg</dt>
