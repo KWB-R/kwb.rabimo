@@ -14,7 +14,7 @@ get_precipitation(precipitation_year, precipitation_summer, correction_factor)
 \item{correction_factor}{correction factor}
 }
 \value{
-list with elements \code{per_year}, \code{in_summer}
+list with elements \code{year}, \code{summer}
 }
 \description{
 Provide Information on Precipitation

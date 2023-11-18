@@ -30,7 +30,7 @@ get_potential_evaporation <- function(is_waterbody, district, lookup)
   )
 
   # One after another, lookup values for "etp", "etps" in the lookup table
-  result <- c(per_year = "etp", in_summer = "etps") %>%
+  result <- c(year = "etp", summer = "etps") %>%
     lapply(function(column) {
       multi_column_lookup(
         data = data,

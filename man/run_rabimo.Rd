@@ -7,7 +7,8 @@
 run_rabimo(input_data, config, simulate_abimo = TRUE)
 }
 \arguments{
-\item{input_data}{data frame with columns as required by Abimo}
+\item{input_data}{data frame with columns as required by Abimo or
+data frame with columns as returned by \code{\link{prepare_input_data}}}
 
 \item{config}{configuration object (list) as returned by
 \code{kwb.abimo:::read_config()}}
@@ -21,4 +22,9 @@ data frame with columns as returned by Abimo
 }
 \description{
 Run R-Abimo, the R-implementation of Water Balance Model Abimo
+}
+\details{
+If \code{input_data} contains a column \code{yield} it is expected that
+the data are already prepared as otherwise would do the function
+\code{\link{prepare_input_data}}.
 }

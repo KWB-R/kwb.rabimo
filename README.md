@@ -59,7 +59,26 @@ for (name in names(abimo_result)[-1L]) {
   y <- rabimo_result[[name]]
   plot(x, y, xlab = "Abimo", ylab = "Rabimo", main = name, asp = 1)
 }
+```
 
+## Usage with data being independent from the Berlin case
+
+```r
+# Load Berlin data from the R-wrapper package kwb.abimo
+data <- kwb.abimo::abimo_input_2019
+
+# Convert the data format used for Berlin into a more general format
+# Feel free to provide your own data in this new format!
+generalised_data <- kwb.rabimo::prepare_input_data(data)
+
+# Prepare a configuration for R-Abimo, based on the default Abimo configuration
+config <- kwb.rabimo::abimo_config_to_config(kwb.abimo:::read_config())
+
+# Run R-Abimo, the R-implementation of Abimo in this package
+rabimo_result <- kwb.rabimo::run_rabimo(generalised_data, config)
+
+# Have a look at the first lines of the result data frame
+head(rabimo_result)
 ```
 
 ## Documentation

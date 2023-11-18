@@ -9,6 +9,7 @@ abimo_config_to_config <- function(abimo_config)
 {
   # abimo_config <- kwb.abimo:::read_config()
   #`%>%` <- magrittr::`%>%`
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
 
   section_pattern <- "^section_"
 
@@ -73,9 +74,28 @@ abimo_config_to_config <- function(abimo_config)
       convert = as.numeric
     )
 
+  diverse <- select_elements(result, "diverse")
+
   result[["precipitation_correction_factor"]] <- as.numeric(
-    select_elements(result, "diverse")[["NIEDKORRF"]]
+    diverse[["NIEDKORRF"]]
   )
+
+  result[["irrigation_to_zero"]] <- as.logical(
+    diverse[["BERtoZero"]]
+  )
+
+  result <- remove_elements(result, "diverse")
+
+  clean_names <- function(x) {
+    stats::setNames(x, multi_substitute(names(x), list(
+      Dachflaechen = "roof",
+      Belaglsklasse = "surface"
+    )))
+  }
+
+  elements <- c("runoff_factors", "bagrov_values")
+
+  result[elements] <- lapply(result[elements], clean_names)
 
   result
 }

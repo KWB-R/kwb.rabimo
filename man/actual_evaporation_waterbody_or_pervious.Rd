@@ -6,9 +6,8 @@
 \usage{
 actual_evaporation_waterbody_or_pervious(
   usage_tuple,
-  potential_evaporation,
+  climate,
   soil_properties,
-  precipitation,
   dbg = TRUE,
   ...,
   digits = NULL
@@ -17,11 +16,12 @@ actual_evaporation_waterbody_or_pervious(
 \arguments{
 \item{usage_tuple}{list as returned by \code{\link{get_usage_tuple}}}
 
-\item{potential_evaporation}{potential evaporation in mm}
+\item{climate}{list with elements \code{epot.year}, \code{epot.summer}
+(potential evaporation in mm per year and in the summer period,
+respecively), \code{prec.year}, \code{prec.summer} (precipitation in mm
+per year and in the summer period, respectively).}
 
 \item{soil_properties}{list as returned by \code{\link{get_soil_properties}}}
-
-\item{precipitation}{precipitation in mm}
 
 \item{dbg}{logical indicating whether or not to show debug messages}
 
