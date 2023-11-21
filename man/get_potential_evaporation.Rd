@@ -29,6 +29,12 @@ get_potential_evaporation(
   district = 1,
   lookup = config$potential_evaporation
 )
+
+get_potential_evaporation(
+  is_waterbody = c(TRUE, TRUE, FALSE, FALSE),
+  district = c(1, 99, 2, 99),
+  lookup = config$potential_evaporation
+)
 }
 
 }

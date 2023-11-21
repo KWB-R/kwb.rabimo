@@ -52,7 +52,7 @@ run_rabimo <- function(input_data, config, simulate_abimo = TRUE)
   pot_evaporation <- cat_and_run(
     "Preparing potential evaporation data for all block areas",
     get_potential_evaporation(
-      is_waterbody = (fetch_input("usage") == "waterbody_G"),
+      is_waterbody = usage_is_waterbody(fetch_input("usage")),
       district = fetch_input("district"),
       lookup = fetch_config("potential_evaporation")
     )

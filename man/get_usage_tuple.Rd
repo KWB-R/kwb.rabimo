@@ -22,5 +22,7 @@ Get Usage Tuple (Usage, Yield, Irrigation) from NUTZUNG and TYP
 }
 \examples{
 get_usage_tuple(10, 10)
+get_usage_tuple(10, 10, TRUE)
 get_usage_tuple(10, 1:3)
+get_usage_tuple(10, 1:3, TRUE)
 }

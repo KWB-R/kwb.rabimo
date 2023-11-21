@@ -1,3 +1,7 @@
+# approx -----------------------------------------------------------------------
+#' @importFrom stats approx
+approx <- stats::approx
+
 # cat_and_run ------------------------------------------------------------------
 #' @importFrom kwb.utils catAndRun
 cat_and_run <- kwb.utils::catAndRun
@@ -238,7 +242,7 @@ n_dims <- function(x)
 # prefix_names -----------------------------------------------------------------
 prefix_names <- function(x, prefix)
 {
-  stats::setNames(x, paste0(prefix, names(x)))
+  set_names(x, paste0(prefix, names(x)))
 }
 
 # print_if ---------------------------------------------------------------------
@@ -277,6 +281,12 @@ remove_columns <- kwb.utils::removeColumns
 #' @importFrom kwb.utils removeElements
 remove_elements <- kwb.utils::removeElements
 
+# remove_left ------------------------------------------------------------------
+remove_left <- function(x, n)
+{
+  right(x, nchar(x) - n)
+}
+
 # rename_and_select ------------------------------------------------------------
 #' @importFrom kwb.utils renameAndSelect
 rename_and_select <- kwb.utils::renameAndSelect
@@ -310,6 +320,10 @@ seq_along_rows <- function(data)
 {
   seq_len(nrow(data))
 }
+
+# set_names --------------------------------------------------------------------
+#' @importFrom stats setNames
+set_names <- stats::setNames
 
 # split_into_identical_rows ----------------------------------------------------
 split_into_identical_rows <- function(data)

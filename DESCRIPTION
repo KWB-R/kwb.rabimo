@@ -29,4 +29,4 @@ Imports:
     xml2
 Remotes: 
     github::kwb-r/kwb.abimo,
-    github::kwb-r/kwb.utils
+    github::kwb-r/kwb.utils@dev
