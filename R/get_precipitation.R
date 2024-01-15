@@ -5,7 +5,7 @@
 #' @param precipitation_year precipitation per year in mm
 #' @param precipitation_summer precipitation within summer period in mm
 #' @param correction_factor correction factor
-#' @return list with elements \code{per_year}, \code{in_summer}
+#' @return list with elements \code{year}, \code{summer}
 #' @export
 #' @examples
 #' get_precipitation(600, 300, 0.8)
@@ -19,7 +19,7 @@ get_precipitation <- function(
   # - No correction for summer precipitation!
 
   data.frame(
-    per_year = precipitation_year * correction_factor,
-    in_summer = precipitation_summer
+    year = precipitation_year * correction_factor,
+    summer = precipitation_summer
   )
 }

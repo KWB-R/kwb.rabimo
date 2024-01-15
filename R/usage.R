@@ -1,0 +1,5 @@
+usage_is_agricultural <- function(x) x == "agricultural_L"
+usage_is_forest <- function(x) x == "forested_W"
+usage_is_horticultural <- function(x) x == "horticultural_K"
+usage_is_vegetationless <- function(x) x == "vegetationless_D"
+usage_is_waterbody <- function(x) x == "waterbody_G"

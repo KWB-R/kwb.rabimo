@@ -10,7 +10,9 @@
 #' @export
 #' @examples
 #' get_usage_tuple(10, 10)
+#' get_usage_tuple(10, 10, TRUE)
 #' get_usage_tuple(10, 1:3)
+#' get_usage_tuple(10, 1:3, TRUE)
 get_usage_tuple <- function(usage, type, include_inputs = FALSE)
 {
   #usage = 10L; type = 10L
@@ -22,40 +24,23 @@ get_usage_tuple <- function(usage, type, include_inputs = FALSE)
     berlin_type = type
   )
 
-  key_columns <- names(data)
-  value_columns <- c("usage", "yield", "irrigation")
+  result <- as.data.frame(multi_column_lookup(
+    data = data,
+    lookup = BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION,
+    value = c("usage", "yield", "irrigation"),
+    includeKeys = include_inputs
+  ))
 
-  # Provide lookup table
-  lookup <- BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION
-
-  result <- value_columns %>%
-    lapply(function(value_column) {
-      multi_column_lookup(
-        data = data,
-        lookup = lookup[, c(key_columns, value_column)],
-        value = value_column
-      )
-    }) %>%
-    stats::setNames(value_columns) %>%
-    do.call(what = data.frame)
-
-  is_missing <- is.na(result[[value_columns[1L]]])
-
-  if (!any(is_missing)) {
-
-    if (include_inputs) {
-      result <- cbind(data, result)
-    }
-
-    return(result)
+  if (any(is_missing <- is.na(result[["usage"]]))) {
+    stop_formatted(
+      "Could not find a (usage, yield, irrigation) tuple for %s",
+      paste(collapse = ", ", sprintf(
+        "(NUTZUNG = %d, TYP = %d)",
+        usage[is_missing],
+        type[is_missing]
+      ))
+    )
   }
 
-  stop_formatted(
-    "Could not find a (usage, yield, irrigation) tuple for %s",
-    paste(collapse = ", ", sprintf(
-      "(NUTZUNG = %d, TYP = %d)",
-      usage[is_missing],
-      type[is_missing]
-    ))
-  )
+  result
 }

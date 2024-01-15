@@ -25,7 +25,7 @@ get_soil_properties <- function(
 )
 {
   # Nothing to do for waterbodies
-  is_waterbody <- usage == "waterbody_G"
+  is_waterbody <- usage_is_waterbody(usage)
 
   # Feldkapazitaet
   usable_field_capacity <- ifelse(
@@ -34,7 +34,7 @@ get_soil_properties <- function(
     no = estimate_water_holding_capacity(
       f30 = field_capacity_30,
       f150 = field_capacity_150,
-      is_forest = (usage == "forested_W")
+      is_forest = usage_is_forest(usage)
     )
   )
 
@@ -120,12 +120,11 @@ get_rooting_depth <- function(usage, yield)
 
   y <- rep(NA_real_, n)
 
-  todo <- usage == "agricultural_L"
-  y[todo] <- ifelse(yield[todo] <= 50, 0.6, 0.7)
-
-  y[usage == "vegetationless_D"] <- 0.2
-  y[usage == "horticultural_K"] <- 0.7
-  y[usage == "forested_W"] <- 1.0
+  is_agri <- usage_is_agricultural(usage)
+  y[is_agri] <- ifelse(yield[is_agri] <= 50, 0.6, 0.7)
+  y[usage_is_vegetationless(usage)] <- 0.2
+  y[usage_is_horticultural(usage)] <- 0.7
+  y[usage_is_forest(usage)] <- 1.0
 
   # in any other case
   y[is.na(y)] <- 0.2
@@ -139,19 +138,19 @@ getRootingDepth_1 <- function(usage, yield)
   stopifnot(length(usage) == 1L)
   stopifnot(length(yield) == 1L)
 
-  if (usage == "agricultural_L") {
+  if (usage_is_agricultural(usage)) {
     return(ifelse(yield <= 50, 0.6, 0.7))
   }
 
-  if (usage == "vegetationless_D") {
+  if (usage_is_vegetationless(usage)) {
     return(0.2)
   }
 
-  if (usage == "horticultural_K") {
+  if (usage_is_horticultural(usage)) {
     return(0.7)
   }
 
-  if (usage == "forested_W") {
+  if (usage_is_forest(usage)) {
     return(1.0)
   }
 
@@ -234,13 +233,13 @@ estimate_days_of_growth <- function(usage, yield, default = 50L)
   y <- rep(NA_integer_, n)
 
   # Special case for agricultural use
-  is_agricultural <- usage == "agricultural_L"
-  y[is_agricultural] <- ifelse(yield[is_agricultural] <= 50, 60L, 75L)
+  is_agri <- usage_is_agricultural(usage)
+  y[is_agri] <- ifelse(yield[is_agri] <= 50, 60L, 75L)
 
   # Constant estimates for other uses
-  y[usage == "vegetationless_D"] <- 50L
-  y[usage == "horticultural_K"] <- 100L
-  y[usage == "forested_W"] <- 90L
+  y[usage_is_vegetationless(usage)] <- 50L
+  y[usage_is_horticultural(usage)] <- 100L
+  y[usage_is_forest(usage)] <- 90L
 
   # Return default for any other use
   y[is.na(y)] <- default
@@ -255,7 +254,7 @@ estimate_days_of_growth_1 <- function(usage, yield, default = 50)
   stopifnot(length(yield) == 1L)
 
   # Special case for agricultural use
-  if (usage == "agricultural_L") {
+  if (usage_is_agricultural(usage)) {
     return(ifelse(yield <= 50, 60, 75))
   }
 
