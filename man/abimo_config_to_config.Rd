@@ -7,13 +7,20 @@
 abimo_config_to_config(abimo_config)
 }
 \arguments{
-\item{abimo_config}{as returned by \code{kwb.abimo:::read_config}}
+\item{abimo_config}{as returned by \code{kwb.abimo::read_config}}
 }
 \value{
-list with elements \code{"potential_evaporation"},
-\code{"runoff_factors"}, \code{"bagrov_values"}, \code{"diverse"},
-\code{"result_digits"}
+list with elements
+\code{"potential_evaporation"},
+\code{"runoff_factors"},
+\code{"bagrov_values"},
+\code{"result_digits"},
+\code{"precipitation_correction_factor"},
+\code{"irrigation_to_zero"}
 }
 \description{
 Convert Abimo Configuration to List
+}
+\examples{
+str(kwb.rabimo::abimo_config_to_config(kwb.abimo::read_config()))
 }

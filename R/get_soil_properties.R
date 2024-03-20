@@ -5,36 +5,34 @@
 #' Provide variables that are relevant to calculate the actual evaporation for
 #' unsealed areas
 #'
-#' @param usage usage string, one of "vegetationless_D", "waterbody_G",
-#'   "horticultural_K", "agricultural_L", "forested_W"
-#' @param yield yield class
+#' @param land_type land_type string, one of "vegetationless", "waterbody",
+#'   "horticultural", "urban", "forested"
+#' @param veg_class vegetation class
 #' @param depth_to_water_table depth to water table
 #' @param field_capacity_30 field capacity in 30 cm depth
 #' @param field_capacity_150 field capacity in 150 cm depth
-#' @param default_for_waterbodies value to be used for waterbodies. Default: NA
 #' @param dbg logical indicating whether or not to show debug messages
 #' @export
 get_soil_properties <- function(
-    usage,
-    yield,
+    land_type,
+    veg_class,
     depth_to_water_table,
     field_capacity_30,
     field_capacity_150,
-    default_for_waterbodies = NA,
     dbg = FALSE
 )
 {
   # Nothing to do for waterbodies
-  is_waterbody <- usage_is_waterbody(usage)
+  is_waterbody <- land_type_is_waterbody(land_type)
 
   # Feldkapazitaet
   usable_field_capacity <- ifelse(
     test = is_waterbody,
-    yes = default_for_waterbodies,
+    yes = 0,
     no = estimate_water_holding_capacity(
       f30 = field_capacity_30,
       f150 = field_capacity_150,
-      is_forest = usage_is_forest(usage)
+      is_forest = land_type_is_forest(land_type)
     )
   )
 
@@ -42,19 +40,19 @@ get_soil_properties <- function(
   # potentielle Aufstiegshoehe
   potential_capillary_rise <- ifelse(
     test = is_waterbody,
-    yes = default_for_waterbodies,
-    no = depth_to_water_table - get_rooting_depth(usage, yield)
+    yes = 0,
+    no = depth_to_water_table - get_rooting_depth(land_type, veg_class)
   )
 
   # mittlere pot. kapillare Aufstiegsrate kr (mm/d) des Sommerhalbjahres
   # Kapillarer Aufstieg pro Jahr ID_KR neu, old: KR
   mean_potential_capillary_rise_rate_raw <- ifelse(
     test = is_waterbody,
-    yes = default_for_waterbodies,
+    yes = 0,
     no = get_mean_potential_capillary_rise_rate(
       potential_capillary_rise,
       usable_field_capacity,
-      days_of_growth = estimate_days_of_growth(usage, yield),
+      days_of_growth = estimate_days_of_growth(land_type, veg_class),
       dbg = dbg
     )
   )
@@ -72,7 +70,7 @@ get_soil_properties <- function(
   data.frame(
     depth_to_water_table = depth_to_water_table,
     usable_field_capacity = usable_field_capacity,
-    potential_capillary_rise_TAS = potential_capillary_rise,
+    potential_capillary_rise = potential_capillary_rise,
     mean_potential_capillary_rise_rate_raw = mean_potential_capillary_rise_rate_raw,
     mean_potential_capillary_rise_rate = mean_potential_capillary_rise_rate,
     g02 = g02
@@ -113,18 +111,18 @@ estimate_water_holding_capacity <- function(f30, f150, is_forest)
 }
 
 # get_rooting_depth ------------------------------------------------------------
-get_rooting_depth <- function(usage, yield)
+get_rooting_depth <- function(land_type, veg_class)
 {
-  n <- length(usage)
-  stopifnot(length(yield) == n)
+  n <- length(land_type)
+  stopifnot(length(veg_class) == n)
 
   y <- rep(NA_real_, n)
 
-  is_agri <- usage_is_agricultural(usage)
-  y[is_agri] <- ifelse(yield[is_agri] <= 50, 0.6, 0.7)
-  y[usage_is_vegetationless(usage)] <- 0.2
-  y[usage_is_horticultural(usage)] <- 0.7
-  y[usage_is_forest(usage)] <- 1.0
+  is_urban <- land_type_is_urban(land_type)
+  y[is_urban] <- ifelse(veg_class[is_urban] <= 50, 0.6, 0.7)
+  y[land_type_is_vegetationless(land_type)] <- 0.2
+  y[land_type_is_horticultural(land_type)] <- 0.7
+  y[land_type_is_forest(land_type)] <- 1.0
 
   # in any other case
   y[is.na(y)] <- 0.2
@@ -133,24 +131,24 @@ get_rooting_depth <- function(usage, yield)
 }
 
 # getRootingDepth_1 ------------------------------------------------------------
-getRootingDepth_1 <- function(usage, yield)
+getRootingDepth_1 <- function(land_type, veg_class)
 {
-  stopifnot(length(usage) == 1L)
-  stopifnot(length(yield) == 1L)
+  stopifnot(length(land_type) == 1L)
+  stopifnot(length(veg_class) == 1L)
 
-  if (usage_is_agricultural(usage)) {
-    return(ifelse(yield <= 50, 0.6, 0.7))
+  if (land_type_is_urban(land_type)) {
+    return(ifelse(veg_class <= 50, 0.6, 0.7))
   }
 
-  if (usage_is_vegetationless(usage)) {
+  if (land_type_is_vegetationless(land_type)) {
     return(0.2)
   }
 
-  if (usage_is_horticultural(usage)) {
+  if (land_type_is_horticultural(land_type)) {
     return(0.7)
   }
 
-  if (usage_is_forest(usage)) {
+  if (land_type_is_forest(land_type)) {
     return(1.0)
   }
 
@@ -223,23 +221,23 @@ MEAN_POTENTIAL_CAPILLARY_RISE_RATES_SUMMER_MATRIX <- local({
 })
 
 # estimate_days_of_growth ------------------------------------------------------
-estimate_days_of_growth <- function(usage, yield, default = 50L)
+estimate_days_of_growth <- function(land_type, veg_class, default = 50L)
 {
-  n <- length(usage)
+  n <- length(land_type)
 
-  stopifnot(length(yield) == n)
+  stopifnot(length(veg_class) == n)
 
   # Initialise result vector
   y <- rep(NA_integer_, n)
 
   # Special case for agricultural use
-  is_agri <- usage_is_agricultural(usage)
-  y[is_agri] <- ifelse(yield[is_agri] <= 50, 60L, 75L)
+  is_urban <- land_type_is_urban(land_type)
+  y[is_urban] <- ifelse(veg_class[is_urban] <= 50, 60L, 75L)
 
   # Constant estimates for other uses
-  y[usage_is_vegetationless(usage)] <- 50L
-  y[usage_is_horticultural(usage)] <- 100L
-  y[usage_is_forest(usage)] <- 90L
+  y[land_type_is_vegetationless(land_type)] <- 50L
+  y[land_type_is_horticultural(land_type)] <- 100L
+  y[land_type_is_forest(land_type)] <- 90L
 
   # Return default for any other use
   y[is.na(y)] <- default
@@ -248,25 +246,25 @@ estimate_days_of_growth <- function(usage, yield, default = 50L)
 }
 
 # estimate_days_of_growth_1 ----------------------------------------------------
-estimate_days_of_growth_1 <- function(usage, yield, default = 50)
+estimate_days_of_growth_1 <- function(land_type, veg_class, default = 50)
 {
-  stopifnot(length(usage) == 1L)
-  stopifnot(length(yield) == 1L)
+  stopifnot(length(land_type) == 1L)
+  stopifnot(length(veg_class) == 1L)
 
   # Special case for agricultural use
-  if (usage_is_agricultural(usage)) {
-    return(ifelse(yield <= 50, 60, 75))
+  if (land_type_is_urban(land_type)) {
+    return(ifelse(veg_class <= 50, 60, 75))
   }
 
   # Constant estimates for other uses
   days_of_growth <- list(
-    vegetationless_D = 50,
-    horticultural_K = 100,
-    forested_W = 90
+    vegetationless = 50,
+    horticultural = 100,
+    forested = 90
   )
 
   # Lookup constant estimate. Return default if use is not in list
-  default_if_null(days_of_growth[[usage]], default)
+  default_if_null(days_of_growth[[land_type]], default)
 }
 
 # lookup_g02 -------------------------------------------------------------------

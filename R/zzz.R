@@ -1,11 +1,11 @@
-# BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION ---------------------------------------
+# BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION -------------------------------
 
-#' Assignment between (NUTZUNG, TYP) and (usage, yield, irrigation)
+#' Assignment between (NUTZUNG, TYP) and (land_type, veg_class, irrigation)
 #'
 #' The following tables are read from csv files and then merged:
 #'
 #' berlin_tuples.csv
-#'   table of different occurring (usage, yield, irrigation) tuples
+#'   table of different occurring (land_type, veg_class, irrigation) tuples
 #'
 #' berlin_type_tuple_groups.csv
 #'   assignments between berlin_type (input column "TYP") and tuples
@@ -16,7 +16,8 @@
 #'
 #' @importFrom dplyr left_join
 #' @export
-BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION <- local({
+BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION <- local({
+
   # Helper function to read csv file from extdata/
   read_csv <- function(name, colClasses = NA) {
     base_name <- sprintf("berlin_%s.csv", name)

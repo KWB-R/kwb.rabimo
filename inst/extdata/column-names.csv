@@ -1,0 +1,35 @@
+rabimo_berlin,abimo_berlin,by_100,meaning,unit,type,data_type
+code,CODE,,Unique identifier of block,-,required,character
+prec_yr,REGENJA,,Long-term average precipitation per year,mm,required,numeric
+prec_s,REGENSO,,Long-term average precipitation per summer half year (May to October!),mm,required,numeric
+epot_yr,,,Long-term average potential evapotranspiration per year,mm,required,numeric
+epot_s,,,Long-term average potential evapotranspiration per summer half year (May to October!),mm,required,numeric
+district,BEZIRK,,Specific to Berlin: name of city district,-,required?,numeric
+total_area,,,Total block area,m2,required,numeric
+area_main,FLGES,,Total non-road area within the block,m2,required?,numeric
+area_rd,STR_FLGES,,Total road area within the block,m2,required?,numeric
+main_fraction,,,Non-road fraction of total block area (area_main/total_area),0..1,required,numeric
+roof,PROBAU,x,Roof fraction of non-road built area,0..1,required,numeric
+swg_roof,KAN_BEB,x,Fraction of ... ,0..1,required,numeric
+pvd,PROVGU,x,Fraction of ...,0..1,required,numeric
+swg_pvd,KAN_VGU,x,Fraction of ...,0..1,required,numeric
+srf1_pvd,BELAG1,x,Fraction of paved area belonging to surface class 1,0..1,required,numeric
+srf2_pvd,BELAG2,x,Fraction of paved area belonging to surface class 2,0..1,required,numeric
+srf3_pvd,BELAG3,x,Fraction of paved area belonging to surface class 3,0..1,required,numeric
+srf4_pvd,BELAG4,x,Fraction of paved area belonging to surface class 4,0..1,required,numeric
+road_fraction,,,Road fraction of total block area (area_rd/total_area),0..1,required,numeric
+pvd_rd,VGSTRASSE,x,Fraction of ...,0..1,required,numeric
+swg_pvd_rd,KAN_STR,x,Fraction of ...,0..1,required,numeric
+srf1_pvd_rd,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,required,numeric
+srf2_pvd_rd,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,required,numeric
+srf3_pvd_rd,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,required,numeric
+srf4_pvd_rd,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,required,numeric
+sealed,,,Fraction of ...,0..1,required,numeric
+gw_dist,FLUR,,Depth to the water table,m,required,numeric
+ufc30,FELD_30,,Usable field capacity 0..30 cm,% by volume,required,numeric
+ufc150,FELD_150,,Usable field capacity 0..150 cm,% by volume,required,numeric
+land_type,,,Land type,-,required,character
+veg_class,,,Vegetation class,-,required,numeric
+irrigation,,,Average irrigation per year,mm,required,numeric
+berlin_usage,NUTZUNG,,Specific to Berlin: Main usage of block,-,berlin-specific,numeric
+berlin_type,TYP,,Specific to Berlin: Type of block,-,berlin-specific,numeric

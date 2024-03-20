@@ -38,7 +38,7 @@ remotes::install_github("KWB-R/kwb.rabimo")
 data <- kwb.abimo::abimo_input_2019
 
 # Provide Abimo's default configuration 
-abimo_config <- kwb.abimo:::read_config()
+abimo_config <- kwb.abimo::read_config()
 
 # Use the R-wrapper to run Abimo.exe
 abimo_result <- kwb.abimo::run_abimo(input_data = data, config = abimo_config)
@@ -72,7 +72,7 @@ data <- kwb.abimo::abimo_input_2019
 generalised_data <- kwb.rabimo::prepare_input_data(data)
 
 # Prepare a configuration for R-Abimo, based on the default Abimo configuration
-config <- kwb.rabimo::abimo_config_to_config(kwb.abimo:::read_config())
+config <- kwb.rabimo::abimo_config_to_config(kwb.abimo::read_config())
 
 # Run R-Abimo, the R-implementation of Abimo in this package
 rabimo_result <- kwb.rabimo::run_rabimo(generalised_data, config)
