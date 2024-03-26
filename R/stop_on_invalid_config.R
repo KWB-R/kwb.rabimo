@@ -5,12 +5,13 @@ stop_on_invalid_config <- function(config)
 
   check_values_for_surface_types <- function(x) {
     stopifnot(is.numeric(x))
-    stopifnot(length(x) == 5L)
+    stopifnot(length(x) == 6L)
     stopifnot("roof" %in% names(x))
     stopifnot("surface1" %in% names(x))
     stopifnot("surface2" %in% names(x))
     stopifnot("surface3" %in% names(x))
     stopifnot("surface4" %in% names(x))
+    stopifnot("surface5" %in% names(x))
   }
 
   bagrov_values <- select_elements(config, "bagrov_values")

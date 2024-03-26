@@ -5,7 +5,7 @@
 \alias{BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION}
 \title{Assignment between (NUTZUNG, TYP) and (land_type, veg_class, irrigation)}
 \format{
-An object of class \code{data.frame} with 180 rows and 5 columns.
+An object of class \code{data.frame} with 181 rows and 5 columns.
 }
 \usage{
 BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION

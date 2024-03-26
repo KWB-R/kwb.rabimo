@@ -44,18 +44,19 @@ test_that("run_rabimo() works", {
       surface1 = 2,
       surface2 = 3,
       surface3 = 4,
-      surface4 = 5
+      surface4 = 5,
+      surface5 = 6
     ),
     runoff_factors = c(
       roof = -1,
       surface1 = -2,
       surface2 = -3,
       surface3 = -4,
-      surface4 = -5
+      surface4 = -5,
+      surface5 = -6
     )
   )
 
-  f <- kwb.rabimo::run_rabimo
   expect_output(f(data, config))
 
 })

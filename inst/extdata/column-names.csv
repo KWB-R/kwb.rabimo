@@ -17,6 +17,7 @@ srf1_pvd,BELAG1,x,Fraction of paved area belonging to surface class 1,0..1,requi
 srf2_pvd,BELAG2,x,Fraction of paved area belonging to surface class 2,0..1,required,numeric
 srf3_pvd,BELAG3,x,Fraction of paved area belonging to surface class 3,0..1,required,numeric
 srf4_pvd,BELAG4,x,Fraction of paved area belonging to surface class 4,0..1,required,numeric
+srf5_pvd,BELAG5,x,Fraction of paved area belonging to surface class 5,0..1,required?,numeric
 road_fraction,,,Road fraction of total block area (area_rd/total_area),0..1,required,numeric
 pvd_rd,VGSTRASSE,x,Fraction of ...,0..1,required,numeric
 swg_pvd_rd,KAN_STR,x,Fraction of ...,0..1,required,numeric

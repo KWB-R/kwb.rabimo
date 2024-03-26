@@ -1,7 +1,7 @@
 # library(testthat)
-test_that("prepare_berlin_data() works", {
+test_that("prepare_berlin_inputs() works", {
 
-  f <- kwb.rabimo::prepare_berlin_data
+  f <- kwb.rabimo::prepare_berlin_inputs
 
   expect_error(f())
 

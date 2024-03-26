@@ -85,12 +85,6 @@ actual_evaporation_waterbody_or_pervious <- function(
     )
   }
 
-  cat_if(dbg, sprintf(
-    "Range of calculated %sn-value(s): %s\n",
-    ifelse(is.null(digits), "", "and rounded "),
-    paste(range(bagrov_values), collapse = " - ")
-  ))
-
   available_water <-
     fetch_climate("prec_yr")[i] +
     rpot[i] +

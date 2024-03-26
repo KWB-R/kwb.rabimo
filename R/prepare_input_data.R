@@ -17,15 +17,66 @@ prepare_input_data <- function(data, config)
 {
   #kwb.utils::assignPackageObjects("kwb.rabimo")
   #data <- kwb.abimo::abimo_input_2019
+  #data <- berlin_2020_data
+  #data <- kwb.utils:::get_cached("berlin_2020_data")
   #config <- abimo_config_to_config(kwb.abimo::read_config())
 
   #
   # See inst/extdata/test-rabimo.R for test data assignments
   #
 
+  # Try to identify the "format" of the data frame
+  data_format <- identify_data_format_or_stop(data)
+
+  # Set column names to upper case to match 2019 data when using raw 2020 data
+  names(data) <- toupper(names(data))
+
   # 1. Rename columns from ABIMO 3.2 names to ABIMO new* internal names
   # 2. Select only the columns that are required
-  data <- rename_columns(data, renamings = get_column_renamings())
+
+  # check: columns that are not required are still in the dataframe
+  data <- rename_columns(data, get_column_renamings())
+
+  # If area fractions are missing (NA) set them to 0
+  data <- set_columns_to_zero_where_na(
+    data = data,
+    columns = grep("roof|pvd|srf", names(data), value = TRUE)
+  )
+
+  # if area main or area road are missing (NA) set them to 0
+  data <- set_columns_to_zero_where_na(
+    data = data,
+    columns = grep("area_", names(data), value = TRUE)
+  )
+
+  if (data_format == "format_2020")
+  {
+    # Identify roads
+    is_road <- grepl("Stra.e", select_columns(data, "ART"))
+
+    # Check that there is no "usage" type for roads
+    stopifnot(all(is.na(select_columns(data, "berlin_usage")[is_road])))
+
+    # Set "berlin_usage" for roads to 300
+    data$berlin_usage[is_road] <- 300
+
+    # Copy district information into the right column
+    data$district[is_road] <- select_columns(data, "BEZIRK_1")[is_road]
+
+    surface_class_columns <- sprintf("srf%d_pvd", 1:5)
+    delta_to_100 <- 100 - rowSums(data[surface_class_columns])
+
+    # Assign missing surface class partition to surface class 5
+    data[delta_to_100 > 0, "srf5_pvd"] <-
+      data[delta_to_100 > 0, "srf5_pvd"] + delta_to_100[delta_to_100 > 0]
+
+    # if for some areas the sum of all surface classes exceeds 1 correct it
+    # by reducing proportionally all surface classes
+    data[, surface_class_columns] <- kwb.rabimo:::rescale_to_row_sum(
+      as.matrix(kwb.utils::selectColumns(data, surface_class_columns)),
+      row_sum = 100
+    )
+  }
 
   # Create column accessor function
   fetch <- create_accessor(data)
@@ -34,12 +85,6 @@ prepare_input_data <- function(data, config)
   # correct precipitation with correction factor from the config file
   data[["prec_yr"]] <- fetch("prec_yr") *
     fetch_config("precipitation_correction_factor")
-
-  # If area fractions are missing (NA) set them to 0
-  data <- set_columns_to_zero_where_na(
-    data = data,
-    columns = grep("roof|pvd|srf", names(data), value = TRUE)
-  )
 
   # Calculate total area
   data[["total_area"]] <- fetch("area_main") + fetch("area_rd")
@@ -57,7 +102,7 @@ prepare_input_data <- function(data, config)
     type = usage_types[[2L]]
   )
 
-  # Calculate potential evaporation for all areas
+  # Calculate potential evaporation for all areas                               # roads have no district: etp 775
   pot_evaporation <- get_potential_evaporation(
     is_waterbody = land_type_is_waterbody(usages[["land_type"]]),
     district = fetch("district"),
@@ -70,12 +115,43 @@ prepare_input_data <- function(data, config)
   # Add a text column describing the type of block (usage)
   data[["block_type"]] <- get_block_type(usage_types)
 
+  # Write road specification into "block_type"
+  data[grepl("300", data[["block_type"]]),"block_type"] <- "300_road"
+
   # Set roof area that are NAs to 0 for water bodies
   data$roof[land_type_is_waterbody(data$land_type) & is.na(data$roof)] <- 0
 
   # Set order of columns as defined in "column-names.csv"
-  select_columns(data, get_column_selection())
+  select_columns(data, get_column_selection() %>%
+                   dplyr::intersect(names(data)))
 }
+
+# identify_data_format_or_stop -------------------------------------------------
+identify_data_format_or_stop <- function(data)
+{
+  columns <- names(data)
+
+  expected <- list(
+    format_2020 = "art",
+    format_2019 = "CODE"
+  )
+
+  for (format_name in names(expected)) {
+    if (expected[[format_name]] %in% columns) {
+      return(format_name)
+    }
+  }
+
+  stop_formatted(
+    paste0(
+      "Unknown format. I was looking for one of these columns: %s.\n",
+      "I found these: %s"
+    ),
+    string_list(unlist(expected)),
+    string_list(columns)
+  )
+}
+
 
 # get_column_renamings ---------------------------------------------------------
 get_column_renamings <- function()
@@ -108,7 +184,8 @@ calculate_fractions <- function(data)
   # Determine names of columns that need to be divided by 100
   columns <- read_column_info() %>%
     dplyr::filter(.data[["by_100"]] == "x") %>%
-    select_columns("rabimo_berlin")
+    select_columns("rabimo_berlin") %>%
+    intersect(names(data))
 
   for (column in columns) {
     data[[column]] <- fetch(column) / 100
@@ -226,10 +303,12 @@ get_block_type <- function(usage_types)
   }
 
   usage_types %>%
-    merge_metadata("nutzungstypen_berlin", c(berlin_usage = "Typ_Nutzung")) %>%
-    merge_metadata("strukturtypen_berlin", c(berlin_type = "Typ")) %>%
+    merge_metadata("nutzungstypen_berlin", c(berlin_usage = "Use_ID")) %>%
+    merge_metadata("strukturtypen_berlin", c(berlin_type = "Type_ID")) %>%
+    remove_columns(pattern = "_GER$") %>%
     paste_columns(sep = ": ") %>%
     subst_special_chars()
+
 }
 
 # get_column_selection ---------------------------------------------------------

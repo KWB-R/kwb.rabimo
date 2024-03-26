@@ -1,4 +1,4 @@
-# prepare_berlin_data ----------------------------------------------------------
+# prepare_berlin_inputs ----------------------------------------------------------
 
 #' Function to be called when using ABIMO with the 'old' Berlin-data structure
 #'
@@ -16,7 +16,7 @@
 #'   the prepared input data and \code{config}, the prepared config object,
 #'   both in a form readable by \code{\link{run_rabimo}}
 #' @export
-prepare_berlin_data <- function(
+prepare_berlin_inputs <- function(
     data_file,
     config_file = kwb.abimo::default_config(),
     data = NULL,
@@ -34,14 +34,14 @@ prepare_berlin_data <- function(
   }
 
   # Convert configuration object into a more convenient structure
-  config_convenient <- abimo_config_to_config(config)
+  new_config <- abimo_config_to_config(config, add_class_5 = TRUE)
 
   # Return a list with input data and configuration as required by Rabimo, e.g.
   # - input data: with corrected precipitation and evaporation
   # - configuration: without correction factor or information on evaporation
   list(
-    data = prepare_input_data(data, config = config_convenient),
-    config = prepare_config(config_convenient)
+    data = prepare_input_data(data, config = new_config),
+    config = prepare_config(new_config)
   )
 }
 
