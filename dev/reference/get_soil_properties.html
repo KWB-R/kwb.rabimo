@@ -55,25 +55,24 @@ unsealed areas</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_soil_properties</span><span class="op">(</span></span>
-<span>  <span class="va">usage</span>,</span>
-<span>  <span class="va">yield</span>,</span>
+<span>  <span class="va">land_type</span>,</span>
+<span>  <span class="va">veg_class</span>,</span>
 <span>  <span class="va">depth_to_water_table</span>,</span>
 <span>  <span class="va">field_capacity_30</span>,</span>
 <span>  <span class="va">field_capacity_150</span>,</span>
-<span>  default_for_waterbodies <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  dbg <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>usage</dt>
-<dd><p>usage string, one of "vegetationless_D", "waterbody_G",
-"horticultural_K", "agricultural_L", "forested_W"</p></dd>
+    <dl><dt>land_type</dt>
+<dd><p>land_type string, one of "vegetationless", "waterbody",
+"horticultural", "urban", "forested"</p></dd>
 
 
-<dt>yield</dt>
-<dd><p>yield class</p></dd>
+<dt>veg_class</dt>
+<dd><p>vegetation class</p></dd>
 
 
 <dt>depth_to_water_table</dt>
@@ -86,10 +85,6 @@ unsealed areas</p>
 
 <dt>field_capacity_150</dt>
 <dd><p>field capacity in 150 cm depth</p></dd>
-
-
-<dt>default_for_waterbodies</dt>
-<dd><p>value to be used for waterbodies. Default: NA</p></dd>
 
 
 <dt>dbg</dt>

@@ -41,7 +41,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Provide Data on Potential Evaporation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/KWB-R/kwb.rabimo/blob/HEAD/R/get_potential_evaporation.R" class="external-link"><code>R/get_potential_evaporation.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KWB-R/kwb.rabimo/blob/HEAD/R/prepare_input_data.R" class="external-link"><code>R/prepare_input_data.R</code></a></small>
       <div class="d-none name"><code>get_potential_evaporation.Rd</code></div>
     </div>
 
@@ -58,7 +58,7 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>is_waterbody</dt>
 <dd><p>(vector of) logical indicating whether a block area is
-of type (from the type/yield/irrigation tuple) "waterbody"</p></dd>
+of type (from the land_type/veg_class/irrigation tuple) "waterbody"</p></dd>
 
 
 <dt>district</dt>
@@ -77,7 +77,7 @@ element <code>"potential_evaporation"</code></p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="abimo_config_to_config.html">abimo_config_to_config</a></span><span class="op">(</span><span class="fu">kwb.abimo</span><span class="fu">:::</span><span class="fu">read_config</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="abimo_config_to_config.html">abimo_config_to_config</a></span><span class="op">(</span><span class="fu">kwb.abimo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kwb.abimo/man/read_config.html" class="external-link">read_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_potential_evaporation</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  is_waterbody <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  district <span class="op">=</span> <span class="fl">1</span>,</span></span>

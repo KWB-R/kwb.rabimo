@@ -22,16 +22,10 @@
     <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/actual_evaporation_waterbody_or_pervious.html</loc>
   </url>
   <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/call_with_data.html</loc>
+    <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION.html</loc>
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/get_potential_evaporation.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/get_precipitation.html</loc>
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/get_soil_properties.html</loc>
@@ -56,6 +50,9 @@
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/plot_block_2.html</loc>
+  </url>
+  <url>
+    <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/prepare_berlin_inputs.html</loc>
   </url>
   <url>
     <loc>https://kwb-r.github.io/kwb.rabimo/dev/reference/prepare_input_data.html</loc>

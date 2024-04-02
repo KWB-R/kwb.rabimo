@@ -51,26 +51,54 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">abimo_config_to_config</span><span class="op">(</span><span class="va">abimo_config</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">abimo_config_to_config</span><span class="op">(</span><span class="va">abimo_config</span>, add_class_5 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>abimo_config</dt>
-<dd><p>as returned by <code>kwb.abimo:::read_config</code></p></dd>
+<dd><p>as returned by <code><a href="https://rdrr.io/pkg/kwb.abimo/man/read_config.html" class="external-link">kwb.abimo::read_config</a></code></p></dd>
+
+
+<dt>add_class_5</dt>
+<dd><p>logical indicating whether or not to add fields for a
+fifth surface class. The default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>list with elements <code>"potential_evaporation"</code>,
-<code>"runoff_factors"</code>, <code>"bagrov_values"</code>, <code>"diverse"</code>,
-<code>"result_digits"</code></p>
+<p>list with elements
+<code>"potential_evaporation"</code>,
+<code>"runoff_factors"</code>,
+<code>"bagrov_values"</code>,
+<code>"result_digits"</code>,
+<code>"precipitation_correction_factor"</code>,
+<code>"irrigation_to_zero"</code></p>
 
 
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu">abimo_config_to_config</span><span class="op">(</span><span class="fu">kwb.abimo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kwb.abimo/man/read_config.html" class="external-link">read_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ potential_evaporation          :'data.frame':	48 obs. of  4 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_waterbody: logi [1:48] TRUE TRUE TRUE TRUE TRUE TRUE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ district    : int [1:48] 1 2 3 4 5 6 13 14 15 17 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ etp         : int [1:48] 825 825 825 825 825 825 825 825 825 825 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ etps        : num [1:48] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ runoff_factors                 : Named num [1:5] 1 0.9 0.7 0.4 0.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:5] "roof" "surface1" "surface2" "surface3" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bagrov_values                  : Named num [1:5] 0.05 0.11 0.11 0.25 0.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:5] "roof" "surface1" "surface2" "surface3" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ result_digits                  : Named num [1:8] 3 3 3 3 3 3 0 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:8] "R" "ROW" "RI" "RVOL" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ precipitation_correction_factor: num 1.09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ irrigation_to_zero             : logi FALSE</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
