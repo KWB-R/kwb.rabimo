@@ -51,13 +51,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span></span>
-<span>  <span class="va">data</span>,</span>
-<span>  <span class="va">config</span>,</span>
-<span>  simulate_abimo <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  intermediates <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">config</span>, controls <span class="op">=</span> <span class="fu"><a href="define_controls.html">define_controls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -72,19 +66,10 @@
 <code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code></p></dd>
 
 
-<dt>simulate_abimo</dt>
-<dd><p>logical indicating whether or not to simulate exactly
-what Abimo does (including obvious errors!).
-Default: <code>TRUE</code>!</p></dd>
-
-
-<dt>check</dt>
-<dd><p>logical indicating whether the check functions are executed</p></dd>
-
-
-<dt>intermediates</dt>
-<dd><p>logical indicating whether the intermediate results are
-returned as attributes</p></dd>
+<dt>controls</dt>
+<dd><p>list of settings that control how the function should behave.
+Use <code><a href="define_controls.html">define_controls</a></code> to define such a list. The default is
+the list returned by <code><a href="define_controls.html">define_controls()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
