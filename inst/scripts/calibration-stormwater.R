@@ -152,48 +152,6 @@ get_area_balance <- function(
   return(factors)
 }
 
-# calculate_delta_mod ----------------------------------------------------------
-calculate_delta_mod <- function(results_mod_1, results_mod_2,
-                                has_codes = TRUE,
-                                var_names = c("surface_runoff",
-                                              "infiltration",
-                                              "evaporation"),
-                                codes_name = "code"){
-
-  #   results_mod_1 <- test_res_3a
-  #   results_mod_2 <- test_res_3b
-
-  stopifnot(identical(dim(results_mod_1), dim(results_mod_2)))
-
-  # force result objects to be data.frames
-  if(is.vector(results_mod_1)){
-    results_mod_1 <- as.data.frame(t(results_mod_1))
-    result_mod_2 <- as.data.frame(t(results_mod_2))
-  } else {
-    results_mod_1 <- as.data.frame(results_mod_1)
-    results_mod_2 <- as.data.frame(results_mod_2)
-  }
-
-  precipitation <- rowSums(results_mod_1[var_names])
-
-  delta_mod <- data.frame(
-    delta_mod = rowSums(
-      abs(results_mod_1[var_names] - results_mod_2[var_names])
-    ) * 0.5 / precipitation
-  )
-
-  if(has_codes){
-    stopifnot(
-      identical(results_mod_1[[codes_name]], results_mod_2[[codes_name]])
-    )
-    codes <- results_mod_1[[codes_name]]
-    delta_mod <- cbind(code = codes, delta_mod = delta_mod)
-  }
-
-  return(delta_mod)
-
-}
-
 # TESTS for calculate_delta_mod()
 # vectors
 # test_res_1a <- c(surface_runoff = 2, infiltration = 10, evaporation = 8)
