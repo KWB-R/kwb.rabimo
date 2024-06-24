@@ -33,10 +33,10 @@ generate_rabimo_area <- function(code, ..., column_info = read_column_info())
   # Compose a one-row data frame from the key-value pairs
   result <- kwb.utils::callWith(data.frame, key_value_pairs, ...)
 
-  # Add columns "code", "main_fraction", "sealed"
+  # Add columns "code", "main_frac", "sealed"
   fetch <- create_accessor(result)
   result["code"] <- code
-  result["main_fraction"] <- round(fetch("area_main")/fetch("total_area") , 2L)
+  result["main_frac"] <- round(fetch("area_main")/fetch("total_area") , 2L)
   result["sealed"] <- round(fetch("roof") + fetch("pvd"), 2L)
 
   result

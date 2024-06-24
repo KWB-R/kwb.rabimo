@@ -43,7 +43,8 @@ prepare_input_data <- function(data, config, dbg = TRUE)
     columns = matching_names(data, pattern = "roof|pvd|srf|area_")
   )
 
-  if (data_format == "format_2020"){
+  if (data_format == "format_2020") {
+
     # Identify roads
     is_road <- grepl("Stra.e", select_columns(data, "ART"))
 
@@ -92,7 +93,7 @@ prepare_input_data <- function(data, config, dbg = TRUE)
     fetch_config("precipitation_correction_factor")
 
   # Calculate total area
-  data[["total_area"]] <- fetch_data("area_main") + fetch_data("area_rd")
+  data[["total_area"]] <- fetch_data("area_main") + fetch_data("area_road")
 
   # Convert percentages to fractions
   data <- calculate_fractions(data)
@@ -187,7 +188,13 @@ read_column_info <- function()
 {
   "extdata/column-names.csv" %>%
     system.file(package = "kwb.rabimo") %>%
-    utils::read.csv()
+    utils::read.table(
+      header = TRUE,
+      stringsAsFactors = FALSE,
+      quote = "",
+      sep = ",",
+      dec = "."
+    )
 }
 
 # calculate_fractions ----------------------------------------------------------
@@ -199,8 +206,8 @@ calculate_fractions <- function(data)
   total_area <- fetch_data("total_area")
 
   # Transform percentage to fractions
-  data[["main_fraction"]] <- fetch_data("area_main") / total_area
-  data[["road_fraction"]] <- fetch_data("area_rd") / total_area
+  data[["main_frac"]] <- fetch_data("area_main") / total_area
+  data[["road_frac"]] <- fetch_data("area_road") / total_area
 
   # Determine names of columns that need to be divided by 100
   columns <- read_column_info() %>%

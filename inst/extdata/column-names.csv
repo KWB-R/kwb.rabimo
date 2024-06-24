@@ -7,8 +7,8 @@ epot_s,,,Long-term average potential evapotranspiration per summer half year (Ma
 district,BEZIRK,,Specific to Berlin: name of city district,-,required?,character,0
 total_area,,,Total block area,m2,required,numeric,100
 area_main,FLGES,,Total non-road area within the block,m2,required?,numeric,100
-area_rd,STR_FLGES,,Total road area within the block,m2,required?,numeric,0.0
-main_fraction,,,Non-road fraction of total block area (area_main/total_area),0..1,required,numeric,
+area_road,STR_FLGES,,Total road area within the block,m2,required?,numeric,0.0
+main_frac,,,Non-road fraction of total block area (area_main/total_area),0..1,required,numeric,
 roof,PROBAU,x,Roof fraction of non-road built area,0..1,required,numeric,0.2
 green_roof,,,Green roof fraction of roof area,0..1,required,numeric,0.0
 swg_roof,KAN_BEB,x,Fraction of ... ,0..1,required,numeric,1.0
@@ -19,13 +19,13 @@ srf2_pvd,BELAG2,x,Fraction of paved area belonging to surface class 2,0..1,requi
 srf3_pvd,BELAG3,x,Fraction of paved area belonging to surface class 3,0..1,required,numeric,0.1
 srf4_pvd,BELAG4,x,Fraction of paved area belonging to surface class 4,0..1,required,numeric,0.1
 srf5_pvd,BELAG5,x,Fraction of paved area belonging to surface class 5,0..1,required,numeric,0.1
-road_fraction,,,Road fraction of total block area (area_rd/total_area),0..1,required,numeric,0.0
-pvd_rd,VGSTRASSE,x,Fraction of ...,0..1,required,numeric,0.9
-swg_pvd_rd,KAN_STR,x,Fraction of ...,0..1,required,numeric,1.0
-srf1_pvd_rd,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,required,numeric,0.9
-srf2_pvd_rd,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,required,numeric,0.1
-srf3_pvd_rd,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,required,numeric,0.0
-srf4_pvd_rd,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,required,numeric,0.0
+road_frac,,,Road fraction of total block area (area_road/total_area),0..1,required,numeric,0.0
+pvd_r,VGSTRASSE,x,Fraction of ...,0..1,required,numeric,0.9
+swg_pvd_r,KAN_STR,x,Fraction of ...,0..1,required,numeric,1.0
+srf1_pvd_r,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,required,numeric,0.9
+srf2_pvd_r,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,required,numeric,0.1
+srf3_pvd_r,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,required,numeric,0.0
+srf4_pvd_r,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,required,numeric,0.0
 sealed,,,Fraction of sealed non-road area including buildings,0..1,required,numeric,
 to_swale,,,Fraction of total area connected to an infiltration swale,0..1,required,numeric,0.0
 gw_dist,FLUR,,Depth to the water table,m,required,numeric,3.0
