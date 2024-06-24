@@ -20,6 +20,7 @@ prepare_input_data <- function(data, config, dbg = TRUE)
   #data <- kwb.abimo::abimo_input_2019
   #data <- berlin_2020_data
   #data <- kwb.utils:::get_cached("berlin_2020_data")
+  #data <- new_data
   #config <- abimo_config_to_config(kwb.abimo::read_config())
   #`%>%` <- magrittr::`%>%`
 
@@ -46,14 +47,19 @@ prepare_input_data <- function(data, config, dbg = TRUE)
     # Identify roads
     is_road <- grepl("Stra.e", select_columns(data, "ART"))
 
-    # Check that there is no "usage" type for roads
-    stopifnot(all(is.na(select_columns(data, "berlin_usage")[is_road])))
+    # Check that there is no "usage" type for roads (NAs or zero)
+    road_usages <- select_columns(data, "berlin_usage")[is_road]
+
+    stopifnot(all(ifelse(is.na(road_usages), 0L, road_usages) == 0L))
 
     # Set "berlin_usage" for roads to 300
     data$berlin_usage[is_road] <- 300L
 
-    # Copy district information into the correct column
-    data$district[is_road] <- select_columns(data, "BEZIRK_1")[is_road]
+    # Copy district information into the correct column (not needed anymore)
+    if("BEZIRK_1" %in% names(data)){
+      stopifnot(identical(data$BEZIRK_1, data$district))
+    }
+    # data$district[is_road] <- select_columns(data, "BEZIRK_1")[is_road]
 
     surface_class_columns <- sprintf("srf%d_pvd", 1:5)
 
