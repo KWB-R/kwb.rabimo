@@ -43,7 +43,8 @@ prepare_input_data <- function(data, config, dbg = TRUE)
     columns = matching_names(data, pattern = "roof|pvd|srf|area_")
   )
 
-  if (data_format == "format_2020"){
+  if (data_format == "format_2020") {
+
     # Identify roads
     is_road <- grepl("Stra.e", select_columns(data, "ART"))
 

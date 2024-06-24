@@ -21,8 +21,8 @@ test_that("prepare_berlin_inputs() works", {
     "area_main", "area_road", "main_frac", "roof", "green_roof", "swg_roof",
     "pvd", "swg_pvd",
     "srf1_pvd", "srf2_pvd", "srf3_pvd", "srf4_pvd", "srf5_pvd",
-    "road_frac", "pvd_rd", "swg_pvd_rd", "srf1_pvd_rd", "srf2_pvd_rd",
-    "srf3_pvd_rd", "srf4_pvd_rd", "sealed", "to_swale", "gw_dist", "ufc30",
+    "road_frac", "pvd_r", "swg_pvd_r", "srf1_pvd_r", "srf2_pvd_r",
+    "srf3_pvd_r", "srf4_pvd_r", "sealed", "to_swale", "gw_dist", "ufc30",
     "ufc150", "land_type", "veg_class", "irrigation", "block_type"
   ))
 

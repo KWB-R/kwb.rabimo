@@ -25,6 +25,8 @@ prepare_berlin_inputs <- function(
     dbg = TRUE
 )
 {
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
+
   # Read config file if config is NULL
   if (is.null(config)) {
     config <- kwb.abimo::read_config(file = safe_path(config_file))
