@@ -7,5 +7,5 @@ pattern_no_roads <- function()
 # pattern_roads ----------------------------------------------------------------
 pattern_roads <- function()
 {
-  "^srf.*rd$"
+  "^srf.*r$"
 }

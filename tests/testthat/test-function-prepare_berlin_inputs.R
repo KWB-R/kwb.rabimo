@@ -18,10 +18,10 @@ test_that("prepare_berlin_inputs() works", {
 
   expect_identical(names(result$data), c(
     "code", "prec_yr", "prec_s", "epot_yr", "epot_s", "district", "total_area",
-    "area_main", "area_rd", "main_fraction", "roof", "green_roof", "swg_roof",
+    "area_main", "area_road", "main_frac", "roof", "green_roof", "swg_roof",
     "pvd", "swg_pvd",
     "srf1_pvd", "srf2_pvd", "srf3_pvd", "srf4_pvd", "srf5_pvd",
-    "road_fraction", "pvd_rd", "swg_pvd_rd", "srf1_pvd_rd", "srf2_pvd_rd",
+    "road_frac", "pvd_rd", "swg_pvd_rd", "srf1_pvd_rd", "srf2_pvd_rd",
     "srf3_pvd_rd", "srf4_pvd_rd", "sealed", "to_swale", "gw_dist", "ufc30",
     "ufc150", "land_type", "veg_class", "irrigation", "block_type"
   ))

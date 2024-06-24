@@ -13,12 +13,12 @@ test_that("data_to_natural() works", {
 
   data <- kwb.rabimo::rabimo_inputs_2020$data
 
-  data <- data %>%
+  data_new <- data %>%
     kwb.rabimo:::check_or_convert_data_types(
       types = kwb.rabimo:::get_expected_data_type(),
       convert = TRUE,
       dbg = FALSE
     )
 
-  result <- f(data)
+  result <- f(data_new)
 })

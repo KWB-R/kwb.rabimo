@@ -109,22 +109,22 @@ run_rabimo <- function(data, config, controls = define_controls())
   runoff_factors <- fetch_config("runoff_factors")
 
   # actual runoff from roof surface (area based, with no infiltration)
-  runoff_roof_actual <- with(data, main_fraction *
+  runoff_roof_actual <- with(data, main_frac *
                                roof * (1 - green_roof) * swg_roof) *
     runoff_factors[["roof"]] * runoff_roof
 
   # actual runoff from green roof surface (area based, with no infiltration)
-  runoff_green_roof_actual <- with(data, main_fraction *
+  runoff_green_roof_actual <- with(data, main_frac *
                                      roof * green_roof * swg_roof) *
     runoff_factors[["roof"]] * runoff_green_roof
 
   # actual infiltration from roof surface (area based, with no runoff)
-  infiltration_roof_actual <- with(data, main_fraction * roof *
+  infiltration_roof_actual <- with(data, main_frac * roof *
                                      (1-green_roof) * (1-swg_roof)) *
     runoff_roof
 
   # actual infiltration from green_roof surface (area based, with no runoff)
-  infiltration_green_roof_actual <- with(data, main_fraction * roof *
+  infiltration_green_roof_actual <- with(data, main_frac * roof *
                                            green_roof * (1-swg_roof)) *
     runoff_green_roof
 
@@ -155,20 +155,20 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # add an empty column in road_surface_fraction to match dimension if needed
   if (!identical(length(surface_cols_no_rd), length(surface_cols_rd))) {
-    road_surface_fractions$srf5_pvd_rd <- 0
+    road_surface_fractions$srf5_pvd_r <- 0
   }
 
   runoff_sealed_actual <-  runoff_sealed * (
-    with(data, main_fraction * pvd * swg_pvd) * unbuilt_surface_fractions +
-      with(data, road_fraction * pvd_rd * swg_pvd_rd) * road_surface_fractions
+    with(data, main_frac * pvd * swg_pvd) * unbuilt_surface_fractions +
+      with(data, road_frac * pvd_r * swg_pvd_r) * road_surface_fractions
   ) *
     runoff_factor_matrix
 
   # infiltration of sealed surfaces
   # (road and non-road) areas (for all surface classes at once)
   infiltration_sealed_actual <- runoff_sealed * (
-    with(data, main_fraction * pvd) * unbuilt_surface_fractions +
-      with(data, road_fraction * pvd_rd) * road_surface_fractions) -
+    with(data, main_frac * pvd) * unbuilt_surface_fractions +
+      with(data, road_frac * pvd_r) * road_surface_fractions) -
     runoff_sealed_actual
 
   # Total Runoff of unsealed surfaces (unsealedSurface_RUV)
@@ -176,13 +176,13 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # Infiltration of road (unsealed areas)
   infiltration_unsealed_roads <-
-    with(data, road_fraction * (1-pvd_rd)) *
+    with(data, road_frac * (1 - pvd_r)) *
     runoff_sealed[, ncol(runoff_sealed)] # last (less sealed) surface class
 
   fraction_unsealed <- if (control("reproduce_abimo_error")) {
     with(data, 1 - sealed)
   } else {
-    with(data, main_fraction * (1 - sealed))
+    with(data, main_frac * (1 - sealed))
   }
 
   infiltration_unsealed_surfaces <- fraction_unsealed * runoff_unsealed
