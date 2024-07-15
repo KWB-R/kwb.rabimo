@@ -1,3 +1,38 @@
+#kwb.rabimo::plot_block(kwb.rabimo::rabimo_inputs_2020$data[1L, ])
+#kwb.rabimo::plot_block_2(block = kwb.rabimo::rabimo_inputs_2020$data[1L, ])
+#kwb.utils::assignPackageObjects("kwb.rabimo")
+
+# get_fraction -----------------------------------------------------------------
+get_fraction <- function(path, block)
+{
+  is_connected <- grepl(path, "connected$")
+
+  if (startsWith(path, "main")) {
+    main <- block$main_frac
+    if (identical(path, "main")) {
+      return(main)
+    }
+    if (grepl("/builtSealed", path)) {
+      return(main * block$roof * ifelse(is_connected, block$swg_roof, 1))
+    }
+    if (grepl("/unbuiltSealed", path)) {
+      return(main * block$pvd * ifelse(is_connected, block$swg_pvd, 1))
+    }
+  }
+
+  if (startsWith(path, "road")) {
+    road <- block$road_frac
+    if (identical(path, "road")) {
+      return(road)
+    }
+    if (grepl("/roadSealed", path)) {
+      return(road * block$pvd_r * ifelse(is_connected, block$swg_pvd_r, 1))
+    }
+  }
+
+  stop("How to handle path '", path, "'?")
+}
+
 # plot_block -------------------------------------------------------------------
 
 #' Plot Area Fractions and their Names for one Block
@@ -10,14 +45,15 @@
 #' @export
 plot_block <- function(block, cex = 1, delta = 0.1)
 {
+  #block <- kwb.rabimo::rabimo_inputs_2020$data[1L, ]
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
+  #`%>%` <- magrittr::`%>%`
   to_label <- kwb.rect:::to_label
-  new_rects <- kwb.rect:::new_rects
-  stack <- kwb.rect:::stack
+  new_rects <- kwb.rect::new_rects
+  stack <- kwb.rect::stack
   separate <- kwb.rect:::separate
   move <- kwb.rect::move
   unlabel_and_dash <- kwb.rect:::unlabel_and_dash
-
-  get_fraction <- create_fraction_accessor(block)
 
   col_rect <- function(col, size = 1, as_width = FALSE, lbl_text = NULL, ...) {
     value <- select_columns(block, col)
@@ -38,8 +74,8 @@ plot_block <- function(block, cex = 1, delta = 0.1)
 
   # Create single rectangles
   area_rects <- c(
-    col_rect("areaFractionRoad"),
-    col_rect("areaFractionMain")
+    col_rect("road_frac"),
+    col_rect("main_frac")
   ) %>%
     stack()
 
@@ -49,10 +85,10 @@ plot_block <- function(block, cex = 1, delta = 0.1)
     unlabel_and_dash()
 
   main_rects <- c(
-    col_rect("mainFractionBuiltSealed"),
-    col_rect("mainFractionUnbuiltSealed")
+    col_rect("roof"),
+    col_rect("sealed")
   ) %>%
-    dplyr::mutate(h = .data[["h"]] * block$areaFractionMain) %>%
+    dplyr::mutate(h = .data[["h"]] * block$main_frac) %>%
     stack(reverse = TRUE) %>%
     move(
       left = area_rects_dashed$llx[2L],
@@ -69,8 +105,8 @@ plot_block <- function(block, cex = 1, delta = 0.1)
   ) %>%
     unlabel_and_dash()
 
-  road_rect <- col_rect("roadFractionRoadSealed") %>%
-    dplyr::mutate(h = .data[["h"]] * block$areaFractionRoad) %>%
+  road_rect <- col_rect("pvd_r") %>%
+    dplyr::mutate(h = .data[["h"]] * block$road_frac) %>%
     move(
       left = area_rects_dashed$llx[1L],
       bottom = area_rects_dashed$lly[1L]
@@ -84,17 +120,17 @@ plot_block <- function(block, cex = 1, delta = 0.1)
 
   conn_rects <- c(
     col_rect_w(
-      "builtSealedFractionConnected",
-      get_fraction("main/builtSealed")
+      "swg_roof",
+      get_fraction("main/builtSealed", block)
     ) %>%
       move(bottom = built_sealed_dashed$lly[1L]),
     col_rect_w(
-      "unbuiltSealedFractionConnected",
-      get_fraction("main/unbuiltSealed")
+      "swg_pvd",
+      get_fraction("main/unbuiltSealed", block)
     ) %>% move(bottom = unbuilt_sealed_dashed$lly[2L]),
     col_rect_w(
-      "roadSealedFractionConnected",
-      get_fraction("road/roadSealed")
+      "swg_pvd_r",
+      get_fraction("road/roadSealed", block)
     ) %>% move(bottom = road_rect_dashed$lly[1L])
   ) %>%
     move(left = road_rect_dashed$llx[1L]) %>%
@@ -103,12 +139,12 @@ plot_block <- function(block, cex = 1, delta = 0.1)
       col = "lightgrey"
     )
 
-  s1 <- get_fraction("main/unbuiltSealed")
+  s1 <- get_fraction("main/unbuiltSealed", block)
   surf_rects_main <- c(
-    col_rect_w("unbuiltSealedFractionSurface1", s1, lbl_text = "1"),
-    col_rect_w("unbuiltSealedFractionSurface2", s1, lbl_text = "2"),
-    col_rect_w("unbuiltSealedFractionSurface3", s1, lbl_text = "3"),
-    col_rect_w("unbuiltSealedFractionSurface4", s1, lbl_text = "4")
+    col_rect_w("srf1_pvd", s1, lbl_text = "1"),
+    col_rect_w("srf2_pvd", s1, lbl_text = "2"),
+    col_rect_w("srf3_pvd", s1, lbl_text = "3"),
+    col_rect_w("srf4_pvd", s1, lbl_text = "4")
   ) %>%
     stack(horizontal = TRUE) %>%
     move(
@@ -116,12 +152,12 @@ plot_block <- function(block, cex = 1, delta = 0.1)
       bottom = unbuilt_sealed_dashed$lly[2L]
     )
 
-  s2 <- get_fraction("road/roadSealed")
+  s2 <- get_fraction("road/roadSealed", block)
   surf_rects_road <- c(
-    col_rect_w("roadSealedFractionSurface1", s2, lbl_text = "1"),
-    col_rect_w("roadSealedFractionSurface2", s2, lbl_text = "2"),
-    col_rect_w("roadSealedFractionSurface3", s2, lbl_text = "3"),
-    col_rect_w("roadSealedFractionSurface4", s2, lbl_text = "4")
+    col_rect_w("srf1_pvd_r", s2, lbl_text = "1"),
+    col_rect_w("srf2_pvd_r", s2, lbl_text = "2"),
+    col_rect_w("srf3_pvd_r", s2, lbl_text = "3"),
+    col_rect_w("srf4_pvd_r", s2, lbl_text = "4")
   ) %>%
     stack(horizontal = TRUE) %>%
     move(
@@ -142,9 +178,6 @@ plot_block <- function(block, cex = 1, delta = 0.1)
     surf_rects_road
   ))
 }
-
-#kwb.utils::assignPackageObjects("kwb.rabimo")
-#block <- kwb.rabimo::prepare_input_data(kwb.abimo::abimo_input_2019)[1, ]
 
 # plot_block_2 -----------------------------------------------------------------
 
@@ -168,19 +201,18 @@ plot_block_2 <- function(
     col_road = "lightgrey"
 )
 {
-  new_rects <- kwb.rect:::new_rects
-  stack <- kwb.rect:::stack
+  new_rects <- kwb.rect::new_rects
+  stack <- kwb.rect::stack
   init_plot <- kwb.rect:::init_plot
   move <- kwb.rect::move
 
-  get_fraction <- create_fraction_accessor(block)
   fetch <- create_accessor(block)
 
-  fraction_main <- get_fraction("main")
-  fraction_road <- get_fraction("road")
+  fraction_main <- get_fraction("main", block)
+  fraction_road <- get_fraction("road", block)
 
   rect_area <- function(name, col) new_rects(
-    w = get_fraction(name), col = col, lbl_text = ""
+    w = get_fraction(name, block), col = col, lbl_text = ""
   )
 
   rect_sealed <- function(name, lbl, col) new_rects(
@@ -209,8 +241,8 @@ plot_block_2 <- function(
   plot(r_area)
 
   r_main <- c(
-    rect_sealed("mainFractionUnbuiltSealed", "unbuiltSealed", "darkgrey"),
-    rect_sealed("mainFractionBuiltSealed", "builtSealed", "orangered")
+    rect_sealed("pvd", "unbuiltSealed", "darkgrey"),
+    rect_sealed("roof", "builtSealed", "orangered")
   ) %>%
     stack() %>%
     move(top = 1)
@@ -221,29 +253,29 @@ plot_block_2 <- function(
 
   new_rects(
     w = fraction_road,
-    h = fetch("roadFractionRoadSealed"),
+    h = fetch("pvd_r"),
     lbl_text = "",
     density = density_sealed
   ) %>%
     move(right = 1, top = 1) %>%
     plot()
 
-  cols <- paste0("unbuiltSealedFractionSurface", 1:4)
+  cols <- sprintf("srf%d_pvd", 1:4)
 
   new_rects(
     w = unlist(fetch(cols)) * fraction_main,
-    h = fetch("mainFractionUnbuiltSealed"),
+    h = fetch("pvd"),
     lbl_text = 1:4
   ) %>%
     stack(horizontal = TRUE) %>%
-    move(top = 1-block$mainFractionBuiltSealed) %>%
+    move(top = 1 - fetch("pvd")) %>%
     plot()
 
-  cols <- paste0("roadSealedFractionSurface", 1:4)
+  cols <- sprintf("srf%d_pvd_r", 1:4)
 
   new_rects(
     w = fraction_road,
-    h = unlist(fetch(cols)) * fetch("roadFractionRoadSealed"),
+    h = unlist(fetch(cols)) * fetch("pvd_r"),
     lbl_text = 1:4
   ) %>%
     stack() %>%
@@ -252,7 +284,7 @@ plot_block_2 <- function(
 
   new_rects(
     w = fraction_main,
-    h = get_fraction("main/unbuiltSealed/connected") / fraction_main,
+    h = get_fraction("main/unbuiltSealed/connected", block) / fraction_main,
     density = density_connected,
     angle = -45,
     lbl_text = "",
@@ -263,7 +295,7 @@ plot_block_2 <- function(
 
   new_rects(
     w = fraction_main,
-    h = get_fraction("main/builtSealed/connected") / fraction_main,
+    h = get_fraction("main/builtSealed/connected", block) / fraction_main,
     density = density_connected,
     angle = -45,
     lbl_text = "",
@@ -273,8 +305,8 @@ plot_block_2 <- function(
     plot()
 
   new_rects(
-    w = get_fraction("road") * fetch("roadSealedFractionConnected"),
-    h = fetch("roadFractionRoadSealed"),
+    w = get_fraction("road", block) * fetch("swg_pvd_r"),
+    h = fetch("swg_pvd_r"),
     density = density_connected,
     angle = -45,
     lbl_text = "",
@@ -302,34 +334,4 @@ plot_block_2 <- function(
     dplyr::mutate(col = NA, density = -1, border = NA, lbl_align = "left") %>%
     move(dx = 0.15) %>%
     plot()
-}
-
-# create_fraction_accessor -----------------------------------------------------
-create_fraction_accessor <- function(data)
-{
-  function(path) {
-    columns <- fraction_path_to_names(path)
-    negated <- get_attribute(columns, "negated")
-    data <- select_columns(data, columns, drop = FALSE)
-    data[negated] <- lapply(data[negated], function(x) 1 - x)
-    Reduce(`*`, data)
-  }
-}
-
-# fraction_path_to_names -------------------------------------------------------
-fraction_path_to_names <- function(path)
-{
-  parts <- strsplit(path, "/")[[1L]]
-
-  # Which columns are to be "negated", i.e. 1 - data[[column]] will be used
-  pattern <- "^[!]"
-  negated <- grepl(pattern, parts)
-
-  # Remove the exclamation mark
-  parts[negated] <- gsub(pattern, "", parts[negated])
-
-  structure(
-    paste0(c("area", parts[-length(parts)]), "Fraction", first_upper(parts)),
-    negated = negated
-  )
 }
