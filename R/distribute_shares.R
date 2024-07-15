@@ -29,7 +29,7 @@ distribute_shares <- function(
     shares > target_value
   }
 
-  ref_areas <- rep(0, length(partial_areas))
+  ref_areas <- rep(0, n_areas)
   ref_areas[consider] <- if (to_increase) {
     complementary_areas[consider]
   } else {
@@ -39,9 +39,15 @@ distribute_shares <- function(
   area_offsets <- total_diff_area * get_weight(ref_areas[consider])
   partial_areas[consider] <- partial_areas[consider] + area_offsets
 
+  delta <- rep(0, n_areas)
+  delta[consider] <- area_offsets
+
   data.frame(
     area = partial_areas,
-    fraction = ifelse(base_areas > 0, partial_areas / base_areas, 0)
+    fraction = ifelse(base_areas > 0, partial_areas / base_areas, 0),
+    consider = consider,
+    ref_area = ref_areas,
+    delta = delta
   )
 }
 
