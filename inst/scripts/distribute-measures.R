@@ -279,44 +279,41 @@ quotient_or_zero <- function(dividend, divisor) {
 # get_green_roof_table ---------------------------------------------------------
 get_green_roof_table <- function(blocks, target)
 {
-  get <- kwb.utils::selectColumns
-
   roof_areas <- get_roof_area(blocks)
   green_roof_areas <- get_green_roof_area(blocks)
 
-  distributed_green_roof <- kwb.rabimo:::distribute_shares(
+  distributed <- kwb.rabimo:::distribute_shares(
     partial_areas = green_roof_areas,
     base_areas = roof_areas,
     complementary_areas = roof_areas - green_roof_areas,
     target
   )
 
-  data.frame(
-    consider = get(distributed_green_roof, "consider"),
-    ref_area = get(distributed_green_roof, "ref_area"),
-    green_roof_area = get(distributed_green_roof, "area"),
-    green_roof = get(distributed_green_roof, "fraction")
-  )
+  kwb.utils::renameAndSelect(distributed, list(
+    "consider",
+    "ref_area",
+    area = "green_roof_area",
+    fraction = "green_roof"
+  ))
 }
 
 # get_unpaved_area_table -------------------------------------------------------
 get_unpaved_area_table <- function(blocks, target)
 {
-  get <- kwb.utils::selectColumns
-
+  unpaved_areas <- get_unpaved_area(blocks)
   main_areas <- get_main_area(blocks)
+  paved_areas_old <- get_paved_area(blocks)
+  sealed_areas_old <- kwb.utils::selectColumns(blocks, "sealed_area")
+  to_swale_values <- kwb.utils::selectColumns(blocks, "to_swale")
 
   distributed_unpaved <- kwb.rabimo:::distribute_shares(
-    partial_areas = get_unpaved_area(blocks),
+    partial_areas = unpaved_areas,
     base_areas = main_areas,
-    complementary_areas = get_paved_area(blocks),
+    complementary_areas = paved_areas_old,
     target_value = target
   )
 
-  deltas_unpaved <- get(distributed_unpaved, "delta")
-
-  paved_areas_old <- get(blocks, "paved_area")
-  sealed_areas_old <- get(blocks, "sealed_area")
+  deltas_unpaved <- kwb.utils::selectColumns(distributed_unpaved, "delta")
 
   paved_areas_new <- pmax(0, paved_areas_old - deltas_unpaved)
   sealed_areas_new <- pmax(0, sealed_areas_old - deltas_unpaved)
@@ -327,16 +324,16 @@ get_unpaved_area_table <- function(blocks, target)
     1
   )
 
-  to_swale_new <- pmin(1, get(blocks, "to_swale") * scaling_factors)
+  to_swale_new <- pmin(1, to_swale_values * scaling_factors)
 
   data.frame(
-    consider = get(distributed_unpaved, "consider"),
-    ref_area = get(distributed_unpaved, "ref_area"),
+    consider = kwb.utils::selectColumns(distributed_unpaved, "consider"),
+    ref_area = kwb.utils::selectColumns(distributed_unpaved, "ref_area"),
     delta = deltas_unpaved,
     paved_area = paved_areas_new,
     pvd = paved_areas_new / main_areas,
-    unpaved_area = get(distributed_unpaved, "area"),
-    unpaved = get(distributed_unpaved, "fraction"),
+    unpaved_area = kwb.utils::selectColumns(distributed_unpaved, "area"),
+    unpaved = kwb.utils::selectColumns(distributed_unpaved, "fraction"),
     sealed_area = sealed_areas_new,
     sealed = sealed_areas_new / main_areas,
     corr_sca = to_swale_new * sealed_areas_new,
@@ -348,15 +345,19 @@ get_unpaved_area_table <- function(blocks, target)
 get_swale_connection_table <- function(blocks, unpaved_area_table, target)
 {
   #target <- 0.39
-  main_area <- sum(get_main_area(blocks))
-  sealed_mean <- sum(unpaved_area_table$sealed_area) / main_area
 
-  to_swale_mean <- sum(unpaved_area_table$corr_sca) / sum(unpaved_area_table$sealed_area)
-  to_swale_diff_rel <- target - to_swale_mean
-  total_diff_area <- to_swale_diff_rel * sealed_mean * main_area
+  sealed_areas <- kwb.utils::selectColumns(unpaved_area_table, "sealed_area")
+  corrected_scas <- kwb.utils::selectColumns(unpaved_area_table, "corr_sca")
+  total_area <- sum(get_main_area(blocks))
+  shares <- kwb.utils::selectColumns(blocks, "to_swale")
+  to_swale_areas <- kwb.utils::selectColumns(blocks, "to_swale_area")
+
+  sealed_mean <- sum(sealed_areas) / total_area
+
+  to_swale_diff_rel <- target - sum(corrected_scas) / sum(sealed_areas)
+  total_diff_area <- to_swale_diff_rel * sealed_mean * total_area
 
   to_increase <- total_diff_area > 0
-  shares <- blocks$to_swale
 
   consider <- if (to_increase) {
     shares < target
@@ -364,23 +365,23 @@ get_swale_connection_table <- function(blocks, unpaved_area_table, target)
     shares > target
   }
 
-  ref_areas <- rep(0, nrow(blocks))
+  ref_areas <- rep(0, length(sealed_areas))
   ref_areas[consider] <- if (to_increase) {
-    unpaved_area_table$sealed_area[consider] - unpaved_area_table$corr_sca[consider]
+    sealed_areas[consider] - corrected_scas[consider]
   } else {
-    blocks$to_swale_area[consider]
+    to_swale_areas[consider]
   }
 
   deltas <- kwb.rabimo:::get_weight(ref_areas) * total_diff_area
 
-  to_swale_areas <- unpaved_area_table$corr_sca + deltas
+  to_swale_areas <- corrected_scas + deltas
 
   data.frame(
     consider = consider,
     ref_area = ref_areas,
     delta = deltas,
     to_swale_area = to_swale_areas,
-    to_swale = ifelse(to_swale_areas > 0, to_swale_areas / unpaved_area_table$sealed_area, 0)
+    to_swale = ifelse(to_swale_areas > 0, to_swale_areas / sealed_areas, 0)
   )
 }
 
