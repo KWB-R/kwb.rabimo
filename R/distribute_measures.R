@@ -15,23 +15,15 @@
 #'   \code{swale_connection_table}, carrying intermediate results.
 distribute_measures <- function(blocks, targets, intermediates = FALSE)
 {
-  get_target <- create_accessor(targets)
+  target_green_roof <- select_elements(targets, "green_roof")
+  target_unpaved <- select_elements(targets, "unpaved")
+  target_to_swale <- select_elements(targets, "to_swale")
 
   # Apply target degrees of application of measures
-  green_roof_table <- get_green_roof_table(
-    blocks,
-    target = get_target("green_roof")
-  )
-
-  unpaved_area_table <- get_unpaved_area_table(
-    blocks,
-    target = get_target("unpaved")
-  )
-
+  green_roof_table <- get_green_roof_table(blocks, target_green_roof)
+  unpaved_area_table <- get_unpaved_area_table(blocks, target_unpaved)
   swale_connection_table <- get_swale_connection_table(
-    blocks,
-    unpaved_area_table,
-    target = get_target("to_swale")
+    blocks, unpaved_area_table, target_to_swale
   )
 
   # Update columns in blocks
