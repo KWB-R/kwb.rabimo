@@ -13,6 +13,7 @@
 #'   updated. In case of \code{intermediates = TRUE}, the data frame has
 #'   attributes \code{green_roof_table}, \code{unpaved_area_table},
 #'   \code{swale_connection_table}, carrying intermediate results.
+#' @export
 distribute_measures <- function(blocks, targets, intermediates = FALSE)
 {
   target_green_roof <- select_elements(targets, "green_roof")
@@ -23,7 +24,9 @@ distribute_measures <- function(blocks, targets, intermediates = FALSE)
   green_roof_table <- get_green_roof_table(blocks, target_green_roof)
   unpaved_area_table <- get_unpaved_area_table(blocks, target_unpaved)
   swale_connection_table <- get_swale_connection_table(
-    blocks, unpaved_area_table, target_to_swale
+    unpaved_area_table,
+    target_to_swale,
+    total_area = sum(get_main_area(blocks))
   )
 
   # Update columns in blocks
@@ -147,13 +150,12 @@ get_sealed_area <- function(blocks)
 }
 
 # get_swale_connection_table ---------------------------------------------------
-get_swale_connection_table <- function(blocks, unpaved_area_table, target)
+get_swale_connection_table <- function(unpaved_area_table, target, total_area)
 {
   sealed_areas <- select_columns(unpaved_area_table, "sealed_area")
   corrected_scas <- select_columns(unpaved_area_table, "corr_sca")
-  total_area <- sum(get_main_area(blocks))
-  shares <- select_columns(blocks, "to_swale")
-  to_swale_areas <- get_to_swale_area(blocks)
+  shares <- select_columns(unpaved_area_table, "corr_sca_frac")
+  to_swale_areas <- select_columns(unpaved_area_table, "corr_sca")
 
   sealed_mean <- sum(sealed_areas) / total_area
 

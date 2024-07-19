@@ -8,8 +8,7 @@ source("inst/scripts/read-stormwatermeasures-xls.R")
 # MAIN -------------------------------------------------------------------------
 if (FALSE)
 {
-  ref_file <- "~/../Downloads/A/amarex/distribution_stormwatermeasures_playground.xlsx"
-  #ref_file <- "~/../Downloads/A/amarex/distribution_stormwatermeasures.xlsx"
+  ref_file <- "~/Projekte/AMAREX/distribution_stormwatermeasures_playground.xlsx"
   #kwb.utils::hsOpenWindowsExplorer(path.expand(ref_file))
 
   ref_input_table <- read_input_table(xls_file = ref_file)
@@ -41,12 +40,12 @@ if (FALSE)
 
   targets <- ref_targets
 
-  new_blocks <- kwb.rabimo:::distribute_measures(
+  new_blocks <- kwb.rabimo::distribute_measures(
     blocks,
     targets
   )
 
-  new_blocks_with_tables <- kwb.rabimo:::distribute_measures(
+  new_blocks_with_tables <- kwb.rabimo::distribute_measures(
     blocks,
     targets,
     intermediates = TRUE
