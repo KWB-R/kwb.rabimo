@@ -1,5 +1,5 @@
 # distribute_measures ----------------------------------------------------------
-#' Distribute Measurements to the Single Blocks
+#' Distribute Rainwater Management Measures to Single Block Areas
 #'
 #' @param blocks data frame as being input to \code{\link{run_rabimo}}
 #' @param targets list with element \code{green_roof}, \code{unpaved},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/distribute_measures.R
 \name{distribute_measures}
 \alias{distribute_measures}
-\title{Distribute Measurements to the Single Blocks}
+\title{Distribute Rainwater Management Measures to Single Block Areas}
 \usage{
 distribute_measures(blocks, targets, intermediates = FALSE)
 }
@@ -25,5 +25,5 @@ attributes \code{green_roof_table}, \code{unpaved_area_table},
 \code{swale_connection_table}, carrying intermediate results.
 }
 \description{
-Distribute Measurements to the Single Blocks
+Distribute Rainwater Management Measures to Single Block Areas
 }
