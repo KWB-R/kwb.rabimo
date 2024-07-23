@@ -71,11 +71,7 @@ read_output_tables <- function(xls_file)
 read_targets <- function(ref_file)
 {
   values <- read_range(ref_file, "K28:K31")[[1L]]
-  list(
-    green_roof = values[1L],
-    unpaved = values[2L],
-    to_swale = values[3L]
-  )
+  stats::setNames(values, c("green_roof", "unpaved", "to_swale"))
 }
 
 # read_measure_means -----------------------------------------------------------
@@ -87,4 +83,46 @@ read_measure_means <- function(ref_file)
     unpaved = values[4L],
     to_swale = values[6L]
   )
+}
+
+# get_or_set_target_values_in_xls_file -----------------------------------------
+get_or_set_target_values_in_xls_file <- function(xls_file, targets = NULL)
+{
+  xls_file <- kwb.utils::safePath(path.expand(xls_file))
+
+  if (is.null(targets)) {
+    return(read_targets(xls_file))
+  }
+
+  require("RDCOMClient", quietly = TRUE)
+
+  # The target values are in cells
+  CELL_TARGETS <- list(
+    green_roof = c(29L, 11L), # column 11 = "K"
+    unpaved = c(30L, 11L),
+    to_swale = c(31L, 11L)
+  )
+
+  xls_app <- RDCOMClient::COMCreate("Excel.Application")
+  on.exit(xls_app$Quit())
+
+  workbook <- xls_app[["Workbooks"]]$Open(xls_file)
+  sheet <- workbook$Worksheets("Tabelle1")
+
+  replaced_values <- numeric()
+
+  for (measure in names(CELL_TARGETS)) {
+    cell_coords <- kwb.utils::selectElements(CELL_TARGETS, measure)
+    cell <- sheet$Cells(cell_coords[1L], cell_coords[2L])
+    replaced_values[measure] <- cell[["Value"]]
+    cell[["Value"]] <- targets[[measure]]
+  }
+
+  workbook$Save()
+
+  # Check that the changes have "arrived" in the Excel file
+  stopifnot(identical(read_targets(xls_file), targets))
+
+  # Return the old values
+  invisible(replaced_values)
 }
