@@ -38,6 +38,9 @@ distribute_measures <- function(blocks, targets, intermediates = FALSE)
   blocks$pvd <- unpaved_area_table$pvd
   blocks$to_swale <- swale_connection_table$to_swale
 
+  # Recalculate "sealed"
+  blocks$sealed <- get_sealed(blocks)
+
   # Return the tables with intermediate values as attributes, if requested
   if (intermediates) {
     return(structure(
@@ -198,4 +201,12 @@ get_swale_connection_table <- function(unpaved_area_table, target, total_area)
 get_to_swale_area <- function(blocks)
 {
   select_columns(blocks, "to_swale") * get_sealed_area(blocks)
+}
+
+# get_sealed -------------------------------------------------------------------
+get_sealed <- function(blocks)
+{
+  dividend <- get_roof_area(blocks) + get_paved_area(blocks)
+  divisor <- kwb.utils::selectColumns(blocks, "total_area")
+  ifelse(dividend > 0, dividend / divisor, 0)
 }

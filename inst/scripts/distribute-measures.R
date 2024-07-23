@@ -61,8 +61,6 @@ if (FALSE)
       blocks, targets = new_targets, intermediates = TRUE
     )
 
-    new_blocks$sealed <- get_sealed(new_blocks)
-
     # Current mean degrees of application of measures
     check_equality(unlist(get_measure_means(new_blocks)), new_targets)
 
@@ -135,7 +133,7 @@ create_example_blocks <- function(block_areas)
   blocks$swg_pvd_r <- 1
 
   blocks$roof <- get_roof(cbind(blocks, block_areas))
-  blocks$sealed <- get_sealed(blocks)
+  blocks$sealed <- kwb.rabimo:::get_sealed(blocks)
   blocks$to_swale <- get_to_swale(cbind(blocks, block_areas))
 
   # Provide columns in the same order as they are stored in the package
@@ -318,15 +316,6 @@ get_paved <- function(blocks) {
 get_unpaved <- function(blocks) {
   kwb.rabimo:::get_unpaved_area(blocks) /
     kwb.rabimo:::get_main_area(blocks)
-}
-
-# get_sealed -------------------------------------------------------------------
-get_sealed <- function(blocks) {
-  quotient_or_zero(
-    dividend = kwb.rabimo:::get_roof_area(blocks) +
-      kwb.rabimo:::get_paved_area(blocks),
-    divisor = kwb.utils::selectColumns(blocks, "total_area")
-  )
 }
 
 # get_to_swale -----------------------------------------------------------------
