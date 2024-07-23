@@ -15,7 +15,7 @@ if (FALSE)
   dir_local <- "~/Projekte/AMAREX"
   file_local <- file.path(dir_local, gsub("\\.xlsx$", "_playground.xlsx", basename(file_server)))
   file.copy(file_server, file_local, overwrite = TRUE)
-  kwb.utils::hsOpenWindowsExplorer(dirname(dir_local))
+  kwb.utils::hsOpenWindowsExplorer(path.expand(dir_local))
 }
 
 # MAIN -------------------------------------------------------------------------
@@ -33,25 +33,47 @@ if (FALSE)
 
   # Set the target values in the old reference system,
   # e.g. 100% green roof = 100% of roofs are green
-  new_targets <- c(green_roof = 1, unpaved = 1, to_swale = 1)
-  get_or_set_target_values_in_xls_file(xls_file, targets = new_targets)
+  (unpaved_max <- sum(blocks$total_area * (1 - blocks$roof)) / sum(blocks$total_area))
+
+  target_combis <- expand.grid(
+    green_roof = seq(0, 1, length.out = 10L),
+    unpaved = seq(0, unpaved_max, length.out = 10L),
+    to_swale = seq(0, 1, length.out = 10L)
+  )
 
   # Current mean degrees of application of measures
   check_equality(get_measure_means(blocks), read_measure_means(xls_file))
 
-  # Distribute the measures over the blocks (skip block that have already
-  # implemented the measure with a higher value than the target value)
-  new_blocks <- kwb.rabimo::distribute_measures(
-    blocks, targets = new_targets, intermediates = TRUE
-  )
+  indices <- seq_len(n <- nrow(target_combis))
+  indices <- sample(indices)
+  #i <- 132L
+  for (i in seq_along(indices)) {
+    cat(sprintf("Checking target %d/%d\n", i, n))
 
-  # Check that the distribution in R works exactly as the distribution in Excel
-  check_distribution(
-    green_roof_table = attr(new_blocks, "green_roof_table"),
-    unpaved_area_table = attr(new_blocks, "unpaved_area_table"),
-    swale_connection_table = attr(new_blocks, "swale_connection_table"),
-    ref_output_tables = read_output_tables(xls_file)
-  )
+    #new_targets <- c(green_roof = 1, unpaved = 0.75, to_swale = 1)
+    new_targets <- unlist(target_combis[indices[i], ])
+    print(new_targets)
+    get_or_set_target_values_in_xls_file(xls_file, targets = new_targets)
+
+    # Distribute the measures over the blocks (skip block that have already
+    # implemented the measure with a higher value than the target value)
+    new_blocks <- kwb.rabimo::distribute_measures(
+      blocks, targets = new_targets, intermediates = TRUE
+    )
+
+    new_blocks$sealed <- get_sealed(new_blocks)
+
+    # Current mean degrees of application of measures
+    check_equality(unlist(get_measure_means(new_blocks)), new_targets)
+
+    # Check that the distribution in R works exactly as the distribution in Excel
+    check_distribution(
+      green_roof_table = attr(new_blocks, "green_roof_table"),
+      unpaved_area_table = attr(new_blocks, "unpaved_area_table"),
+      swale_connection_table = attr(new_blocks, "swale_connection_table"),
+      ref_output_tables = read_output_tables(xls_file)
+    )
+  }
 }
 
 # Working with targets in the "new" reference system ---------------------------
