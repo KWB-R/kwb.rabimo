@@ -2,10 +2,14 @@
 #' Distribute Rainwater Management Measures to Single Block Areas
 #'
 #' @param blocks data frame as being input to \code{\link{run_rabimo}}
-#' @param targets list with element \code{green_roof}, \code{unpaved},
-#'   \code{to_swale}, each of which is a value between 0 and 1, describing the
-#'   extent to which the corresponding measures are to be installed on average
-#'   over all \code{blocks}
+#' @param targets numeric vector with elements named \code{green_roof},
+#'   \code{unpaved}, \code{to_swale}, each of which is a value between 0 and 1,
+#'   describing the extent to which the corresponding measures are to be
+#'   installed on average over all \code{blocks}. The percentages refer to
+#'   different base areas: green_roof = total area of green roofs divided by
+#'   total area of roofs; unpaved = sum of unpaved (non-roof) area divided by
+#'   total area; to_swale = sum of areas that are connected to a swale divided
+#'   by sum of of areas that are sealed (roof area + paved area).
 #' @param intermediates logical indicating whether or not to return tables with
 #'   intermediate results in attributes. The default is \code{FALSE}, i.e. no
 #'   attributes are attached to the result data frame.
@@ -16,9 +20,9 @@
 #' @export
 distribute_measures <- function(blocks, targets, intermediates = FALSE)
 {
-  target_green_roof <- select_elements(targets, "green_roof")
-  target_unpaved <- select_elements(targets, "unpaved")
-  target_to_swale <- select_elements(targets, "to_swale")
+  target_green_roof <- targets[["green_roof"]]
+  target_unpaved <- targets[["unpaved"]]
+  target_to_swale <- targets[["to_swale"]]
 
   # Apply target degrees of application of measures
   green_roof_table <- get_green_roof_table(blocks, target_green_roof)

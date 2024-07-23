@@ -9,10 +9,14 @@ distribute_measures(blocks, targets, intermediates = FALSE)
 \arguments{
 \item{blocks}{data frame as being input to \code{\link{run_rabimo}}}
 
-\item{targets}{list with element \code{green_roof}, \code{unpaved},
-\code{to_swale}, each of which is a value between 0 and 1, describing the
-extent to which the corresponding measures are to be installed on average
-over all \code{blocks}}
+\item{targets}{numeric vector with elements named \code{green_roof},
+\code{unpaved}, \code{to_swale}, each of which is a value between 0 and 1,
+describing the extent to which the corresponding measures are to be
+installed on average over all \code{blocks}. The percentages refer to
+different base areas: green_roof = total area of green roofs divided by
+total area of roofs; unpaved = sum of unpaved (non-roof) area divided by
+total area; to_swale = sum of areas that are connected to a swale divided
+by sum of of areas that are sealed (roof area + paved area).}
 
 \item{intermediates}{logical indicating whether or not to return tables with
 intermediate results in attributes. The default is \code{FALSE}, i.e. no
