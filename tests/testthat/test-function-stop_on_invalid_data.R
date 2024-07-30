@@ -14,8 +14,6 @@ test_that("stop_on_invalid_data() works", {
     epot_s = 1
   )
 
-  expect_output(
-    expect_error(f(data[1L, ]), "There are missing columns")
-  )
+  expect_error(f(data[1L, ]), "There are missing columns")
 
 })
