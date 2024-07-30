@@ -17,15 +17,10 @@ stop_on_invalid_data <- function(data)
   missing <- setdiff(columns_with("type", "required"), names(data))
 
   if (length(missing)) {
-    column_info %>%
-      dplyr::filter(.data[["rabimo_berlin"]] %in% missing) %>%
-      rename_and_select(list(rabimo_berlin = "column", "meaning", "unit")) %>%
-      reset_row_names() %>%
-      print_if(condition = TRUE, caption = "Missing columns")
-    clean_stop(
-      "There are missing columns (see above). ",
-      "Please make sure that you provide all required columns."
-    )
+    info <- dplyr::filter(column_info, .data[["rabimo_berlin"]] %in% missing)
+    clean_stop("There are missing columns:\n", paste(collapse = "\n", sprintf(
+        "- %s (%s)", info$rabimo_berlin, info$meaning
+    )))
   }
 
   # Stop if a column does not have the expected data type
