@@ -18,15 +18,15 @@ distribute_shares <- function(
     length(target_value) == 1L
   )
 
-  total_diff_area <- sum(target_value * base_areas) - sum(partial_areas)
+  total_diff_area <- round(sum(target_value * base_areas) - sum(partial_areas),2)
 
   to_increase <- total_diff_area > 0
   shares <- ifelse(base_areas > 0, partial_areas / base_areas, 0)
 
   consider <- if (to_increase) {
-    shares < target_value
+    round(shares,2) < round(target_value,2)
   } else {
-    shares > target_value
+    round(shares,2) > round(target_value,2)
   }
 
   ref_areas <- rep(0, n_areas)
