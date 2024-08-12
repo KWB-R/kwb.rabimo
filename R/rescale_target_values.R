@@ -13,8 +13,7 @@ rescale_target_values <- function(new_targets, blocks)
   unpaved <- unpaved_new
   to_swale <- to_swale_new * total_area / total_sealed_area
 
-  # TODO: calculate
-  max_allowed_unpaved <- 1
+  max_allowed_unpaved <- (total_area - total_roof_area)/total_area
 
   stopifnot(green_roof <= 1)
   stopifnot(unpaved <= max_allowed_unpaved)
