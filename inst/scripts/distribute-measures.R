@@ -247,11 +247,22 @@ check_equality <- function(a, b)
 # get_measure_means ------------------------------------------------------------
 get_measure_means <- function(blocks)
 {
-  list(
+  means_1 <- list(
     green_roof = green_roof_mean(blocks),
     unpaved = unpaved_mean(blocks),
     to_swale = to_swale_mean(blocks)
   )
+
+  get <- kwb.utils::selectElements
+
+  measure_stats <- kwb.rabimo::get_measure_stats(blocks, reference_system = 1)
+  means_2 <- get(measure_stats, "mean")
+
+  check_equality(means_1$green_roof, get(means_2, "green_roof"))
+  check_equality(means_1$unpaved, get(means_2, "unpaved"))
+  check_equality(means_1$to_swale, get(means_2, "to_swale"))
+
+  means_1
 }
 
 # green_roof_mean --------------------------------------------------------------
