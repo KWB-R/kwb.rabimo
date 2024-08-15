@@ -31,17 +31,18 @@ if (FALSE)
   # Just to double check: Read current target values from the Excel file
   get_or_set_target_values_in_xls_file(xls_file, targets = NULL)
 
-  # Set the target values in the old reference system,
+  # Set the target values in the old "reference system",
   # e.g. 100% green roof = 100% of roofs are green
   (unpaved_max <- sum(blocks$total_area * (1 - blocks$roof)) / sum(blocks$total_area))
 
+  # Create different combinations of target values
   target_combis <- expand.grid(
     green_roof = seq(0, 1, length.out = 10L),
     unpaved = seq(0, unpaved_max, length.out = 10L),
     to_swale = seq(0, 1, length.out = 10L)
   )
 
-  # Current mean degrees of application of measures
+  # Current mean "degrees of application" of measures
   check_equality(get_measure_means(blocks), read_measure_means(xls_file))
 
   indices <- seq_len(n <- nrow(target_combis))
