@@ -86,8 +86,6 @@ function(req, n_records = 3L, seed = as.integer(Sys.time()), output_only = TRUE)
 #* @post data_to_natural
 function(data_json, type = "undeveloped")
 {
-  data <-
-
   data <- kwb.rabimo:::check_or_convert_data_types(
     data = jsonlite::fromJSON(data_json),
     types = kwb.rabimo:::get_expected_data_type(),
@@ -129,4 +127,16 @@ function()
   config[elements] <- lapply(config[elements], as.list)
 
   config
+}
+
+# /get_measure_stats -----------------------------------------------------------
+
+#* Statistics (mean, max) on measures within selected blocks
+#* @param blocks_json Selected blocks
+#* @param reference_system "Reference system" (1:old, 2:new = percentages of total area)
+#* @post get_measure_stats
+function(req, blocks_json, reference_system = 2)
+{
+  blocks <- jsonlite::fromJSON(blocks_json)
+  kwb.rabimo::get_measure_stats(blocks, reference_system)
 }
