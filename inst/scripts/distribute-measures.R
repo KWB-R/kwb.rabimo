@@ -32,17 +32,18 @@ if (FALSE)
   # Just to double check: Read current target values from the Excel file
   get_or_set_target_values_in_xls_file(xls_file, targets = NULL,  sheet = sheet)
 
-  # Set the target values in the old reference system,
+  # Set the target values in the old "reference system",
   # e.g. 100% green roof = 100% of roofs are green
   (unpaved_max <- sum(blocks$total_area * (1 - blocks$roof)) / sum(blocks$total_area))
 
+  # Create different combinations of target values
   target_combis <- expand.grid(
     green_roof = seq(0, 1, length.out = 10L),
     unpaved = seq(0, unpaved_max, length.out = 10L),
     to_swale = seq(0, 1, length.out = 10L)
   )
 
-  # Current mean degrees of application of measures
+  # Current mean "degrees of application" of measures
   check_equality(get_measure_means(blocks), read_measure_means(xls_file, sheet = sheet))
 
   indices <- seq_len(n <- nrow(target_combis))
@@ -78,14 +79,16 @@ if (FALSE)
 # Working with targets in the "new" reference system ---------------------------
 if (FALSE)
 {
-  # Statistics on measure implementation in new reference system (share of total
-  # area)
-  get_measure_stats_new(blocks)
+  # Statistics on measures in new reference system (shares of total area)
+  kwb.rabimo::get_measure_stats(blocks, reference_system = 2)
 
-  # Convert new targets (all percentages referring to total area) to targets
-  # that are expected by distribute_measures()
+  # Define targets in new reference system (all shares referring to total area)
   new_targets <- list(green_roof = 0.259, unpaved = 0.5, to_swale = 0.67)
 
+  # Convert targets in new reference system to targets in old reference system
+  # that is expected by distribute_measures(). In the old system, the shares
+  # relate to areas that are specific to the measure (e.g. green_roof is related
+  # to the area of roofs, to swale is related to the area of sealed surfaces).
   targets <- rescale_target_values(
     new_targets,
     total_area = sum(kwb.rabimo:::get_main_area(blocks)),
@@ -245,11 +248,22 @@ check_equality <- function(a, b)
 # get_measure_means ------------------------------------------------------------
 get_measure_means <- function(blocks)
 {
-  list(
+  means_1 <- list(
     green_roof = green_roof_mean(blocks),
     unpaved = unpaved_mean(blocks),
     to_swale = to_swale_mean(blocks)
   )
+
+  get <- kwb.utils::selectElements
+
+  measure_stats <- kwb.rabimo::get_measure_stats(blocks, reference_system = 1)
+  means_2 <- get(measure_stats, "mean")
+
+  check_equality(means_1$green_roof, get(means_2, "green_roof"))
+  check_equality(means_1$unpaved, get(means_2, "unpaved"))
+  check_equality(means_1$to_swale, get(means_2, "to_swale"))
+
+  means_1
 }
 
 # green_roof_mean --------------------------------------------------------------
@@ -356,78 +370,6 @@ rescale_target_values <- function(
   stopifnot(to_swale <= 1)
 
   list(green_roof = green_roof, unpaved = unpaved, to_swale = to_swale)
-}
-
-# get_measure_stats_new --------------------------------------------------------
-get_measure_stats_new <- function(blocks, refer_to_total = TRUE)
-{
-  #blocks <- kwb.rabimo::rabimo_inputs_2020$data
-  get <- kwb.utils::createAccessor(blocks)
-
-  total_areas <- get("total_area")
-  roofs <- get("roof")
-  pvds <- get("pvd")
-
-  area_total <- sum(total_areas)
-  area_roof <- sum(total_areas * roofs)
-  area_green_roof <- sum(total_areas * roofs * get("green_roof"))
-  area_pvd <- sum(total_areas * pvds)
-  area_unpvd <- sum(total_areas * (1 - roofs - pvds))
-  area_sca <- sum(total_areas * (roofs + pvds) * get("to_swale"))
-  area_sealed <- area_roof + area_pvd
-
-  mean_roof <- area_roof / area_total
-  mean_pvd <- area_pvd / area_total
-
-  mean_green_roof <- if (refer_to_total) {
-    area_green_roof / area_total
-  } else {
-    area_green_roof / area_roof
-  }
-
-  mean_unpvd <- area_unpvd / area_total
-
-  mean_sca <- if (refer_to_total) {
-    area_sca / area_total
-  } else {
-    area_sca / area_sealed
-  }
-
-  max_green_roof <- if (refer_to_total) mean_roof else 1
-  max_unpvd <- 1 - mean_roof
-  max_sca <- if (refer_to_total) {
-    1 - mean_unpvd
-  } else {
-    1
-  }
-
-  # area_total <- sum(kwb.rabimo:::get_main_area(blocks))
-  # area_green_roof <- sum(kwb.rabimo:::get_green_roof_area(blocks))
-  # area_roof <- sum(kwb.rabimo:::get_roof_area(blocks))
-  # area_unpvd <- sum(kwb.rabimo:::get_unpaved_area(blocks))
-  # area_pvd <- sum(kwb.rabimo:::get_paved_area(blocks))
-  # area_sca <- sum(kwb.rabimo:::get_to_swale_area(blocks))
-  # area_sealed <- sum(kwb.rabimo:::get_sealed_area(blocks))
-  #
-  # mean_green_roof <- area_green_roof / area_total
-  # max_green_roof <- area_roof / area_total
-  # mean_unpvd <- area_unpvd / area_total
-  # max_unpvd <- area_pvd / area_total
-  # mean_sca <- area_sca / area_total
-  # max_sca <- area_sealed / area_total
-
-  cbind(
-    mean = c(
-      green_roof = mean_green_roof,
-      unpaved = mean_unpvd,
-      to_swale = mean_sca
-    ),
-    max = c(
-      green_roof = max_green_roof,
-      unpaved = max_unpvd,
-      to_swale = max_sca
-    )
-  )
 }
 
 # check_distribution -----------------------------------------------------------
