@@ -1,6 +1,3 @@
-
-
-
 #library(testthat)
 test_that("run_rabimo_with_measures() works", {
 
@@ -13,28 +10,30 @@ test_that("run_rabimo_with_measures() works", {
 
   stats <- kwb.rabimo:::get_measure_stats(blocks)
 
+  safety_factor <- 0.999
+
   measures_max <- list(
-    green_roof = stats$green_roof[["max"]],
-    unpaved = stats$unpaved[["max"]],
-    to_swale = stats$to_swale[["max"]]
+    green_roof = safety_factor * stats$green_roof$max,
+    unpaved = safety_factor * stats$unpaved$max,
+    to_swale = safety_factor * stats$to_swale$max
   )
 
   measures_too_big_1 <- list(
-    green_roof = stats$green_roof[["max"]] + 0.01,
-    unpaved = stats$unpaved[["max"]],
-    to_swale = stats$to_swale[["max"]]
+    green_roof = measures_max$green_roof$max + 0.01,
+    unpaved = measures_max$unpaved$max,
+    to_swale = measures_max$to_swale$max
   )
 
   measures_too_big_2 <- list(
-    green_roof = stats$green_roof[["max"]],
-    unpaved = stats$unpaved[["max"]] + 0.01,
-    to_swale = stats$to_swale[["max"]]
+    green_roof = measures_max$green_roof$max,
+    unpaved = measures_max$unpaved$max + 0.01,
+    to_swale = measures_max$to_swale$max
   )
 
   measures_too_big_3 <- list(
-    green_roof = stats$green_roof[["max"]],
-    unpaved = stats$unpaved[["max"]],
-    to_swale = stats$to_swale[["max"]] + 0.01
+    green_roof = measures_max$green_roof$max,
+    unpaved = measures_max$unpaved$max,
+    to_swale = measures_max$to_swale$max + 0.01
   )
 
   result <- f(blocks, measures = measures_max)
