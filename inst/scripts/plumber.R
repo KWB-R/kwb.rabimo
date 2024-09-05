@@ -4,9 +4,10 @@
 
 #' Run R-Abimo with data and config (optional)
 #* @param data_json input data as json string, as returned by /example_data in "output"
+#* @param measures_json Optional. Target values of measures, as json string, e.g. '{"green_roof":0.1, "unpaved":0.2, "to_swale":0.3}'
 #* @param config_json Optional. Configuration as json string, as returned by /default_config
 #* @post /run_rabimo
-function(req, data_json, config_json = "")
+function(req, data_json, measures_json = "", config_json = "")
 {
   data <- jsonlite::fromJSON(data_json)
 
@@ -17,30 +18,33 @@ function(req, data_json, config_json = "")
     convert = TRUE
   )
 
+  measures <- if (measures_json != "") {
+    jsonlite::fromJSON(measures_json)
+  } # else NULL implicitly
+
   if (config_json == "") {
-
     config <- kwb.rabimo::rabimo_inputs_2020$config
-
   } else {
-
     # Convert json string to list
     config <- jsonlite::fromJSON(config_json)
-
     # Convert elements that are lists to named vectors
     elements <- names(which(sapply(config, is.list)))
     config[elements] <- lapply(config[elements], unlist)
   }
 
-  output <- try(kwb.rabimo::run_rabimo(data, config))
+  output <- try(
+    if (is.null(measures)) {
+      kwb.rabimo::run_rabimo(data, config)
+    } else {
+      kwb.rabimo::run_rabimo_with_measures(data, measures, config)
+    }
+  )
 
-  return(output)
+  failed <- kwb.utils::isTryError(output)
 
   list(
-    inputs = list(
-      data_json = data_json,
-      config_json = config_json
-    ),
-    output = output
+    data = if (failed) NULL else output,
+    error = if (failed) as.character(output) else ""
   )
 }
 
