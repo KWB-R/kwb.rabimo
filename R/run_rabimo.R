@@ -256,14 +256,22 @@ run_rabimo <- function(data, config, controls = define_controls())
   output_format <- control("output_format")
 
   result_data <- if (output_format == "abimo") {
+
     # Provide the same columns as Abimo does
     rename_columns(result_data_raw, name_mapping)
+
   } else if (output_format == "rabimo") {
-    remove_columns(result_data_raw, pattern = "_flow") %>%
-      remove_columns("total_runoff") %>%
-      move_columns_to_front(c("code", "total_area")) %>%
-      dplyr::rename_with(~gsub("total_","",.))
+
+    data.frame(
+      code = result_data_raw$code,
+      area = result_data_raw$total_area,
+      runoff = result_data_raw$total_surface_runoff,
+      infiltr = result_data_raw$total_infiltration,
+      evapor = result_data_raw$total_evaporation
+    )
+
   } else {
+
     clean_stop("controls$output_format must be either 'abimo' or 'rabimo'.")
   }
 

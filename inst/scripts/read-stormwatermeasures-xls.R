@@ -1,5 +1,5 @@
 # read_input_table -------------------------------------------------------------
-read_input_table <- function(xls_file)
+read_input_table <- function(xls_file, ...)
 {
   na_to_empty <- function(x) ifelse(is.na(x), "", x)
   empty_to_na <- function(x) ifelse(x == "", NA, x)
@@ -13,29 +13,29 @@ read_input_table <- function(xls_file)
   captions <- kwb.utils::naToLastNonNa(empty_to_na(gsub("^_|_$", "", captions)))
   captions <- kwb.utils::makeUnique(captions, sep = "_", warn = FALSE)
 
-  stats::setNames(read_range(xls_file, "Y3:AN14"), captions)
+  stats::setNames(read_range(xls_file, "Y3:AN14", ...), captions)
 }
 
 # read_range -------------------------------------------------------------------
-read_range <- function(xls_file, range)
+read_range <- function(xls_file, range, sheet = 1)
 {
-  suppressMessages(data <- readxl::read_excel(xls_file, range = range))
+  suppressMessages(data <- readxl::read_excel(xls_file, range = range, sheet = sheet))
   as.data.frame(data)
 }
 
 # read_strings -----------------------------------------------------------------
-read_strings <- function(xls_file, range)
+read_strings <- function(xls_file, range, ...)
 {
-  data <- read_range(xls_file, range)
+  data <- read_range(xls_file, range, ...)
   gsub(" ", "_", trimws(unname(unlist(data))))
 }
 
 # read_output_tables -----------------------------------------------------------
-read_output_tables <- function(xls_file)
+read_output_tables <- function(xls_file, ...)
 {
   list(
     green_roof_table = kwb.utils::renameColumns(
-      read_range(xls_file, "Z21:AC32"),
+      read_range(xls_file, "Z21:AC32", ...),
       list(
         "ref a" = "ref_area",
         "new gr" = "green_roof_area",
@@ -43,7 +43,7 @@ read_output_tables <- function(xls_file)
       )
     ),
     unpaved_area_table = kwb.utils::renameColumns(
-      read_range(xls_file, "AE21:AO32"),
+      read_range(xls_file, "AE21:AO32", ...),
       list(
         "ref a" = "ref_area",
         "new pvd" = "paved_area",
@@ -57,7 +57,7 @@ read_output_tables <- function(xls_file)
       )
     ),
     swale_connection_table = kwb.utils::renameColumns(
-      read_range(xls_file, "AQ21:AU32"),
+      read_range(xls_file, "AQ21:AU32", ...),
       list(
         "ref a" = "ref_area",
         "new sca" = "to_swale_area",
@@ -68,16 +68,16 @@ read_output_tables <- function(xls_file)
 }
 
 # read_targets -----------------------------------------------------------------
-read_targets <- function(ref_file)
+read_targets <- function(ref_file, ...)
 {
-  values <- read_range(ref_file, "K28:K31")[[1L]]
+  values <- read_range(ref_file, "K28:K31", ...)[[1L]]
   stats::setNames(values, c("green_roof", "unpaved", "to_swale"))
 }
 
 # read_measure_means -----------------------------------------------------------
-read_measure_means <- function(ref_file)
+read_measure_means <- function(ref_file, ...)
 {
-  values <- read_range(ref_file, "K20:K26")[[1L]]
+  values <- read_range(ref_file, "K20:K26", ...)[[1L]]
   list(
     green_roof = values[2L],
     unpaved = values[4L],
@@ -86,12 +86,12 @@ read_measure_means <- function(ref_file)
 }
 
 # get_or_set_target_values_in_xls_file -----------------------------------------
-get_or_set_target_values_in_xls_file <- function(xls_file, targets = NULL)
+get_or_set_target_values_in_xls_file <- function(xls_file, targets = NULL, ...)
 {
   xls_file <- kwb.utils::safePath(path.expand(xls_file))
 
   if (is.null(targets)) {
-    return(read_targets(xls_file))
+    return(read_targets(xls_file, ...))
   }
 
   require("RDCOMClient", quietly = TRUE)
@@ -121,7 +121,7 @@ get_or_set_target_values_in_xls_file <- function(xls_file, targets = NULL)
   workbook$Save()
 
   # Check that the changes have "arrived" in the Excel file
-  stopifnot(identical(read_targets(xls_file), targets))
+  stopifnot(identical(read_targets(xls_file, ...), targets))
 
   # Return the old values
   invisible(replaced_values)

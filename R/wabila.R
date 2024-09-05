@@ -1,33 +1,41 @@
 # calculate_wabila_roof --------------------------------------------------------
-calculate_wabila_roof <- function(area, retention_height)
-{
+calculate_wabila_roof <- function(area, retention_height, return_code = TRUE) {
   # get climatic parameters from area
-  P <- area$prec_yr
-  ET_p <- area$epot_yr
+  P <- area["prec_yr"]
+  ET_p <- area["epot_yr"]
+  code <- area["code"]
 
   # runoff component
-  a <- 0.9115 + 0.00007063 * P - 0.000007498 * ET_p - 0.2063 *
-    log(retention_height + 1)
+  a <- 0.9115 + 0.00007063 * P - 0.000007498 * ET_p - 0.2063 * log(retention_height + 1)
 
   # infiltration component
-  g <- 0
+  g <- rep(0, length(P))  # if P is a vector, g will be a vector of zeros with the same length
 
-  #evaporation component
+  # evaporation component
   v <- 1 - a
 
-  c(a, g, v)
+  result <- setNames(c(a, g, v),
+                     c("surface_runoff", "infiltration", "evaporation"))
+
+  if (return_code){
+    return(cbind(code, result))
+  }
+
+  result
+
 }
 
 # calculate_wabila_green_roof --------------------------------------------------
-calculate_wabila_green_roof <- function(area, height, kf, w_diff)
+calculate_wabila_green_roof <- function(area, height, kf, w_diff, return_code = TRUE)
 {
   # h: depth, in cm
   # kf: permeability of soil, in mm/h
   # w_diff: difference between water holding capacity and wilting point, unitless
 
   # get climatic parameters from area
-  P <- area$prec_yr
-  ET_p <- area$epot_yr
+  P <- area["prec_yr"]
+  ET_p <- area["epot_yr"]
+  code <- area["code"]
 
   # runoff component
   a = -2.182 + 0.4293 * log(P) - 0.0001092 * P +  236.1/ET_p +
@@ -40,7 +48,14 @@ calculate_wabila_green_roof <- function(area, height, kf, w_diff)
   #evaporation component
   v <- 1 - a
 
-  c(a, g, v)
+  result <- setNames(c(a, g, v),
+                     c("surface_runoff", "infiltration", "evaporation"))
+
+  if (return_code){
+    return(cbind(code, result))
+  }
+
+  result
 }
 
 # calculate_wabila_paved -------------------------------------------------------
@@ -131,7 +146,7 @@ estimate_swale_area <- function(kf)
 
 
 # calculate_delta_mod ----------------------------------------------------------
-calculate_delta_mod <- function(results_mod_1, results_mod_2,
+calculate_delta_mod_v0 <- function(results_mod_1, results_mod_2,
                                 has_codes = TRUE,
                                 var_names = c("surface_runoff",
                                               "infiltration",
@@ -169,5 +184,47 @@ calculate_delta_mod <- function(results_mod_1, results_mod_2,
   }
 
   return(delta_mod)
+
+}
+
+calculate_delta_mod <- function(results_mod_1, results_mod_2,
+                                has_codes = TRUE,
+                                col_patterns = c("runoff|infiltration|evaporation"),
+                                codes_name = "code"){
+
+  # force result objects to be data.frames
+  if(is.vector(results_mod_1)){
+    results_mod_1 <- as.data.frame(t(results_mod_1))
+    result_mod_2 <- as.data.frame(t(results_mod_2))
+  } else {
+    results_mod_1 <- as.data.frame(results_mod_1)
+    results_mod_2 <- as.data.frame(results_mod_2)
+  }
+
+  stopifnot(nrow(results_mod_1) == nrow(results_mod_2))
+
+  var_names_1 <- grep(pattern = col_patterns, x = names(results_mod_1), value = TRUE)
+  var_names_2 <- grep(pattern = col_patterns, x = names(results_mod_2), value = TRUE)
+
+  precipitation_1 <- rowSums(results_mod_1[var_names_1])
+  precipitation_2 <- rowSums(results_mod_2[var_names_2])
+  tolerance <- 1e-6
+  stopifnot(all(abs(precipitation_1 - precipitation_2) < tolerance))
+
+  delta_mod <- data.frame(
+    delta_mod = rowSums(
+      abs(results_mod_1[var_names_1] - results_mod_2[var_names_2])
+    ) * 0.5 / precipitation_1
+  )
+
+  if(has_codes){
+    stopifnot(
+      identical(results_mod_1[[codes_name]], results_mod_2[[codes_name]])
+    )
+    codes <- results_mod_1[[codes_name]]
+    return(cbind(code = codes, delta_mod = delta_mod))
+  }
+
+  delta_mod
 
 }

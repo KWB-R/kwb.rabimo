@@ -22,14 +22,15 @@ if (FALSE)
 if (FALSE)
 {
   xls_file <- "~/Projekte/AMAREX/distribution_stormwatermeasures_playground.xlsx"
+  sheet <- 2
 
   # Provide input data for R-Abimo, based on input table in the Excel file
   blocks <- provide_rabimo_input_based_on_excel_input(
-    ref_input_table = read_input_table(xls_file)
+    ref_input_table = read_input_table(xls_file, sheet = sheet)
   )
 
   # Just to double check: Read current target values from the Excel file
-  get_or_set_target_values_in_xls_file(xls_file, targets = NULL)
+  get_or_set_target_values_in_xls_file(xls_file, targets = NULL,  sheet = sheet)
 
   # Set the target values in the old "reference system",
   # e.g. 100% green roof = 100% of roofs are green
@@ -43,7 +44,7 @@ if (FALSE)
   )
 
   # Current mean "degrees of application" of measures
-  check_equality(get_measure_means(blocks), read_measure_means(xls_file))
+  check_equality(get_measure_means(blocks), read_measure_means(xls_file, sheet = sheet))
 
   indices <- seq_len(n <- nrow(target_combis))
   indices <- sample(indices)
@@ -256,7 +257,7 @@ get_measure_means <- function(blocks)
   get <- kwb.utils::selectElements
 
   measure_stats <- kwb.rabimo::get_measure_stats(blocks, reference_system = 1)
-  means_2 <- get(measure_stats, "mean")
+  means_2 <- lapply(measure_stats, get, "mean")
 
   check_equality(means_1$green_roof, get(means_2, "green_roof"))
   check_equality(means_1$unpaved, get(means_2, "unpaved"))
