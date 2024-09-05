@@ -1,11 +1,60 @@
 #library(plumber); pr("R/plumber.R") %>% pr_run()
 
+# /example_data ----------------------------------------------------------------
+
+#* Example data for Abimo (Berlin, 2019)
+#* @param n_records number of records (= input rows = "Blockteilflaechen").
+#* @param seed seed value for the random number generator used to randomly select rows
+#* @param output_only whether to return only the data frame with example data (true, the default) or a list with inputs and output (false).
+#* @post /example_data
+function(req, n_records = 3L, seed = as.integer(Sys.time()), output_only = TRUE)
+{
+  n_records <- as.integer(n_records)
+  seed <- as.integer(seed)
+
+  stopifnot(length(n_records) == 1L, !is.na(n_records))
+  stopifnot(length(seed) == 1L, !is.na(seed))
+
+  data <- kwb.utils::selectElements(kwb.rabimo::rabimo_inputs_2020, "data")
+
+  n_rows <- nrow(data)
+  set.seed(seed)
+
+  size <- min(c(n_rows, n_records))
+  rows <- sample(n_rows, size = size)
+
+  output <- data[rows, ]
+
+  if (output_only) {
+    return(output)
+  }
+
+  list(
+    inputs = list(n_records = n_records, seed = seed),
+    output = output
+  )
+}
+
+# /get_measure_stats -----------------------------------------------------------
+
+#* Statistics (mean, max) on measures within selected blocks
+#* @param blocks_json Selected blocks
+#* @param reference_system "Reference system" (1:old, 2:new = percentages of total area)
+#* @serializer unboxedJSON
+#* @post get_measure_stats
+function(req, blocks_json, reference_system = 2)
+{
+  blocks <- jsonlite::fromJSON(blocks_json)
+  kwb.rabimo::get_measure_stats(blocks, reference_system)
+}
+
 # /run_rabimo ------------------------------------------------------------------
 
 #' Run R-Abimo with data and config (optional)
 #* @param data_json input data as json string, as returned by /example_data in "output"
 #* @param measures_json Optional. Target values of measures, as json string, e.g. '{"green_roof":0.1, "unpaved":0.2, "to_swale":0.3}'
 #* @param config_json Optional. Configuration as json string, as returned by /default_config
+#* @serializer unboxedJSON
 #* @post /run_rabimo
 function(req, data_json, measures_json = "", config_json = "")
 {
@@ -44,42 +93,13 @@ function(req, data_json, measures_json = "", config_json = "")
 
   list(
     data = if (failed) NULL else output,
+    weighted_means = if (failed) NULL else {
+      areas <- output$area
+      cols <- 3:5
+      x <- colSums(areas * as.matrix(output[, cols])) / sum(areas)
+      stats::setNames(as.list(x), names(output)[cols])
+    },
     error = if (failed) as.character(output) else ""
-  )
-}
-
-# /example_data ----------------------------------------------------------------
-
-#* Example data for Abimo (Berlin, 2019)
-#* @param n_records number of records (= input rows = "Blockteilflaechen").
-#* @param seed seed value for the random number generator used to randomly select rows
-#* @param output_only whether to return only the data frame with example data (true, the default) or a list with inputs and output (false).
-#* @post /example_data
-function(req, n_records = 3L, seed = as.integer(Sys.time()), output_only = TRUE)
-{
-  n_records <- as.integer(n_records)
-  seed <- as.integer(seed)
-
-  stopifnot(length(n_records) == 1L, !is.na(n_records))
-  stopifnot(length(seed) == 1L, !is.na(seed))
-
-  data <- kwb.utils::selectElements(kwb.rabimo::rabimo_inputs_2020, "data")
-
-  n_rows <- nrow(data)
-  set.seed(seed)
-
-  size <- min(c(n_rows, n_records))
-  rows <- sample(n_rows, size = size)
-
-  output <- data[rows, ]
-
-  if (output_only) {
-    return(output)
-  }
-
-  list(
-    inputs = list(n_records = n_records, seed = seed),
-    output = output
   )
 }
 
@@ -133,14 +153,3 @@ function()
   config
 }
 
-# /get_measure_stats -----------------------------------------------------------
-
-#* Statistics (mean, max) on measures within selected blocks
-#* @param blocks_json Selected blocks
-#* @param reference_system "Reference system" (1:old, 2:new = percentages of total area)
-#* @post get_measure_stats
-function(req, blocks_json, reference_system = 2)
-{
-  blocks <- jsonlite::fromJSON(blocks_json)
-  kwb.rabimo::get_measure_stats(blocks, reference_system)
-}
