@@ -12,11 +12,14 @@ run_rabimo_with_measures(
 }
 \arguments{
 \item{blocks}{data frame of selected blocks (same columns as in
-\code{link{rabimo_inputs_2020}$data})}
+\code{\link{rabimo_inputs_2020}$data})}
 
 \item{measures}{list with elements \code{green_roof}, \code{unpaved},
 \code{to_swale} representing the target percentages of the total areas
 corresponding to each measure}
+
+\item{config}{configuration object, default:
+\code{\link{rabimo_inputs_2020}$config}}
 }
 \description{
 Distribute Rainwater Management Measures and run R-Abimo
