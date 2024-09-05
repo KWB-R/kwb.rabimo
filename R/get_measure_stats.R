@@ -60,9 +60,9 @@ get_measure_stats <- function(blocks, reference_system = 2)
   }
 
   list(
-    green_roof = c(mean = mean_green_roof, max = max_green_roof),
-    unpaved = c(mean = mean_unpvd, max = max_unpvd),
-    to_swale = c(mean = mean_sca, max = max_sca)
+    green_roof = list(mean = mean_green_roof, max = max_green_roof),
+    unpaved = list(mean = mean_unpvd, max = max_unpvd),
+    to_swale = list(mean = mean_sca, max = max_sca)
   )
 }
 

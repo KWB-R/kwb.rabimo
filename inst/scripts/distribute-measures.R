@@ -257,7 +257,7 @@ get_measure_means <- function(blocks)
   get <- kwb.utils::selectElements
 
   measure_stats <- kwb.rabimo::get_measure_stats(blocks, reference_system = 1)
-  means_2 <- get(measure_stats, "mean")
+  means_2 <- lapply(measure_stats, get, "mean")
 
   check_equality(means_1$green_roof, get(means_2, "green_roof"))
   check_equality(means_1$unpaved, get(means_2, "unpaved"))
