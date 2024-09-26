@@ -15,92 +15,126 @@ triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
 {
   stopifnot(sum(fractions) == 1)
 
-  point <- function(x, y) data.frame(x = x, y = y)
   grad_to_rad <- function(x) x/180 * pi
-  sin_grad <- function(x) sin(grad_to_rad(x))
-  cos_grad <- function(x) cos(grad_to_rad(x))
-  tan_grad <- function(x) tan(grad_to_rad(x))
-  linear_n <- function(x, y, m) y - m * x
 
-  y_fun <- function(m, n) function(x) {m * x + n}
-  x_fun <- function(m, n) function(y) {stopifnot(m != 0);(y - n) / m}
+  new_point <- function(x, y) {
+    data.frame(x = x, y = y)
+  }
 
-  shift_x <- function(dist = 0.04) dist * sin_grad(60)
-  shift_y <- function(dist = 0.04) dist * cos_grad(60)
+  new_line <- function(slope, point) {
+    list(slope = slope, intersept = point$y - slope * point$x)
+  }
 
-  ytop <- 0.5 * sqrt(3)
+  new_axis <- function(origin, phi) {
+    function(x) {
+      # Convert Polar coordinates to Cartesian coordinates
+      data.frame(x = origin$x + x * cos(phi), y = origin$y + x * sin(phi))
+    }
+  }
 
-  triangle <- rbind(
-    point(-0.5,    0),
-    point(   0, ytop),
-    point(+0.5,    0),
-    point(-0.5,    0)
+  line_crossing <- function(line_1, line_2) {
+    x <- (line_2$intersept - line_1$intersept) / (line_1$slope - line_2$slope)
+    new_point(x, line_1$slope * x + line_1$intersept)
+  }
+
+  arrow_path <- function(data, colour = "black") {
+    ggplot2::geom_path(
+      data = data,
+      colour = colour,
+      linewidth = 1,
+      arrow = ggplot2::arrow(length = ggplot2::unit(0.3, "cm"))
+    )
+  }
+
+  tick_path <- function(data, colour = "black") {
+    ggplot2::geom_path(data = data, colour = colour)
+  }
+
+  rad_60 <- grad_to_rad(60)
+  rad_150 <- grad_to_rad(150)
+  rad_180 <- grad_to_rad(180)
+
+  axis_1 <- new_axis(new_point(0, 0), phi = rad_60)
+  axis_2 <- new_axis(axis_1(1), phi = -rad_60)
+  axis_3 <- new_axis(new_point(1, 0), phi = rad_180)
+
+  centre <- line_crossing(
+    line_1 = new_line(slope = 0, point = axis_1(fractions[1L])),
+    line_2 = new_line(slope = tan(rad_60), point = axis_2(fractions[2L]))
   )
 
-  # Share 1 (starting from left leg of triangle)
-  dx_1 <- fractions[1L] * cos_grad(60)
-  dy_1 <- fractions[1L] * sin_grad(60)
+  shift_ortho <- function(points, slope, by) {
+    if (slope == 0) {
+      dx <- 0
+      dy <- by
+    } else {
+      ortho_slope <- -1/slope
+      dx <- by / sqrt(1 + ortho_slope * ortho_slope)
+      dy <- ortho_slope * dx
+    }
+    new_point(points$x + dx, points$y + dy)
+  }
 
-  # Share 2 (starting from right leg of triangle)
-  dx_2 <- fractions[2L] * sin_grad(30)
-  dy_2 <- fractions[2L] * cos_grad(30)
-  slope_2 <- tan_grad(60)
-  intersept_2 <- linear_n(x = dx_2, y = ytop - dy_2, m = slope_2)
-  x_fun_2 <- x_fun(slope_2, intersept_2)
-  y_fun_2 <- y_fun(slope_2, intersept_2)
+  annotate_axis <- function(points, i, angle = 0, size = 4) {
+    ggplot2::annotate(
+      "text",
+      size = size,
+      x = points$x,
+      y = points$y,
+      label = c("0", names(fractions)[i], "1"),
+      colour = cols[i],
+      angle = angle
+    )
+  }
 
-  # Share 3 (starting from bottom leg of triangle)
-  slope_3 <- -tan_grad(60)
-  intersept_3 <- linear_n(x = x_fun_2(dy_1), y = dy_1, m = slope_3)
-  x_fun_3 <- x_fun(slope_3, intersept_3)
-  centre <- point(x_fun_2(dy_1), dy_1)
+  tick_pos <- seq(0, 1, 0.1)
+  tick_begs_1 <- axis_1(tick_pos)
+  tick_begs_2 <- axis_2(tick_pos)
+  tick_begs_3 <- axis_3(tick_pos)
 
-  my_path <- function(data, colour) ggplot2::geom_path(
-    data = data,
-    colour = colour,
-    linewidth = 1,
-    arrow = ggplot2::arrow(length = ggplot2::unit(0.3, "cm"))
+  by <- -0.02
+  tick_ends_1 <- shift_ortho(tick_begs_1, tan(rad_60), by)
+  tick_ends_2 <- shift_ortho(tick_begs_2, -tan(rad_60), -by)
+  tick_ends_3 <- shift_ortho(tick_begs_3, 0, by)
+
+  tick_data <- rbind(
+    cbind(tick_begs_1, tick_ends_1),
+    cbind(tick_begs_2, tick_ends_2),
+    cbind(tick_begs_3, tick_ends_3)
   )
 
-  my_annotate <- function(...) ggplot2::annotate("text", ...)
+  names(tick_data) <- c("x", "y", "xend", "yend")
+
+  blank <- ggplot2::element_blank()
+  blank_theme <- ggplot2::theme(
+    panel.grid.major = blank,
+    panel.grid.minor = blank,
+    axis.text = blank,
+    axis.ticks = blank,
+    panel.border = blank
+  )
+
+  by <- -0.06
+  pos <- c(0, 0.5, 1)
+  label_points_1 <- shift_ortho(axis_1(pos), tan(rad_60), by)
+  label_points_2 <- shift_ortho(axis_2(pos), -tan(rad_60), -by)
+  label_points_3 <- shift_ortho(axis_3(pos), 0, by)
 
   ggplot2::ggplot(mapping = ggplot2::aes(x = .data$x, y = .data$y)) +
-    ggplot2::geom_path(data = triangle) +
-    my_path(rbind(point(-0.5 + dx_1, dy_1), centre), cols[1L]) +
-    my_path(rbind(point(dx_2, y_fun_2(dx_2)), centre), cols[2L]) +
-    my_path(rbind(point(x_fun_3(0), 0), centre), cols[3L]) +
-    my_annotate(
-      x = c(-0.5, 0.0, 0.5),
-      y = -0.05,
-      label = c("1", names(fractions)[3L], "0"),
-      colour = cols[3L]
+    ggplot2::geom_path(
+      data = rbind(axis_1(1), axis_2(1), axis_3(1), axis_1(1))
     ) +
-    my_annotate(
-      x = c(-0.5 -shift_x(), -0.3, -shift_x()),
-      y = c(0 + shift_y(), ytop/2, ytop + shift_y()),
-      label = c("0", names(fractions)[1L], "1"),
-      colour = cols[1L],
-      angle = 60,
-      hjust = 0.5,
-      vjust = 0.5
-    ) +
-    my_annotate(
-      x = c(0 + shift_x(), 0.3, 0.5 + shift_x()),
-      y = c(ytop + shift_y(), ytop/2, 0 + shift_y()),
-      label = c("0", names(fractions)[2L], "1"),
-      colour = cols[2L],
-      angle = -60,
-      hjust = 0.5,
-      vjust = 0.5
-    ) +
+    arrow_path(rbind(axis_1(fractions[1L]), centre), col = cols[1L]) +
+    arrow_path(rbind(axis_2(fractions[2L]), centre), col = cols[2L]) +
+    arrow_path(rbind(axis_3(fractions[3L]), centre), col = cols[3L]) +
     ggplot2::coord_fixed() +
     ggplot2::labs(x = "", y = "") +
     ggplot2::theme_bw() +
-    ggplot2::theme(
-      panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank(),
-      axis.text = ggplot2::element_blank(),
-      axis.ticks = ggplot2::element_blank(),
-      panel.border = ggplot2::element_blank()
-    )
+    blank_theme +
+    ggplot2::geom_segment(data = tick_data, mapping = ggplot2::aes(
+      x = .data$x, y = .data$y, xend = .data$xend, yend = .data$yend
+    )) +
+    annotate_axis(label_points_1, 1, angle = 60) +
+    annotate_axis(label_points_2, 2, angle = -60) +
+    annotate_axis(label_points_3, 3)
 }
