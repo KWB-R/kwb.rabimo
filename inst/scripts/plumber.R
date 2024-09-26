@@ -178,6 +178,5 @@ function(
   p <- kwb.rabimo::triangle_of_fractions(fractions = x / sum(x))
   file <- file.path(tempdir(), "triangle.png")
   ggplot2::ggsave(file, plot = p, width = size_cm, height = size_cm, units = "cm")
-  readBin(png_file, "raw", n = file.info(file)$size)
+  readBin(file, "raw", n = file.info(file)$size)
 }
-
