@@ -159,3 +159,25 @@ function()
   config
 }
 
+# /triangle --------------------------------------------------------------------
+
+#* Plot Hydrological Triangle
+#* @get /triangle
+#* @param components_json json string with elements "evaporation", "runoff",
+#*   "infiltration"
+#* @param size_cm image size in cm
+# @serializer png list(width = 300, height = 300)
+#* @serializer contentType list(type="image/png")
+function(
+  components_json = '{"evaporation": 100, "runoff": 60, "infiltration": 40}',
+  size_cm = 10
+)
+{
+  size_cm <- as.numeric(size_cm)
+  x <- unlist(jsonlite::fromJSON(components_json))
+  p <- kwb.rabimo::triangle_of_fractions(fractions = x / sum(x))
+  file <- file.path(tempdir(), "triangle.png")
+  ggplot2::ggsave(file, plot = p, width = size_cm, height = size_cm, units = "cm")
+  readBin(png_file, "raw", n = file.info(file)$size)
+}
+
