@@ -15,6 +15,7 @@
 #' components <- c(runoff = 200, infiltration = 50, evaporation = 100)
 #' fractions <- components / sum(components)
 #' triangle_of_fractions(fractions)
+#' triangle_of_fractions(fractions, fractions_2 = c(0.1, 0.3, 0.6))
 triangle_of_fractions <- function(
     fractions, fractions_2 = NULL, cols = c("blue", "red", "darkgreen")
 )
