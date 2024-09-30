@@ -4,6 +4,10 @@
 #'
 #' @param fractions numeric vector with three values having a sum of one. The
 #'   names of the vector elements are used as labels
+#' @param fractions_2 optional. Similar to \code{fractions}. If given, these
+#'   fractions are shown as dashed lines in the plot and the "deltas" between
+#'   \code{fractions} and \code{fractions_2} are shown as horizontally
+#'   stacked bars below the triangle.
 #' @param cols vector of length three giving the colour names
 #' @export
 #' @examples
@@ -11,11 +15,14 @@
 #' components <- c(runoff = 200, infiltration = 50, evaporation = 100)
 #' fractions <- components / sum(components)
 #' triangle_of_fractions(fractions)
-triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
+triangle_of_fractions <- function(
+    fractions, fractions_2 = NULL, cols = c("blue", "red", "darkgreen")
+)
 {
   stopifnot(sum(fractions) == 1)
 
-  grad_to_rad <- function(x) x/180 * pi
+  rad <- function(x) x/180 * pi
+  ortho <- function(phi) phi + pi/2
 
   new_point <- function(x, y) {
     data.frame(x = x, y = y)
@@ -26,8 +33,8 @@ triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
   }
 
   new_axis <- function(origin, phi) {
+    # Function to convert Polar coordinates to Cartesian coordinates
     function(x) {
-      # Convert Polar coordinates to Cartesian coordinates
       data.frame(x = origin$x + x * cos(phi), y = origin$y + x * sin(phi))
     }
   }
@@ -37,12 +44,15 @@ triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
     new_point(x, line_1$slope * x + line_1$intersept)
   }
 
-  arrow_path <- function(data, colour = "black") {
+  arrow_path <- function(
+    data, colour = "black", arrow_length_cm = 0.3, linetype = "solid"
+  ) {
     ggplot2::geom_path(
       data = data,
       colour = colour,
-      linewidth = 1,
-      arrow = ggplot2::arrow(length = ggplot2::unit(0.3, "cm"))
+      linewidth = 0.8,
+      linetype = linetype,
+      arrow = grid::arrow(length = ggplot2::unit(arrow_length_cm, "cm"))
     )
   }
 
@@ -50,28 +60,25 @@ triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
     ggplot2::geom_path(data = data, colour = colour)
   }
 
-  rad_60 <- grad_to_rad(60)
-  rad_150 <- grad_to_rad(150)
-  rad_180 <- grad_to_rad(180)
+  rad_1 <- rad(60)
+  rad_2 <- rad(-60)
+  rad_3 <- rad(180)
 
-  axis_1 <- new_axis(new_point(0, 0), phi = rad_60)
-  axis_2 <- new_axis(axis_1(1), phi = -rad_60)
-  axis_3 <- new_axis(new_point(1, 0), phi = rad_180)
+  axis_1 <- new_axis(new_point(0, 0), phi = rad_1)
+  axis_2 <- new_axis(axis_1(1), phi = rad_2)
+  axis_3 <- new_axis(new_point(1, 0), phi = rad_3)
 
-  centre <- line_crossing(
-    line_1 = new_line(slope = 0, point = axis_1(fractions[1L])),
-    line_2 = new_line(slope = tan(rad_60), point = axis_2(fractions[2L]))
-  )
+  get_crossing <- function(f) {
+    line_crossing(
+      line_1 = new_line(slope = 0, point = axis_1(f[1L])),
+      line_2 = new_line(slope = tan(rad_1), point = axis_2(f[2L]))
+    )
+  }
 
-  shift_ortho <- function(points, slope, by) {
-    if (slope == 0) {
-      dx <- 0
-      dy <- by
-    } else {
-      ortho_slope <- -1/slope
-      dx <- by / sqrt(1 + ortho_slope * ortho_slope)
-      dy <- ortho_slope * dx
-    }
+  shift_along_angle <- function(points, phi, by) {
+    slope <- tan(phi)
+    dx <- by / sqrt(1 + slope * slope)
+    dy <- slope * dx
     new_point(points$x + dx, points$y + dy)
   }
 
@@ -87,51 +94,104 @@ triangle_of_fractions <- function(fractions, cols = c("blue", "red", "green"))
     )
   }
 
-  tick_pos <- seq(0, 1, 0.1)
-  tick_begs_1 <- axis_1(tick_pos)
-  tick_begs_2 <- axis_2(tick_pos)
-  tick_begs_3 <- axis_3(tick_pos)
+  # Calculate begin and end positions of axis ticks
+  get_tick_data <- function(tick_pos = seq(0, 1, 0.1), tick_len = 0.02) {
+    tick_begs_1 <- axis_1(tick_pos)
+    tick_begs_2 <- axis_2(tick_pos)
+    tick_begs_3 <- axis_3(tick_pos)
+    tick_data <- rbind(
+      cbind(tick_begs_1, shift_along_angle(tick_begs_1, ortho(rad_1), by = -tick_len)),
+      cbind(tick_begs_2, shift_along_angle(tick_begs_2, ortho(rad_2), by = tick_len)),
+      cbind(tick_begs_3, shift_along_angle(tick_begs_3, ortho(rad_3), by = -tick_len))
+    )
+    names(tick_data) <- c("x", "y", "xend", "yend")
+    tick_data
+  }
 
-  by <- -0.02
-  tick_ends_1 <- shift_ortho(tick_begs_1, tan(rad_60), by)
-  tick_ends_2 <- shift_ortho(tick_begs_2, -tan(rad_60), -by)
-  tick_ends_3 <- shift_ortho(tick_begs_3, 0, by)
-
-  tick_data <- rbind(
-    cbind(tick_begs_1, tick_ends_1),
-    cbind(tick_begs_2, tick_ends_2),
-    cbind(tick_begs_3, tick_ends_3)
-  )
-
-  names(tick_data) <- c("x", "y", "xend", "yend")
-
-  blank <- ggplot2::element_blank()
-  blank_theme <- ggplot2::theme(
-    panel.grid.major = blank,
-    panel.grid.minor = blank,
-    axis.text = blank,
-    axis.ticks = blank,
-    panel.border = blank
-  )
+  my_theme <- function(x_axis = FALSE) {
+    blank <- ggplot2::element_blank()
+    theme <- ggplot2::theme(
+      panel.grid.major = blank,
+      panel.grid.minor = blank,
+      axis.text.y = blank,
+      axis.ticks.y = blank
+    )
+    if (isTRUE(x_axis)) {
+      return(theme)
+    }
+    theme + ggplot2::theme(
+      axis.text.x = blank,
+      axis.ticks.x = blank,
+      panel.border = blank
+    )
+  }
 
   by <- -0.06
   pos <- c(0, 0.5, 1)
-  label_points_1 <- shift_ortho(axis_1(pos), tan(rad_60), by)
-  label_points_2 <- shift_ortho(axis_2(pos), -tan(rad_60), -by)
-  label_points_3 <- shift_ortho(axis_3(pos), 0, by)
+  label_points_1 <- shift_along_angle(axis_1(pos), ortho(rad_1), by)
+  label_points_2 <- shift_along_angle(axis_2(pos), ortho(rad_2), -by)
+  label_points_3 <- shift_along_angle(axis_3(pos), ortho(rad_3), by)
 
-  ggplot2::ggplot(mapping = ggplot2::aes(x = .data$x, y = .data$y)) +
+  p <- ggplot2::ggplot(mapping = ggplot2::aes(x = .data$x, y = .data$y)) +
     ggplot2::geom_path(
       data = rbind(axis_1(1), axis_2(1), axis_3(1), axis_1(1))
-    ) +
-    arrow_path(rbind(axis_1(fractions[1L]), centre), col = cols[1L]) +
-    arrow_path(rbind(axis_2(fractions[2L]), centre), col = cols[2L]) +
-    arrow_path(rbind(axis_3(fractions[3L]), centre), col = cols[3L]) +
-    ggplot2::coord_fixed() +
+    )
+
+  crossing <- get_crossing(f = fractions)
+  p <- p +
+    arrow_path(rbind(axis_1(fractions[1L]), crossing), col = cols[1L]) +
+    arrow_path(rbind(axis_2(fractions[2L]), crossing), col = cols[2L]) +
+    arrow_path(rbind(axis_3(fractions[3L]), crossing), col = cols[3L])
+
+  if (!is.null(fractions_2)) {
+
+    crossing <- get_crossing(f = fractions_2)
+
+    p <- p +
+      arrow_path(rbind(axis_1(fractions_2[1L]), crossing), col = cols[1L], linetype = "dashed") +
+      arrow_path(rbind(axis_2(fractions_2[2L]), crossing), col = cols[2L], linetype = "dashed") +
+      arrow_path(rbind(axis_3(fractions_2[3L]), crossing), col = cols[3L], linetype = "dashed")
+
+    thick_line <- function(data, colour, linewidth = 1.5) {
+      ggplot2::geom_line(data = data, colour = colour, linewidth = linewidth)
+    }
+
+    fracs <- rbind(fractions, fractions_2)
+
+    line_1 <- axis_1(fracs[, 1L])
+    line_2 <- axis_2(fracs[, 2L])
+    line_3 <- axis_3(fracs[, 3L])
+
+    p <- p +
+      thick_line(line_1, cols[1L]) +
+      thick_line(line_2, cols[2L]) +
+      thick_line(line_3, cols[3L])
+
+    delta_axis <- new_axis(origin = new_point(0, -0.3), phi = 0)
+    abs_diffs <- 0.5 * abs(fracs[1L, ] - fracs[2L, ])
+    to_values <- cumsum(abs_diffs)
+    from_points <- delta_axis(c(0, to_values[-length(to_values)]))
+    to_points <- delta_axis(to_values)
+
+    # Delta-W
+    p <- p +
+      thick_line(rbind(from_points[1L, ], to_points[1L, ]), cols[1L], 5) +
+      thick_line(rbind(from_points[2L, ], to_points[2L, ]), cols[2L], 5) +
+      thick_line(rbind(from_points[3L, ], to_points[3L, ]), cols[3L], 5) +
+      ggplot2::annotate(
+        geom = "text",
+        x = 0,
+        y = -0.2,
+        label = sprintf("Wasserhaushaltsdifferenz = %0.2f", sum(abs_diffs)),
+        hjust = 0
+      )
+  }
+
+  p + ggplot2::coord_fixed() +
     ggplot2::labs(x = "", y = "") +
     ggplot2::theme_bw() +
-    blank_theme +
-    ggplot2::geom_segment(data = tick_data, mapping = ggplot2::aes(
+    my_theme(x_axis = !is.null(fractions_2)) +
+    ggplot2::geom_segment(data = get_tick_data(), mapping = ggplot2::aes(
       x = .data$x, y = .data$y, xend = .data$xend, yend = .data$yend
     )) +
     annotate_axis(label_points_1, 1, angle = 60) +

@@ -4,11 +4,20 @@
 \alias{triangle_of_fractions}
 \title{Plot Triangle of Three Fractions}
 \usage{
-triangle_of_fractions(fractions, cols = c("blue", "red", "green"))
+triangle_of_fractions(
+  fractions,
+  fractions_2 = NULL,
+  cols = c("blue", "red", "darkgreen")
+)
 }
 \arguments{
 \item{fractions}{numeric vector with three values having a sum of one. The
 names of the vector elements are used as labels}
+
+\item{fractions_2}{optional. Similar to \code{fractions}. If given, these
+fractions are shown as dashed lines in the plot and the "deltas" between
+\code{fractions} and \code{fractions_2} are shown as horizontally
+stacked bars below the triangle.}
 
 \item{cols}{vector of length three giving the colour names}
 }
