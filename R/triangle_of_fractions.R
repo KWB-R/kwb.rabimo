@@ -53,12 +53,13 @@ triangle_of_fractions <- function(
       colour = colour,
       linewidth = 0.8,
       linetype = linetype,
-      arrow = grid::arrow(length = ggplot2::unit(arrow_length_cm, "cm"))
+      arrow = grid::arrow(length = ggplot2::unit(arrow_length_cm, "cm")),
+      alpha = 0.8
     )
   }
 
   tick_path <- function(data, colour = "black") {
-    ggplot2::geom_path(data = data, colour = colour)
+    ggplot2::geom_path(data = data, colour = colour, alpha = 0.8)
   }
 
   rad_1 <- rad(60)

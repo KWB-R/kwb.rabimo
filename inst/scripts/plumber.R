@@ -163,19 +163,31 @@ function()
 
 #* Plot Hydrological Triangle
 #* @get /triangle
-#* @param components_json json string with elements "evaporation", "runoff",
-#*   "infiltration"
+#* @param components_json json string with elements "evaporation", "runoff", "infiltration", given inmm
+#* @param components_2_json optional. Json string similar to components_json specifying a second point in the triangle plot. If given, the difference between the two water balances is also calculated and represented in the plot.
 #* @param size_cm image size in cm
-# @serializer png list(width = 300, height = 300)
+# @serializer png
 #* @serializer contentType list(type="image/png")
 function(
   components_json = '{"evaporation": 100, "runoff": 60, "infiltration": 40}',
+  components_2_json = "",
   size_cm = 10
 )
 {
   size_cm <- as.numeric(size_cm)
-  x <- unlist(jsonlite::fromJSON(components_json))
-  p <- kwb.rabimo::triangle_of_fractions(fractions = x / sum(x))
+
+  # Helper functions
+  to_vector <- function(x) unlist(jsonlite::fromJSON(x))
+  to_fractions <- function(x) x / sum(x)
+
+  # Create triangle plot
+  p <- kwb.rabimo::triangle_of_fractions(
+    fractions = to_fractions(to_vector(components_json)),
+    fractions_2 = if (components_2_json != "") {
+      to_fractions(to_vector(components_2_json))
+    }
+  )
+
   file <- file.path(tempdir(), "triangle.png")
   ggplot2::ggsave(file, plot = p, width = size_cm, height = size_cm, units = "cm")
   readBin(file, "raw", n = file.info(file)$size)
