@@ -13,53 +13,107 @@ code of ABIMO 3.3: Water Balance Model for Urban Areas
 
 ## Installation
 
-For details on how to install KWB-R packages checkout our [installation tutorial](https://kwb-r.github.io/kwb.pkgbuild/articles/install.html).
-
 ```r
-### Optionally: specify GitHub Personal Access Token (GITHUB_PAT)
-### See here why this might be important for you:
-### https://kwb-r.github.io/kwb.pkgbuild/articles/install.html#set-your-github_pat
-
-# Sys.setenv(GITHUB_PAT = "mysecret_access_token")
-
 # Install package "remotes" from CRAN
-if (! require("remotes")) {
-  install.packages("remotes", repos = "https://cloud.r-project.org")
-}
+install.packages("remotes", repos = "https://cloud.r-project.org")
 
-# Install KWB package 'kwb.rabimo' from GitHub
+# Install package "kwb.rabimo" (latest "release") from GitHub
 remotes::install_github("KWB-R/kwb.rabimo")
+
+# Install package "kwb.rabimo" (development version) from GitHub
+remotes::install_github("KWB-R/kwb.rabimo@dev")
+
+# Install package "kwb.abimo" (wrapper around C++ version of Abimo) from GitHub
+remotes::install_github("KWB-R/kwb.abimo@dev")
 ```
 
-## Basic usage
+## Basic Usage
+
+### Provide input data and configuration
+
+Compared to the original C++ version of Abimo we have modified the structures
+of input data, output data and configuration.
+
+You may still use data that has been prepared for the usage with Abimo as
+described below.
 
 ```r
-# Load Berlin data from the R-wrapper package kwb.abimo
-data <- kwb.abimo::abimo_input_2019
+# Load Berlin data in the original Abimo format
+old_data <- kwb.abimo::abimo_input_2019
 
-# Provide Abimo's default configuration 
-abimo_config <- kwb.abimo:::read_config()
+# Convert the original Abimo inputs (data frame in old format, path to XML 
+# file containing configuration details) to corresponding inputs that are 
+# required by R-Abimo. The new inputs are intended to be more general than the 
+# original, Berlin-specific, inputs. Feel free to provide your own data in this
+# new format!
+new_inputs <- kwb.rabimo::prepare_berlin_inputs(
+  data = old_data,
+  config_file = kwb.abimo::default_config()
+)
+```
 
-# Use the R-wrapper to run Abimo.exe
-abimo_result <- kwb.abimo::run_abimo(input_data = data, config = abimo_config)
+### Run R-Abimo for the status quo
 
-# Prepare a configuration for R-Abimo, based on the default Abimo configuration
-config <- kwb.rabimo::abimo_config_to_config(abimo_config)
+```r
+# Run R-Abimo, the R-implementation of Abimo
+rabimo_result <- kwb.rabimo::run_rabimo(
+  data = new_inputs$data, 
+  config = new_inputs$config
+)
 
-# Run R-Abimo, the R-implementation of Abimo in this package
-rabimo_result <- kwb.rabimo::run_rabimo(data, config)
+# Have a look at the first lines of the result data frame
+head(rabimo_result)
+```
+
+### Run R-Abimo for a natural state scenario
+
+```r
+rabimo_result_natural <- kwb.rabimo::run_rabimo(
+  data = kwb.rabimo::data_to_natural(new_inputs$data), 
+  config = new_inputs$config
+)
+```
+
+### Calculate "Delta-W"
+
+For the first ten blocks, calculate the deviation from the natural state:
+
+```r
+kwb.rabimo::calculate_delta_w(
+  urban = rabimo_result[1:10, ],
+  natural = rabimo_result_natural
+)
+```
+
+## Compare with what Abimo (C++ version) returns
+
+```r
+# Use the R-wrapper to run Abimo.exe (with a default configuration)
+abimo_result <- kwb.abimo::run_abimo(
+  input_data = old_data, 
+  config = kwb.abimo::read_config()
+)
 
 # Have a look at the first lines of the result data frames
 head(abimo_result)
 head(rabimo_result)
 
-# Plot the differences between Abimo and R-Abimo, per variable
-for (name in names(abimo_result)[-1L]) {
-  x <- abimo_result[[name]]
-  y <- rabimo_result[[name]]
-  plot(x, y, xlab = "Abimo", ylab = "Rabimo", main = name, asp = 1)
-}
+# Rename the columns of the Abimo result to match the column names of the 
+# R-Abimo result
+abimo_result_renamed <- kwb.utils::renameColumns(abimo_result, list(
+  FLAECHE = "area",
+  ROW = "surface_runoff",
+  RI = "infiltration",
+  VERDUNSTUN = "evaporation"
+))
 
+# Plot the differences between Abimo and R-Abimo, per variable
+columns <- setdiff(names(rabimo_result), "code")
+for (column in columns) {
+  x <- abimo_result_renamed[[column]]
+  y <- rabimo_result[[column]]
+  plot(x, y, xlab = "Abimo", ylab = "Rabimo", main = column, asp = 1)
+}
 ```
 
 ## Documentation

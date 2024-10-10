@@ -1,3 +1,7 @@
+# approx -----------------------------------------------------------------------
+#' @importFrom stats approx
+approx <- stats::approx
+
 # cat_and_run ------------------------------------------------------------------
 #' @importFrom kwb.utils catAndRun
 cat_and_run <- kwb.utils::catAndRun
@@ -6,9 +10,74 @@ cat_and_run <- kwb.utils::catAndRun
 #' @importFrom kwb.utils catIf
 cat_if <- kwb.utils::catIf
 
+# check_columns ----------------------------------------------------------------
+check_columns <- function(
+    data, columns, check, msg = "Column '%s' is invalid (%d-times)."
+)
+{
+  #column <- columns[1L]
+  for (column in columns) {
+    check_column(data, column, check, msg)
+  }
+}
+
+# check_column -----------------------------------------------------------------
+check_column <- function(data, column, check, msg)
+{
+  stopifnot(is.function(check))
+
+  failed <- !check(select_columns(data, column))
+
+  if (any(failed)) {
+    stop_formatted(msg, column, sum(failed))
+  }
+}
+
 # check_for_missing_columns ----------------------------------------------------
 #' @importFrom kwb.utils checkForMissingColumns
 check_for_missing_columns <- kwb.utils::checkForMissingColumns
+
+# clean_stop -------------------------------------------------------------------
+clean_stop <- function(...)
+{
+  stop(..., call. = FALSE)
+}
+
+# columns_to_named_vector ------------------------------------------------------
+columns_to_named_vector <- function(data, key_column, value_column)
+{
+  select_columns(data, value_column) %>%
+    stats::setNames(select_columns(data, key_column))
+}
+
+# check_or_convert_data_types --------------------------------------------------
+check_or_convert_data_types <- function(
+    data, types, convert = FALSE, dbg = TRUE
+)
+{
+  columns <- intersect(names(data), names(types))
+
+  for (column in columns) {
+    #column <- columns[2L]
+    new_type <- types[[column]]
+    old_type <- class(data[[column]])[1L]
+    if (old_type != new_type) {
+      if (!convert) {
+        stop_formatted(
+          "Column '%s' (%s) does not have the expected data type (%s).",
+          column, old_type, new_type
+        )
+      }
+      cat_and_run(
+        sprintf("Converting %s from %s to %s", column, old_type, new_type),
+        dbg = dbg,
+        data[[column]] <- do.call(paste0("as.", new_type), list(data[[column]]))
+      )
+    }
+  }
+
+  data
+}
 
 # create_accessor --------------------------------------------------------------
 #' @importFrom kwb.utils createAccessor
@@ -22,9 +91,8 @@ default_if_null <- kwb.utils::defaultIfNULL
 expand_to_matrix <- function(x, nrow = NULL, ncol = NULL)
 {
   if (is.null(nrow) && is.null(ncol) || !is.null(nrow) && !is.null(ncol)) {
-    stop(
-      "Either nrow or ncol must be given but not both at the same time.",
-      call. = FALSE
+    clean_stop(
+      "Either nrow or ncol must be given but not both at the same time."
     )
   }
 
@@ -35,18 +103,6 @@ expand_to_matrix <- function(x, nrow = NULL, ncol = NULL)
   if (!is.null(ncol)) {
     return(matrix(rep(x, ncol), ncol = ncol, byrow = FALSE))
   }
-}
-
-# expand_to_vector -------------------------------------------------------------
-expand_to_vector <- function(x, indices)
-{
-  stopifnot(length(x) == length(indices))
-
-  result <- list()
-
-  result[unlist(indices)] <- rep(x, lengths(indices))
-
-  result
 }
 
 # filter_elements --------------------------------------------------------------
@@ -126,7 +182,10 @@ index_string_to_integers <- function(x, splits = c(",", "-"))
 
 # in_range ---------------------------------------------------------------------
 #' @importFrom kwb.utils inRange
-in_range <- kwb.utils::inRange
+in_range <- function(x, a, b, tolerance = 0.005)
+{
+  x + tolerance >= a & x - tolerance <= b
+}
 
 # interpolate ------------------------------------------------------------------
 interpolate <- function(x, y, xout)
@@ -138,12 +197,12 @@ interpolate <- function(x, y, xout)
   yout[xout <= x[1L]] <- y[1L]
   yout[xout >= x[nx]] <- y[nx]
 
-  todo <- is.na(yout)
-
-  yout[todo] <- sapply(xout[todo], function(xi) {
-    i <- which(xi <= x[-1L])[1L] + 1L
-    (y[i - 1L] + y[i]) / 2
-  })
+  if (any(is_na <- is.na(yout))) {
+    yout[is_na] <- sapply(xout[is_na], function(xi) {
+      i <- which(xi <= x[-1L])[1L] + 1L
+      (y[i - 1L] + y[i]) / 2
+    })
+  }
 
   yout
 }
@@ -217,6 +276,12 @@ list_to_data_frame_with_keys <- function(
   move_columns_to_front(result, key_name)
 }
 
+# matching_names ---------------------------------------------------------------
+matching_names <- function(data, pattern)
+{
+  grep(pattern, names(data), value = TRUE)
+}
+
 # move_columns_to_front --------------------------------------------------------
 #' @importFrom kwb.utils moveColumnsToFront
 move_columns_to_front <- kwb.utils::moveColumnsToFront
@@ -225,10 +290,18 @@ move_columns_to_front <- kwb.utils::moveColumnsToFront
 #' @importFrom kwb.utils multiColumnLookup
 multi_column_lookup <- kwb.utils::multiColumnLookup
 
-# n_dims -----------------------------------------------------------------------
-n_dims <- function(x)
+# multi_substitute -------------------------------------------------------------
+#' @importFrom kwb.utils multiSubstitute
+multi_substitute <- kwb.utils::multiSubstitute
+
+# paste_columns ----------------------------------------------------------------
+#' @importFrom kwb.utils pasteColumns
+paste_columns <- kwb.utils::pasteColumns
+
+# prefix_names -----------------------------------------------------------------
+prefix_names <- function(x, prefix)
 {
-  length(dim(x))
+  set_names(x, paste0(prefix, names(x)))
 }
 
 # print_if ---------------------------------------------------------------------
@@ -248,17 +321,6 @@ range_to_seq <- function(x, by = 1)
   do.call(seq, c(as.list(range(x)), list(by = by)))
 }
 
-# rbind_first_rows -------------------------------------------------------------
-rbind_first_rows <- function(x)
-{
-  stopifnot(is.list(x), all(sapply(x, n_dims) == 2L))
-
-  x %>%
-    lapply(utils::head, 1L) %>%
-    do.call(what = rbind) %>%
-    reset_row_names()
-}
-
 # remove_columns ---------------------------------------------------------------
 #' @importFrom kwb.utils removeColumns
 remove_columns <- kwb.utils::removeColumns
@@ -266,6 +328,12 @@ remove_columns <- kwb.utils::removeColumns
 # remove_elements --------------------------------------------------------------
 #' @importFrom kwb.utils removeElements
 remove_elements <- kwb.utils::removeElements
+
+# remove_left ------------------------------------------------------------------
+remove_left <- function(x, n)
+{
+  right(x, nchar(x) - n)
+}
 
 # rename_and_select ------------------------------------------------------------
 #' @importFrom kwb.utils renameAndSelect
@@ -275,9 +343,25 @@ rename_and_select <- kwb.utils::renameAndSelect
 #' @importFrom kwb.utils renameColumns
 rename_columns <- kwb.utils::renameColumns
 
+# rescale_to_row_sum -----------------------------------------------------------
+rescale_to_row_sum <- function(x, row_sum = 1)
+{
+  kwb.utils::stopIfNotMatrix(x)
+
+  x / rowSums(x) * row_sum
+}
+
 # reset_row_names --------------------------------------------------------------
 #' @importFrom kwb.utils resetRowNames
 reset_row_names <- kwb.utils::resetRowNames
+
+# right ------------------------------------------------------------------------
+#' @importFrom kwb.utils right
+right <- kwb.utils::right
+
+# safe_path --------------------------------------------------------------------
+#' @importFrom kwb.utils safePath
+safe_path <- kwb.utils::safePath
 
 # safe_row_bind_all ------------------------------------------------------------
 #' @importFrom kwb.utils safeRowBindAll
@@ -291,19 +375,68 @@ select_columns <- kwb.utils::selectColumns
 #' @importFrom kwb.utils selectElements
 select_elements <- kwb.utils::selectElements
 
-# seq_along_rows ---------------------------------------------------------------
-seq_along_rows <- function(data)
+# set_columns_to_zero ----------------------------------------------------------
+set_columns_to_zero <- function(data, columns, check, text)
 {
-  seq_len(nrow(data))
+  stopifnot(is.data.frame(data))
+
+  for (column in columns) {
+
+    x <- data[[column]]
+
+    stopifnot(is.numeric(x))
+
+    meets_condition <- check(x)
+
+    if (!any(meets_condition)) {
+      next
+    }
+
+    data[[column]] <- cat_and_run(
+      sprintf(
+        "Setting %d value(s) in \"%s\" to 0 where %s",
+        sum(meets_condition),
+        column,
+        text
+      ),
+      expr = {
+        x[meets_condition] <- 0
+        x
+      }
+    )
+  }
+
+  data
 }
 
-# split_into_identical_rows ----------------------------------------------------
-split_into_identical_rows <- function(data)
+# set_columns_to_zero_where_almost_zero ----------------------------------------
+set_columns_to_zero_where_almost_zero <- function(
+    data, columns, threshold = 0.001
+)
 {
-  data %>%
-    cbind(row. = seq_along_rows(data)) %>%
-    split(f = data, drop = TRUE)
+  set_columns_to_zero(
+    data = data,
+    columns = columns,
+    check = function(x) abs(x) < threshold,
+    text = paste("value <", threshold)
+  )
 }
+
+
+# set_columns_to_zero_where_na -------------------------------------------------
+set_columns_to_zero_where_na <- function(data, columns)
+{
+  set_columns_to_zero(
+    data = data,
+    columns = columns,
+    check = is.na,
+    text = "value is NA"
+  )
+}
+
+# set_names --------------------------------------------------------------------
+#' @importFrom stats setNames
+set_names <- stats::setNames
 
 # stop_formatted ---------------------------------------------------------------
 #' @importFrom kwb.utils stopFormatted
@@ -313,3 +446,10 @@ stop_formatted <- kwb.utils::stopFormatted
 #' @importFrom kwb.utils stringList
 string_list <- kwb.utils::stringList
 
+# subst_special_chars ----------------------------------------------------------
+#' @importFrom kwb.utils substSpecialChars
+subst_special_chars <- kwb.utils::substSpecialChars
+
+# to_lookup_list ---------------------------------------------------------------
+#' @importFrom kwb.utils toLookupList
+to_lookup_list <- kwb.utils::toLookupList

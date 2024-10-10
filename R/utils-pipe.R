@@ -12,3 +12,10 @@
 #' @param rhs A function call using the magrittr semantics.
 #' @return The result of calling `rhs(lhs)`.
 NULL
+
+# Let R CMD check not complain about magrittr's dot placeholder
+# https://github.com/tidyverse/magrittr/issues/29
+#' @importFrom utils globalVariables
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c("."))
+}

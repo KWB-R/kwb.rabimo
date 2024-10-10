@@ -4,90 +4,346 @@
 #'
 #' Rename columns from ABIMO 3.2 original names to ABIMO 3.3 internal names
 #'
-#' @param input_data data frame with columns REGENJA, REGENSO, NUTZUNG, TYP,
-#'   BEZIRK, FLGES, STR_FLGES, PROBAU, PROVGU, VGSTRASSE, KAN_BEB, BELAG1,
+#' @param data data frame with columns CODE, REGENJA, REGENSO, NUTZUNG,
+#'   TYP, BEZIRK, FLGES, STR_FLGES, PROBAU, PROVGU, VGSTRASSE, KAN_BEB, BELAG1,
 #'   BELAG2, BELAG3, BELAG4, KAN_VGU, STR_BELAG1, STR_BELAG2, STR_BELAG3,
 #'   STR_BELAG4, KAN_STR, FLUR, FELD_30, FELD_150
-#' @return \code{input_data} with columns renamed and additional columns
-#'  (e.g. ratios calculated from percentages, (main) usage, yield, irrigation)
-#' @export
-prepare_input_data <- function(input_data)
+#' @param config configuration object (list) as returned by the function
+#'   \code{abimo_config_to_config()} used on \code{kwb.abimo::read_config()}
+#' @param dbg logical indicating whether or not to show debug messages
+#' @return \code{data} with columns renamed and additional columns
+#'  (e.g. ratios calculated from percentages, land type, vegetation class,
+#'  irrigation)
+prepare_input_data <- function(data, config, dbg = TRUE)
 {
-  # Rename columns from ABIMO 3.2 names to ABIMO 3.3 internal names
-  input <- rename_columns(input_data, list(
-    REGENJA = "precipitationYear",
-    REGENSO = "precipitationSummer",
-    NUTZUNG = "berlin_usage",
-    TYP = "berlin_type",
-    BEZIRK = "district",
-    FLGES = "mainArea",
-    STR_FLGES = "roadArea",
-    PROBAU = "mainPercentageBuiltSealed",
-    PROVGU = "mainPercentageUnbuiltSealed",
-    VGSTRASSE = "roadPercentageSealed",
-    KAN_BEB = "builtSealedPercentageConnected",
-    BELAG1 = "unbuiltSealedPercentageSurface1",
-    BELAG2 = "unbuiltSealedPercentageSurface2",
-    BELAG3 = "unbuiltSealedPercentageSurface3",
-    BELAG4 = "unbuiltSealedPercentageSurface4",
-    KAN_VGU = "unbuiltSealedPercentageConnected",
-    STR_BELAG1 = "roadSealedPercentageSurface1",
-    STR_BELAG2 = "roadSealedPercentageSurface2",
-    STR_BELAG3 = "roadSealedPercentageSurface3",
-    STR_BELAG4 = "roadSealedPercentageSurface4",
-    KAN_STR = "roadSealedPercentageConnected",
-    FLUR = "depthToWaterTable",
-    FELD_30 = "fieldCapacity_30",
-    FELD_150 = "fieldCapacity_150"
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
+  #data <- kwb.abimo::abimo_input_2019
+  #data <- berlin_2020_data
+  #data <- kwb.utils:::get_cached("berlin_2020_data")
+  #data <- new_data
+  #config <- abimo_config_to_config(kwb.abimo::read_config())
+  #`%>%` <- magrittr::`%>%`
+
+  #
+  # See inst/scripts/test-rabimo.R for test data assignments
+  #
+
+  # Try to identify the "format" of the data frame
+  data_format <- identify_data_format_or_stop(data)
+
+  # Set column names to upper case to match 2019 data when using raw 2020 data
+  names(data) <- toupper(names(data))
+
+  # Rename columns from ABIMO 3.2 names to new ABIMO-internal names
+  data <- rename_columns(data, get_column_renamings())
+
+  # If area fractions or area main or area road are missing (NA) set them to 0
+  data <- set_columns_to_zero_where_na(
+    data = data,
+    columns = matching_names(data, pattern = "roof|pvd|srf|area_")
+  )
+
+  if (data_format == "format_2020") {
+
+    # Identify roads
+    is_road <- grepl("Stra.e", select_columns(data, "ART"))
+
+    # Check that there is no "usage" type for roads (NAs or zero)
+    road_usages <- select_columns(data, "berlin_usage")[is_road]
+
+    stopifnot(all(ifelse(is.na(road_usages), 0L, road_usages) == 0L))
+
+    # Set "berlin_usage" for roads to 300
+    data$berlin_usage[is_road] <- 300L
+
+    # Copy district information into the correct column (not needed anymore)
+    if("BEZIRK_1" %in% names(data)){
+      stopifnot(identical(data$BEZIRK_1, data$district))
+    }
+    # data$district[is_road] <- select_columns(data, "BEZIRK_1")[is_road]
+
+    surface_class_columns <- sprintf("srf%d_pvd", 1:5)
+
+    delta_to_100 <- 100 - rowSums(data[surface_class_columns])
+    has_delta <- delta_to_100 > 0
+
+    # Assign missing surface class partition to surface class 5
+    data[["srf5_pvd"]][has_delta] <-
+      data[["srf5_pvd"]][has_delta] + delta_to_100[has_delta]
+
+    # if for some areas the sum of all surface classes exceeds 1 correct it
+    # by reducing proportionally all surface classes
+    data[, surface_class_columns] <- rescale_to_row_sum(
+      as.matrix(select_columns(data, surface_class_columns)),
+      row_sum = 100
+    )
+  } else if (data_format == "format_2019") {
+
+    # add en empty column for surface class 5 for format consistency
+    data <- kwb.utils::insertColumns(
+      data, srf5_pvd = rep(0,nrow(data)), after = "srf4_pvd")
+  }
+
+  # Create column accessor function
+  fetch_data <- create_accessor(data)
+  fetch_config <- create_accessor(config)
+
+  # correct precipitation with correction factor from the config file
+  data[["prec_yr"]] <- fetch_data("prec_yr") *
+    fetch_config("precipitation_correction_factor")
+
+  # Calculate total area
+  data[["total_area"]] <- fetch_data("area_main") + fetch_data("area_road")
+
+  # Convert percentages to fractions
+  data <- calculate_fractions(data)
+
+  # insert column with total sealed area
+  data[["sealed"]] <- with(data, roof + pvd)
+
+  # insert empty to_swale column (fraction of the area connected to a swale)
+  data[["to_swale"]] <- 0
+
+  # insert empty green-roof column (fraction of roof)
+  data[["green_roof"]] <- 0
+
+  # Get (land_type, veg_class, irrigation) tuples based on Berlin-specific codes
+  usage_types <- fetch_data(c("berlin_usage", "berlin_type"))
+
+  usages <- get_usage_tuple(
+    usage = usage_types[[1L]],
+    type = usage_types[[2L]]
+  )
+
+  # Calculate potential evaporation for all areas and column-bind everything
+  # together. Roads have no district: etp 775
+  data <- cbind(data, usages,
+    get_potential_evaporation(
+    is_waterbody = land_type_is_waterbody(usages[["land_type"]]),
+    district = fetch_data("district"),
+    lookup = fetch_config("potential_evaporation")
   ))
 
-  # Calculate the percentage of built and unbuild sealed areas. Add a small
-  # value to round .5 "up" not "down":
-  # round(98.5) -> 98
-  # round(98.5 + 1e-12) -> 99
+  # Add a text column describing the type of block (usage)
+  data[["block_type"]] <- get_block_type(usage_types)
 
-  # === Code in C++:
-  # vgd = (dbReader.getRecord(k, "PROBAU")).toFloat() / 100.0F; // Dachflaechen
-  # vgb = (dbReader.getRecord(k, "PROVGU")).toFloat() / 100.0F; // Hofflaechen
-  # ptrDA.VER = (int)round((vgd * 100) + (vgb * 100));
+  # Write road specification into "block_type"
+  data[["block_type"]][grepl("300", data[["block_type"]])] <- "300_road"
 
-  input[["mainPercentageSealed"]] <- as.integer(round(
-    select_columns(input, "mainPercentageBuiltSealed") +
-      select_columns(input, "mainPercentageUnbuiltSealed") +
-      1e-12
+  # Set roof area that are NAs to 0 for water bodies
+  data$roof[land_type_is_waterbody(data$land_type) & is.na(data$roof)] <- 0
+
+  # Read information about the expected data types
+  data_types <- get_expected_data_type()
+
+  # Select only the required columns and convert data types as required
+  data %>%
+    select_columns(intersect(get_column_selection(), names(data))) %>%
+    check_or_convert_data_types(data_types, convert = TRUE, dbg = dbg)
+}
+
+# identify_data_format_or_stop -------------------------------------------------
+identify_data_format_or_stop <- function(data)
+{
+  columns <- names(data)
+
+  expected <- list(
+    format_2020 = "art",
+    format_2019 = "CODE"
+  )
+
+  for (format_name in names(expected)) {
+    if (expected[[format_name]] %in% columns) {
+      return(format_name)
+    }
+  }
+
+  stop_formatted(
+    paste0(
+      "Unknown format. I was looking for one of these columns: %s.\n",
+      "I found these: %s"
+    ),
+    string_list(unlist(expected)),
+    string_list(columns)
+  )
+}
+
+
+# get_column_renamings ---------------------------------------------------------
+get_column_renamings <- function()
+{
+  read_column_info() %>%
+    dplyr::filter(nzchar(.data[["abimo_berlin"]])) %>%
+    to_lookup_list(data = select_columns(., c("abimo_berlin", "rabimo_berlin")))
+}
+
+# read_column_info -------------------------------------------------------------
+
+#' Provide Meta Information About Input Columns
+#'
+#' @returns data frame with columns "rabimo_berlin", "abimo_berlin", "by_100",
+#'   "meaning", "unit", "type", "data_type", "default"
+#' @export
+read_column_info <- function()
+{
+  "extdata/column-names.csv" %>%
+    system.file(package = "kwb.rabimo") %>%
+    utils::read.table(
+      header = TRUE,
+      stringsAsFactors = FALSE,
+      quote = "",
+      sep = ",",
+      dec = "."
+    )
+}
+
+# calculate_fractions ----------------------------------------------------------
+calculate_fractions <- function(data)
+{
+  # Column accessor
+  fetch_data <- create_accessor(data)
+
+  total_area <- fetch_data("total_area")
+
+  # Transform percentage to fractions
+  data[["main_frac"]] <- fetch_data("area_main") / total_area
+  data[["road_frac"]] <- fetch_data("area_road") / total_area
+
+  # Determine names of columns that need to be divided by 100
+  columns <- read_column_info() %>%
+    dplyr::filter(.data[["by_100"]] == "x") %>%
+    select_columns("rabimo_berlin") %>%
+    intersect(names(data))
+
+  for (column in columns) {
+    data[[column]] <- fetch_data(column) / 100
+  }
+
+  data
+}
+
+# get_usage_tuple --------------------------------------------------------------
+
+#' Get Usage Tuple (Land_type, Veg_class, Irrigation) from NUTZUNG and TYP
+#'
+#' @param usage value of column NUTZUNG in input data frame
+#' @param type value of column TYP in input data frame
+#' @param include_inputs logical indicating whether or not to include the
+#'   input values in the output
+#' @return list with elements \code{land_type}, \code{veg_class}, \code{irrigation}
+#' @export
+#' @examples
+#' get_usage_tuple(10, 10)
+#' get_usage_tuple(10, 10, TRUE)
+#' get_usage_tuple(10, 1:3)
+#' get_usage_tuple(10, 1:3, TRUE)
+get_usage_tuple <- function(usage, type, include_inputs = FALSE)
+{
+  #usage = 10L; type = 10L
+  #usage = 10L; type = 333L
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
+
+  # Prepare data for which to lookup value combinations in the lookup table
+  data <- data.frame(
+    berlin_usage = usage,
+    berlin_type = type
+  )
+
+  result <- as.data.frame(multi_column_lookup(
+    data = data,
+    lookup = BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION,
+    value = c("land_type", "veg_class", "irrigation"),
+    includeKeys = include_inputs
   ))
 
-  # Helper function to select column and divide by 100
-  by_100 <- function(x) select_columns(input, x) / 100
+  if (any(is_missing <- is.na(result[["land_type"]]))) {
+    stop_formatted(
+      "Could not find a (land_type, veg_class, irrigation) tuple for %s",
+      paste(collapse = ", ", sprintf(
+        "(NUTZUNG = %d, TYP = %d)",
+        usage[is_missing],
+        type[is_missing]
+      ))
+    )
+  }
 
-  # Calculate additional columns (e.g. percentage to fraction)
-  main_area <- select_columns(input, "mainArea")
-  road_area <- select_columns(input, "roadArea")
-  total_area <-  main_area + road_area
+  result
+}
 
-  input[["totalArea"]] <- total_area
-  input[["areaFractionMain"]] <- select_columns(input, "mainArea") / total_area
-  input[["areaFractionRoad"]] <- select_columns(input, "roadArea") / total_area
+# get_potential_evaporation ----------------------------------------------------
 
-  input[["mainFractionBuiltSealed"]] <- by_100("mainPercentageBuiltSealed")
-  input[["mainFractionUnbuiltSealed"]] <- by_100("mainPercentageUnbuiltSealed")
-  input[["mainFractionSealed"]] <- by_100("mainPercentageSealed")
-  input[["roadFractionRoadSealed"]] <- by_100("roadPercentageSealed")
-  input[["builtSealedFractionConnected"]] <- by_100("builtSealedPercentageConnected")
-  input[["unbuiltSealedFractionSurface1"]] <- by_100("unbuiltSealedPercentageSurface1")
-  input[["unbuiltSealedFractionSurface2"]] <- by_100("unbuiltSealedPercentageSurface2")
-  input[["unbuiltSealedFractionSurface3"]] <- by_100("unbuiltSealedPercentageSurface3")
-  input[["unbuiltSealedFractionSurface4"]] <- by_100("unbuiltSealedPercentageSurface4")
-  input[["unbuiltSealedFractionConnected"]] <- by_100("unbuiltSealedPercentageConnected")
-  input[["roadSealedFractionSurface1"]] <- by_100("roadSealedPercentageSurface1")
-  input[["roadSealedFractionSurface2"]] <- by_100("roadSealedPercentageSurface2")
-  input[["roadSealedFractionSurface3"]] <- by_100("roadSealedPercentageSurface3")
-  input[["roadSealedFractionSurface4"]] <- by_100("roadSealedPercentageSurface4")
-  input[["roadSealedFractionConnected"]] <- by_100("roadSealedPercentageConnected")
+#' Provide Data on Potential Evaporation
+#'
+#' @param is_waterbody (vector of) logical indicating whether a block area is
+#'   of type (from the land_type/veg_class/irrigation tuple) "waterbody"
+#' @param district (vector of) integer indicating the district number of the
+#'   plot area (from the original input column "BEZIRK")
+#' @param lookup data frame with key columns \code{is_waterbody}, \code{district}
+#'   and value columns \code{etp}, \code{etps}. A data frame of the required
+#'   structure is returned by \code{\link{abimo_config_to_config}} in list
+#'   element \code{"potential_evaporation"}
+#' @export
+#' @examples
+#' \dontrun{
+#' config <- abimo_config_to_config(kwb.abimo::read_config())
+#' get_potential_evaporation(
+#'   is_waterbody = TRUE,
+#'   district = 1,
+#'   lookup = config$potential_evaporation
+#' )
+#'
+#' get_potential_evaporation(
+#'   is_waterbody = c(TRUE, TRUE, FALSE, FALSE),
+#'   district = c(1, 99, 2, 99),
+#'   lookup = config$potential_evaporation
+#' )
+#' }
+#'
+get_potential_evaporation <- function(is_waterbody, district, lookup)
+{
+  # Lookup values for "etp", "etps" in the lookup table based on the
+  # value combinations in vectors "is_waterbody", "district"
+  result <- data.frame(is_waterbody = is_waterbody, district = district) %>%
+    multi_column_lookup(lookup, value = c("etp", "etps")) %>%
+    set_names(c("epot_yr", "epot_s"))
 
-  # Add the "usage tuple" as columns
-  cbind(input, get_usage_tuple(
-    usage = select_columns(input, "berlin_usage"),
-    type = select_columns(input, "berlin_type")
-  ))
+  if (all(lengths(result) == 1L)) {
+    result
+  } else {
+    as.data.frame(result)
+  }
+}
+
+# get_block_type ---------------------------------------------------------------
+get_block_type <- function(usage_types)
+{
+  merge_metadata <- function(data, name, by) {
+    dplyr::left_join(
+      x = data,
+      y = utils::read.table(
+        file = kwb.abimo::extdata_file(paste0(name, ".csv")),
+        sep = ";",
+        header = TRUE,
+        fileEncoding = "WINDOWS-1252"
+      ),
+      by = by
+    )
+  }
+
+  usage_types %>%
+    merge_metadata("nutzungstypen_berlin", c(berlin_usage = "Use_ID")) %>%
+    merge_metadata("strukturtypen_berlin", c(berlin_type = "Type_ID")) %>%
+    remove_columns(pattern = "_GER$") %>%
+    paste_columns(sep = ": ") %>%
+    subst_special_chars()
+
+}
+
+# get_column_selection ---------------------------------------------------------
+get_column_selection <- function()
+{
+  read_column_info() %>%
+    select_columns("rabimo_berlin") %>%
+    setdiff(c("berlin_usage", "berlin_type")) %>%
+    c("block_type")
 }

@@ -24,6 +24,15 @@ real_evapo_transpiration <- function(
     ...
 )
 {
+
+  if(FALSE)
+  {
+    potential_evaporation = ep_year[i]
+    x_ratio = available_water / ep_year[i]
+    bagrov_parameter = bagrov_values
+    FUN_y_ratio = y_ratio_3
+  }
+
   # Calculate the x-factor of the Bagrov relation
   if (is.null(x_ratio)) {
     x_ratio <- precipitation / potential_evaporation
@@ -33,6 +42,7 @@ real_evapo_transpiration <- function(
 
   # ... and calculate the real evapotransporation using the estimated y-ratio
   FUN_y_ratio(bagrov_parameter, x_ratio, ...) * potential_evaporation
+  #FUN_y_ratio(bagrov_parameter, x_ratio, use_abimo_algorithm = TRUE) * potential_evaporation
 }
 
 # y_ratio ----------------------------------------------------------------------
@@ -110,6 +120,7 @@ y_ratio_3 <- function(
     index = seq_along(bagrov_parameter)
   )
 
+  # TODO: Can we use kwb.utils::callWithData() here?
   combisets <- split(combis, combis$bagrov_parameter)
 
   if (use_abimo_algorithm) {
@@ -160,7 +171,6 @@ y_ratio_3 <- function(
           ncores
         ),
         expr = {
-          # Call the call_with_data function in a (parallel) loop
           parallel::parLapply(cl, combisets, fun = getBagrovCurve)
         }
       )
