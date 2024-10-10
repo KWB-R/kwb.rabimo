@@ -85,8 +85,8 @@ estimate_water_holding_capacity <- function(f30, f150, is_forest)
   stopifnot(length(f150) == n)
   stopifnot(length(is_forest) == n)
 
-  # Initialise result vector with the default result
-  y <- numeric(n)
+  # Initialise result vector
+  y <- rep(NA_real_, n)
 
   # Smaller value of f30, f150 at each index
   min_capacity <- pmin(f30, f150)
