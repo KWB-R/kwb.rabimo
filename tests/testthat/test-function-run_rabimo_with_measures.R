@@ -6,6 +6,7 @@ test_that("run_rabimo_with_measures() works", {
   expect_error(f())
 
   data <- kwb.rabimo::rabimo_inputs_2020$data
+
   blocks <- data[sample(seq_len(nrow(data)), 10L), ]
 
   stats <- kwb.rabimo:::get_measure_stats(blocks)

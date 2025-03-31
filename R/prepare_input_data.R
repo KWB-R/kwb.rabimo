@@ -17,6 +17,11 @@
 prepare_input_data <- function(data, config, dbg = TRUE)
 {
   #kwb.utils::assignPackageObjects("kwb.rabimo")
+
+  #data <- sf::read_sf("~/../Downloads/raw_combined.gpkg")
+  #data$geom <- NULL
+  #data <- as.data.frame(data)
+
   #data <- kwb.abimo::abimo_input_2019
   #data <- berlin_2020_data
   #data <- kwb.utils:::get_cached("berlin_2020_data")
@@ -57,7 +62,7 @@ prepare_input_data <- function(data, config, dbg = TRUE)
     data$berlin_usage[is_road] <- 300L
 
     # Copy district information into the correct column (not needed anymore)
-    if("BEZIRK_1" %in% names(data)){
+    if ("BEZIRK_1" %in% names(data)) {
       stopifnot(identical(data$BEZIRK_1, data$district))
     }
     # data$district[is_road] <- select_columns(data, "BEZIRK_1")[is_road]
@@ -92,11 +97,20 @@ prepare_input_data <- function(data, config, dbg = TRUE)
   data[["prec_yr"]] <- fetch_data("prec_yr") *
     fetch_config("precipitation_correction_factor")
 
-  # Calculate total area
-  data[["total_area"]] <- fetch_data("area_main") + fetch_data("area_road")
-
   # Convert percentages to fractions
-  data <- calculate_fractions(data)
+  data[["total_area"]] <- fetch_data("FLGES") + fetch_data("STR_FLGES")
+
+  # Transform percentage to fractions
+  data[["main_frac"]] <- fetch_data("FLGES") / data[["total_area"]]
+  data[["road_frac"]] <- fetch_data("STR_FLGES") / data[["total_area"]]
+
+  # Determine names of columns that need to be divided by 100
+  columns_to_divide_by_100 <- read_column_info() %>%
+    dplyr::filter(.data[["by_100"]] == "x") %>%
+    select_columns("rabimo_berlin") %>%
+    intersect(names(data))
+
+  data[columns_to_divide_by_100] <- lapply(data[columns_to_divide_by_100], `/`, 100)
 
   # insert empty to_swale column (fraction of the area connected to a swale)
   data[["to_swale"]] <- 0
@@ -169,7 +183,7 @@ identify_data_format_or_stop <- function(data)
 # get_column_renamings ---------------------------------------------------------
 get_column_renamings <- function()
 {
-  read_column_info() %>%
+  renamings <- read_column_info() %>%
     dplyr::filter(nzchar(.data[["abimo_berlin"]])) %>%
     to_lookup_list(data = select_columns(., c("abimo_berlin", "rabimo_berlin")))
 }
@@ -192,31 +206,6 @@ read_column_info <- function()
       sep = ",",
       dec = "."
     )
-}
-
-# calculate_fractions ----------------------------------------------------------
-calculate_fractions <- function(data)
-{
-  # Column accessor
-  fetch_data <- create_accessor(data)
-
-  total_area <- fetch_data("total_area")
-
-  # Transform percentage to fractions
-  data[["main_frac"]] <- fetch_data("area_main") / total_area
-  data[["road_frac"]] <- fetch_data("area_road") / total_area
-
-  # Determine names of columns that need to be divided by 100
-  columns <- read_column_info() %>%
-    dplyr::filter(.data[["by_100"]] == "x") %>%
-    select_columns("rabimo_berlin") %>%
-    intersect(names(data))
-
-  for (column in columns) {
-    data[[column]] <- fetch_data(column) / 100
-  }
-
-  data
 }
 
 # get_usage_tuple --------------------------------------------------------------

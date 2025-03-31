@@ -94,30 +94,15 @@ if (FALSE)
   #kwb.utils::hsOpenWindowsExplorer(get_path("results"))
 }
 
-# MAIN: Convert column names (max 10 chars) in input data ----------------------
+# MAIN: Update data stored in the package --------------------------------------
 if (FALSE)
 {
   inputs <- kwb.rabimo::rabimo_inputs_2020
-  inputs$data <- kwb.utils::renameColumns(inputs$data, list(
-    area_rd = "area_road",
-    main_fraction = "main_frac",
-    road_fraction = "road_frac",
-    pvd_rd = "pvd_r",
-    swg_pvd_rd = "swg_pvd_r",
-    srf1_pvd_rd = "srf1_pvd_r",
-    srf2_pvd_rd = "srf2_pvd_r",
-    srf3_pvd_rd = "srf3_pvd_r",
-    srf4_pvd_rd = "srf4_pvd_r"
+  str(inputs$data)
+  inputs$data$veg_class <- as.numeric(inputs$data$veg_class)
+  inputs$data <- kwb.utils::removeColumns(inputs$data, c(
+    "sealed", "area_main", "area_road"
   ))
-
-  names_1 <- names(inputs$data)
-  names_1 <- setdiff(names_1, "block_type")
-
-  names_2 <- kwb.rabimo::read_column_info()$rabimo_berlin
-  names_2 <- setdiff(names_2, c("berlin_usage", "berlin_type"))
-
-  stopifnot(all(names_1 %in% names_2))
-
   rabimo_inputs_2020 <- inputs
   usethis::use_data(rabimo_inputs_2020, overwrite = TRUE)
 }

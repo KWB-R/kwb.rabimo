@@ -25,7 +25,7 @@ test_that("run_rabimo() works", {
     ufc30 = -123,
     ufc150 = 1.2,
     gw_dist = c(-1,-2,1),
-    veg_class = 1L,
+    veg_class = 1.0,
     irrigation = -1L,
     main_frac = c(1, 1, 0.3),
     roof = c(0.1, 0.2, 0.3),
@@ -75,7 +75,5 @@ test_that("run_rabimo() works", {
 
   expect_s3_class(result, "data.frame")
   expect_true(nrow(result) == nrow(data))
-
-
 
 })

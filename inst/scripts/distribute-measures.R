@@ -128,7 +128,6 @@ create_example_blocks <- function(block_areas)
   blocks <- do.call(rbind, lapply(codes, kwb.rabimo:::generate_rabimo_area))
 
   blocks$total_area <- total_areas
-  blocks$area_main <- total_areas
   blocks$green_roof <- get_green_roof(block_areas)
   blocks$pvd <- get_paved(block_areas)
 

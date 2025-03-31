@@ -31,11 +31,14 @@ generate_rabimo_area <- function(code, ..., column_info = read_column_info())
   key_value_pairs[is_integer] <- lapply(key_value_pairs[is_integer], as.integer)
 
   # Compose a one-row data frame from the key-value pairs
-  result <- kwb.utils::callWith(data.frame, key_value_pairs, ...)
+  further_args <- list(...)
+  #further_args <- list()
+  args <- key_value_pairs
+  args[names(further_args)] <- further_args
 
-  # Add columns "code", "main_frac"
-  fetch <- create_accessor(result)
+  result <- do.call(data.frame, args)
+
+  # Add column "code"
   result["code"] <- code
-  result["main_frac"] <- round(fetch("area_main")/fetch("total_area") , 2L)
   result
 }
