@@ -55,7 +55,7 @@ if (FALSE)
 
   rabimo_inputs_2020 <- kwb.rabimo::prepare_berlin_inputs(
     data = berlin_2020_data,
-    config = kwb.abimo::read_config()
+    config = kwb.abimo:::read_config()
   )
 
   # Fehler: Column 'gw_dist' must not contain missing values (NA, found 4
