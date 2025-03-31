@@ -22,6 +22,12 @@ triangle_of_fractions <- function(
 {
   stopifnot(sum(fractions) == 1)
 
+  fractions_to_colour <- function(x) {
+    if (!is.null(x)) {
+      do.call(grDevices::rgb, unname(as.list(x[c(2, 3, 1)])))
+    }
+  }
+
   rad <- function(x) x/180 * pi
   ortho <- function(phi) phi + pi/2
 
@@ -140,7 +146,12 @@ triangle_of_fractions <- function(
     )
 
   crossing <- get_crossing(f = fractions)
-  p <- p +
+
+  add_point <- function(p, point, colour) {
+    p + ggplot2::geom_point(data = point, size = 5, colour = colour)
+  }
+
+  p <- add_point(p, crossing, fractions_to_colour(fractions)) +
     arrow_path(rbind(axis_1(fractions[1L]), crossing), col = cols[1L]) +
     arrow_path(rbind(axis_2(fractions[2L]), crossing), col = cols[2L]) +
     arrow_path(rbind(axis_3(fractions[3L]), crossing), col = cols[3L])
@@ -149,7 +160,7 @@ triangle_of_fractions <- function(
 
     crossing <- get_crossing(f = fractions_2)
 
-    p <- p +
+    p <- add_point(p, crossing, fractions_to_colour(fractions_2)) +
       arrow_path(rbind(axis_1(fractions_2[1L]), crossing), col = cols[1L], linetype = "dashed") +
       arrow_path(rbind(axis_2(fractions_2[2L]), crossing), col = cols[2L], linetype = "dashed") +
       arrow_path(rbind(axis_3(fractions_2[3L]), crossing), col = cols[3L], linetype = "dashed")
