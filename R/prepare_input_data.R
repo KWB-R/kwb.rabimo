@@ -98,9 +98,6 @@ prepare_input_data <- function(data, config, dbg = TRUE)
   # Convert percentages to fractions
   data <- calculate_fractions(data)
 
-  # insert column with total sealed area
-  data[["sealed"]] <- with(data, roof + pvd)
-
   # insert empty to_swale column (fraction of the area connected to a swale)
   data[["to_swale"]] <- 0
 

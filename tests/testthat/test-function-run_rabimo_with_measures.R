@@ -36,7 +36,7 @@ test_that("run_rabimo_with_measures() works", {
     to_swale = measures_max$to_swale + 0.01
   )
 
-  result <- f(blocks, measures = measures_max)
+  expect_output(result <- f(blocks, measures = measures_max))
   expect_true(all(result$surface_runoff == 0))
 
   expect_error(f(blocks, measures = measures_too_big_1))

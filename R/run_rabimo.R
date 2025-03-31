@@ -179,11 +179,10 @@ run_rabimo <- function(data, config, controls = define_controls())
     with(data, road_frac * (1 - pvd_r)) *
     runoff_sealed[, ncol(runoff_sealed)] # last (less sealed) surface class
 
-  fraction_unsealed <- if (control("reproduce_abimo_error")) {
-    with(data, 1 - sealed)
-  } else {
-    with(data, main_frac * (1 - sealed))
-  }
+  fraction_unsealed <- with(
+    data,
+    ifelse(control("reproduce_abimo_error"), 1, main_frac) * (1 - (roof + pvd))
+  )
 
   infiltration_unsealed_surfaces <- fraction_unsealed * runoff_unsealed
 

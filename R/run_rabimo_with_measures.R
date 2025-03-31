@@ -21,7 +21,8 @@ run_rabimo_with_measures <- function(
 
   run_rabimo(
     distribute_measures(blocks = blocks, targets = rescaled_targets),
-    config = config)
+    config = config
+  )
 }
 
 # config_file = kwb.abimo::default_config()

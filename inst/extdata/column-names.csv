@@ -26,7 +26,6 @@ srf1_pvd_r,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,
 srf2_pvd_r,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,required,numeric,0.1
 srf3_pvd_r,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,required,numeric,0.0
 srf4_pvd_r,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,required,numeric,0.0
-sealed,,,Fraction of sealed non-road area including buildings,0..1,required,numeric,
 to_swale,,,Fraction of total area connected to an infiltration swale,0..1,required,numeric,0.0
 gw_dist,FLUR,,Depth to the water table,m,required,numeric,3.0
 ufc30,FELD_30,,Usable field capacity 0..30 cm,% by volume,required,numeric,13.0

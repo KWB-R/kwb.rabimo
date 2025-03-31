@@ -26,7 +26,7 @@ data_to_natural <- function(data, type = "undeveloped")
   stop_on_invalid_data(data)
 
   # Columns related to urbanisation
-  urban_columns <- grep("pv|swg|roof|sealed", names(data), value = TRUE)
+  urban_columns <- grep("pv|swg|roof", names(data), value = TRUE)
 
   # non urbanized state: no building, no pavements
   nat_data <- data

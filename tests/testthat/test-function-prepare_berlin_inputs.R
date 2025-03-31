@@ -22,7 +22,7 @@ test_that("prepare_berlin_inputs() works", {
     "pvd", "swg_pvd",
     "srf1_pvd", "srf2_pvd", "srf3_pvd", "srf4_pvd", "srf5_pvd",
     "road_frac", "pvd_r", "swg_pvd_r", "srf1_pvd_r", "srf2_pvd_r",
-    "srf3_pvd_r", "srf4_pvd_r", "sealed", "to_swale", "gw_dist", "ufc30",
+    "srf3_pvd_r", "srf4_pvd_r", "to_swale", "gw_dist", "ufc30",
     "ufc150", "land_type", "veg_class", "irrigation", "block_type"
   ))
 

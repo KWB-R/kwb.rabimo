@@ -36,7 +36,6 @@ test_that("run_rabimo() works", {
     road_frac = 0.1,
     pvd_r = 0,
     swg_pvd_r = c(0.2, 1, 0),
-    sealed = 0.1,
     to_swale = 0.0,
     total_area = 100
   )
