@@ -32,6 +32,9 @@ data_to_natural <- function(data, type = "undeveloped")
   nat_data <- data
   nat_data[urban_columns] <- 0
 
+  # vegetation class 50
+  nat_data["veg_class"] <- 50L
+
   if (type == "undeveloped") {
     return(nat_data)
   }
@@ -143,7 +146,7 @@ calculate_delta_w_1 <- function(
 calculate_delta_w_2 <- function(
     natural,
     urban,
-    columns_water_balance = c("surface_runoff", "infiltration", "evaporation"),
+    columns_water_balance = c("runoff", "infiltr", "evapor"),
     column_code = "code"
 )
 {
@@ -173,7 +176,7 @@ calculate_delta_w_2 <- function(
 calculate_delta_w_3 <- function(
     natural,
     urban,
-    columns_water_balance = c("surface_runoff", "infiltration", "evaporation"),
+    columns_water_balance = c("runoff", "infiltr", "evapor"),
     column_code = "code"
 )
 {
