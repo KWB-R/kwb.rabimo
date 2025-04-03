@@ -354,6 +354,9 @@ yearly_height_to_volume_flow <- function(height, area)
 #'   returned as attributes. Default: \code{FALSE}.
 #' @returns list with the arguments of this function as list elements
 #' @export
+#' @examples
+#' inputs <- kwb.rabimo::rabimo_inputs_2025
+#' result <- run_rabimo(inputs$data, inputs$config)
 define_controls <- function(
     check = TRUE,
     use_abimo_bagrov_solver = TRUE,
