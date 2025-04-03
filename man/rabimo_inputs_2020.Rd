@@ -3,20 +3,78 @@
 \docType{data}
 \name{rabimo_inputs_2020}
 \alias{rabimo_inputs_2020}
-\title{"Official" R-Abimo Inputs (Data and Config) for Berlin, 2020}
+\title{R-Abimo Inputs (Data and Config) for Berlin, 2020}
 \format{
+\subsection{\code{rabimo_inputs_2020}}{
+
 A list containing two elements:
-1 - a data frame with the input data in r-abimo format ...(number of vars)
-2 - a list object with configuration data
 \describe{
-\item{CODE}{Variable 'CODE'}
-...
+\item{\code{data}}{a data frame with the input data to R-Abimo (see below)}
+\item{\code{config}}{a list of model parameters (see below)}
+}
+}
+
+\subsection{\code{rabimo_inputs_2020$data}}{
+
+A data.frame with 58531 observations of 33 variables:
+\describe{
+\item{\code{code}}{Unique block area identifier (character)}
+\item{\code{prec_yr}}{Long-term average of annual precipitation in mm (integer)}
+\item{\code{prec_s}}{Long-term average of annual precipitation within summer months (May to October) in mm (integer)}
+\item{\code{epot_yr}}{Long-term average of annual potential evapotranspiration in mm (integer)}
+\item{\code{epot_s}}{Long-term average of annual potential evapotranspiration within summer months (May to October) in mm (integer)}
+\item{\code{district}}{Number of Berlin "Bezirk" (district) in which the block area is located (character)}
+\item{\code{total_area}}{Total block area in square metres (numeric)}
+\item{\code{main_frac}}{Fraction of the total area that is NOT considered as "road" area (numeric value between 0.0 and 1.0). This value should be 0.0 if roads are modelled separately, i.e. as block areas on their own.}
+\item{\code{roof}}{Fraction of the total area that is considered as "roof" area (numeric value between 0.0 and 1.0)}
+\item{\code{green_roof}}{Fraction of the roof area that belongs to green roofs (numeric value between 0.0 and 1.0). A value of 1.0 means that all roofs in the block area are green roofs.}
+\item{\code{swg_roof}}{Fraction of the roof area that is connected to the drainage system (numeric value between 0.0 and 1.0)}
+\item{\code{pvd}}{Fraction of the total block area that is paved (numeric value between 0.0 and 1.0)}
+\item{\code{swg_pvd}}{Fraction of the paved area that is connected to the drainage system (numeric value between 0.0 and 1.0)}
+\item{\code{srf1_pvd}}{Fraction of the paved area that belongs to surface class 1 (numeric value between 0.0 and 1.0, see note 1 below)}
+\item{\code{srf2_pvd}}{Fraction of the paved area that belongs to surface class 2 (numeric value between 0.0 and 1.0, see note 1 below)}
+\item{\code{srf3_pvd}}{Fraction of the paved area that belongs to surface class 3 (numeric value between 0.0 and 1.0, see note 1 below)}
+\item{\code{srf4_pvd}}{Fraction of the paved area that belongs to surface class 4 (numeric value between 0.0 and 1.0, see note 1 below)}
+\item{\code{srf5_pvd}}{Fraction of the paved area that belongs to surface class 5 (numeric value between 0.0 and 1.0, see note 1 below)}
+\item{\code{road_frac}}{Fraction of the total area that is considered as "road" area (numeric value between 0.0 and 1.0)}
+\item{\code{pvd_r}}{Fraction of road area (within the block area) that is paved (numeric, see note 2 below)}
+\item{\code{swg_pvd_r}}{Fraction of paved road area (within the block area) that is connected to the drainage system (numeric, see note 2 below))}
+\item{\code{srf1_pvd_r}}{Fraction of paved road area (within the block area) that belongs to surface class 1 (numeric, see note 2 below))}
+\item{\code{srf2_pvd_r}}{Fraction of paved road area (within the block area) that belongs to surface class 2 (numeric, see note 2 below))}
+\item{\code{srf3_pvd_r}}{Fraction of paved road area (within the block area) that belongs to surface class 3 (numeric, see note 2 below))}
+\item{\code{srf4_pvd_r}}{Fraction of paved road area (within the block area) that belongs to surface class 4 (numeric, see note 2 below))}
+\item{\code{to_swale}}{Fraction of sealed area (roof area + paved area) that is connected to an infiltration swale (numeric)}
+\item{\code{gw_dist}}{Distance between groundwater table and surface in metres (numeric)}
+\item{\code{ufc30}}{field capacity in 30 cm depth (numeric)}
+\item{\code{ufc150}}{field capacity in 150 cm depth (numeric)}
+\item{\code{land_type}}{land type, one of \code{forested}, \code{horticultural}, \code{urban}, \code{vegetationless}, \code{waterbody} (character)}
+\item{\code{veg_class}}{vegetation class (numeric values each being one of 0, 1, 10, 25, 30, 35, 40, 45, 50, 55). Each combination of block and land use type is assigned to a distinct vegetation class value.}
+\item{\code{irrigation}}{irrigation in mm per year (integer)}
+\item{\code{block_type}}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character)}
+}
+
+Note 1: The sum of surface class fractions \code{srf1_pvd}, \code{srf1_pvd}, \code{srf1_pvd}, \code{srf1_pvd}, \code{srf1_pvd} should be 1.0 within each block area.
+
+Note 2: The fields with suffix "_r" are all zero because rows are modelled as their own blocks. In an earlier version of the dataset, roads were modelled as parts of the block area.
+}
+
+\subsection{\code{rabimo_inputs_2020$config}}{
+
+A list with 5 named elements:
+\describe{
+\item{\code{runoff_factors}}{vector of num with names \code{roof}, \code{surface1}, \code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}}
+\item{\code{bagrov_values}}{vector of num with names \code{roof}, \code{green_roof}, \code{surface1}, \code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}}
+\item{\code{result_digits}}{vector of num with names \code{R}, \code{ROW}, \code{RI}, \code{RVOL}, \code{ROWVOL}, \code{RIVOL}, \code{FLAECHE}, \code{VERDUNSTUNG}}
+\item{\code{irrigation_to_zero}}{not used!}
+\item{\code{swale}}{vector of num with names \code{swale_evaporation_factor}}
+}
 }
 }
 \usage{
 rabimo_inputs_2020
 }
 \description{
-The data was ...
+Data frame and configuration object that are required by the R-Abimo main
+function \code{\link{run_rabimo}}.
 }
 \keyword{datasets}
