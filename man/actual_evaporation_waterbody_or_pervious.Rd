@@ -14,7 +14,8 @@ actual_evaporation_waterbody_or_pervious(
 )
 }
 \arguments{
-\item{usage_tuple}{list as returned by \code{\link{get_usage_tuple}}}
+\item{usage_tuple}{list with elements \code{land_type}, \code{veg_class},
+\code{irrigation}}
 
 \item{climate}{list with elements \code{epot.year}, \code{epot.summer}
 (potential evaporation in mm per year and in the summer period,

@@ -2,7 +2,8 @@
 
 #' Calculate Actual Evapotranspiration for Waterbodies or Pervious Areas
 #'
-#' @param usage_tuple list as returned by \code{\link{get_usage_tuple}}
+#' @param usage_tuple list with elements \code{land_type}, \code{veg_class},
+#'   \code{irrigation}
 #' @param climate list with elements \code{epot.year}, \code{epot.summer}
 #'   (potential evaporation in mm per year and in the summer period,
 #'   respecively), \code{prec.year}, \code{prec.summer} (precipitation in mm
