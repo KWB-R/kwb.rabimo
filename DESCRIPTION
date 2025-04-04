@@ -17,7 +17,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: 
-    covr,
     ggplot2,
     kwb.rect,
     plumber,
@@ -25,14 +24,14 @@ Suggests:
 Imports: 
     dplyr,
     kwb.abimo,
-    kwb.utils,
+    kwb.utils (>= 0.15.0),
     magrittr,
     parallel,
     rlang
 Remotes: 
     github::kwb-r/kwb.abimo@dev,
     github::kwb-r/kwb.rect,
-    github::kwb-r/kwb.utils@dev
+    github::kwb-r/kwb.utils
 Config/testthat/edition: 3
 Depends: 
     R (>= 3.5.0)
