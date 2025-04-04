@@ -402,8 +402,22 @@ yearly_height_to_volume_flow <- function(height, area)
 #' @export
 #' @examples
 #' inputs <- kwb.rabimo::rabimo_inputs_2020
-#' result <- run_rabimo(inputs$data, inputs$config)
-#' colMeans(as.matrix(result[, -1L]))
+#' test_data <- inputs$data[sample(seq_len(nrow(inputs$data)), size = 1000L), ]
+#' controls_default <- define_controls()
+#' controls_no_check <- define_controls(check = FALSE)
+#' controls_no_solver <- define_controls(use_abimo_bagrov_solver = FALSE)
+#' system.time(result_default <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_default
+#' ))
+#' system.time(result_no_check <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_no_check
+#' ))
+#' identical(result_default, result_no_check)
+#' \dontrun{
+#' system.time(result_no_solver <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_no_solver
+#' ))
+#' }
 define_controls <- function(
     check = TRUE,
     use_abimo_bagrov_solver = TRUE,
