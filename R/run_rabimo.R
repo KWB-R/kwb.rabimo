@@ -12,10 +12,25 @@
 #' @return data frame with columns as returned by Abimo
 #' @export
 #' @examples
+#' # Get input data and config for Berlin (version 2020)
 #' inputs_2020 <- kwb.rabimo::rabimo_inputs_2020
+#'
+#' # Randomly select 1000 blocks (to reduce runtime)
+#' data <- inputs_2020$data
+#' data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
+#'
+#' # Run R-Abimo
+#' results_2020 <- kwb.rabimo::run_rabimo(data, inputs_2020$config)
+#'
+#' # Get input data and config for Berlin (version 2025)
 #' inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
-#' results_2020 <- kwb.rabimo::run_rabimo(inputs_2020$data, inputs_2020$config)
-#' results_2025 <- kwb.rabimo::run_rabimo(inputs_2025$data, inputs_2025$config)
+#'
+#' # Randomly select 1000 blocks (to reduce runtime)
+#' data <- inputs_2025$data
+#' data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
+#'
+#' # Run R-Abimo
+#' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
 run_rabimo <- function(data, config, controls = define_controls())
 {
   # Provide functions and variables for debugging
