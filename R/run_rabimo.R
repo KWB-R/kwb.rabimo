@@ -11,6 +11,11 @@
 #'   the list returned by \code{define_controls()}.
 #' @return data frame with columns as returned by Abimo
 #' @export
+#' @examples
+#' inputs_2020 <- kwb.rabimo::rabimo_inputs_2020
+#' inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
+#' results_2020 <- kwb.rabimo::run_rabimo(inputs_2020$data, inputs_2020$config)
+#' results_2025 <- kwb.rabimo::run_rabimo(inputs_2025$data, inputs_2025$config)
 run_rabimo <- function(data, config, controls = define_controls())
 {
   # Provide functions and variables for debugging
@@ -24,6 +29,9 @@ run_rabimo <- function(data, config, controls = define_controls())
     controls <- define_controls()
     `%>%` <- magrittr::`%>%`
   }
+
+  # If road-area-specific columns are missing, create them
+  data <- handle_missing_columns(data)
 
   # Provide function to access the list of controls
   control <- create_accessor(controls)
@@ -310,6 +318,29 @@ run_rabimo <- function(data, config, controls = define_controls())
       fraction_unsealed = fraction_unsealed
     )
   )
+}
+
+# handle_missing_columns -------------------------------------------------------
+handle_missing_columns <- function(data)
+{
+  road_specific_columns <- c(
+    "road_frac", "pvd_r", "swg_pvd_r",
+    "srf1_pvd_r", "srf2_pvd_r", "srf3_pvd_r", "srf4_pvd_r"
+  )
+
+  missing_road_columns <- setdiff(road_specific_columns, names(data))
+
+  if (length(missing_road_columns)) {
+    for (column in missing_road_columns) {
+      data[[column]] <- 0
+    }
+  }
+
+  if (! "main_frac" %in% names(data)) {
+    data$main_frac <- 1
+  }
+
+  data
 }
 
 # get_climate: provides climate relevant input data ----------------------------

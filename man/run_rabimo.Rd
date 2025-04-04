@@ -23,3 +23,9 @@ data frame with columns as returned by Abimo
 \description{
 Run R-Abimo, the R-implementation of Water Balance Model Abimo
 }
+\examples{
+inputs_2020 <- kwb.rabimo::rabimo_inputs_2020
+inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
+results_2020 <- kwb.rabimo::run_rabimo(inputs_2020$data, inputs_2020$config)
+results_2025 <- kwb.rabimo::run_rabimo(inputs_2025$data, inputs_2025$config)
+}
