@@ -24,7 +24,6 @@ Suggests:
     testthat (>= 3.0.0)
 Imports: 
     dplyr,
-    foreign,
     kwb.abimo,
     kwb.utils,
     magrittr,
