@@ -20,7 +20,7 @@ triangle_of_fractions <- function(
     fractions, fractions_2 = NULL, cols = c("blue", "red", "darkgreen")
 )
 {
-  stopifnot(sum(fractions) == 1)
+  stopifnot(all.equal(sum(fractions), 1))
 
   fractions_to_colour <- function(x) {
     if (!is.null(x)) {
