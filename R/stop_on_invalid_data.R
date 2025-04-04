@@ -1,9 +1,6 @@
 # stop_on_invalid_data ---------------------------------------------------------
 stop_on_invalid_data <- function(data)
 {
-  #kwb.utils::assignPackageObjects("kwb.rabimo")
-  #data <- prepare_input_data(kwb.abimo::abimo_input_2019, abimo_config_to_config(kwb.abimo::read_config()))
-
   # Read information on column names and types
   column_info <- read_column_info()
 

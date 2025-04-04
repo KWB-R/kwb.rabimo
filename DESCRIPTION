@@ -28,8 +28,7 @@ Imports:
     kwb.utils,
     magrittr,
     parallel,
-    rlang,
-    xml2
+    rlang
 Remotes: 
     github::kwb-r/kwb.abimo@dev,
     github::kwb-r/kwb.rect,

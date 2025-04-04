@@ -2,10 +2,10 @@
 
 #' Run R-Abimo, the R-implementation of Water Balance Model Abimo
 #'
-#' @param data data frame with columns as returned by
-#'   \code{\link{prepare_input_data}}
-#' @param config configuration object (list) as returned by
-#'   \code{\link{abimo_config_to_config}}
+#' @param data data frame similar to
+#'   \code{\link{rabimo_inputs_2025}$data}
+#' @param config configuration object (list) similar to
+#'   \code{\link{rabimo_inputs_2025}$config}
 #' @param controls list of settings that control how the function should behave.
 #'   Use \code{\link{define_controls}} to define such a list. The default is
 #'   the list returned by \code{define_controls()}.

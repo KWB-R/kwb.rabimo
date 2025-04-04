@@ -7,8 +7,8 @@
 plot_block(block, cex = 1, delta = 0.1)
 }
 \arguments{
-\item{block}{data frame with one row and columns as available
-in the data frame that is returned by \code{\link{prepare_input_data}}}
+\item{block}{data frame with one row and columns as provided in the data
+frame \code{\link{rabimo_inputs_2025}$data}}
 
 \item{cex}{character expansion factor to scale the texts}
 

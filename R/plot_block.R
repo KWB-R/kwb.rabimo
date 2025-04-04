@@ -37,8 +37,8 @@ get_fraction <- function(path, block)
 
 #' Plot Area Fractions and their Names for one Block
 #'
-#' @param block data frame with one row and columns as available
-#'   in the data frame that is returned by \code{\link{prepare_input_data}}
+#' @param block data frame with one row and columns as provided in the data
+#'   frame \code{\link{rabimo_inputs_2025}$data}
 #' @param cex character expansion factor to scale the texts
 #' @param delta controls the space between rectangles
 #' @importFrom rlang .data
@@ -183,8 +183,8 @@ plot_block <- function(block, cex = 1, delta = 0.1)
 
 #' Plot Area Fractions of one Block as Part of a Square
 #'
-#' @param block data frame with one row and columns as available
-#'   in the data frame that is returned by \code{\link{prepare_input_data}}
+#' @param block data frame with one row and columns as contained in
+#'   \code{\link{rabimo_inputs_2025}$data}
 #' @param mar margin vector being passed to \code{\link{par}}
 #' @param density_sealed density of shading lines indicating sealed areas
 #' @param density_connected density of shading lines indicating connected areas

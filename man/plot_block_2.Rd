@@ -14,8 +14,8 @@ plot_block_2(
 )
 }
 \arguments{
-\item{block}{data frame with one row and columns as available
-in the data frame that is returned by \code{\link{prepare_input_data}}}
+\item{block}{data frame with one row and columns as contained in
+\code{\link{rabimo_inputs_2025}$data}}
 
 \item{mar}{margin vector being passed to \code{\link{par}}}
 
