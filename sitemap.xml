@@ -1,81 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/404.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/abimo_config_to_config.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/actual_evaporation_waterbody_or_pervious.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/BERLIN_TYPES_TO_USAGE_YIELD_IRRIGATION.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/call_with_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/get_potential_evaporation.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/get_precipitation.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/get_soil_properties.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/get_usage_tuple.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/index_string_to_integers.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/list_to_data_frame_with_keys.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/plot_block.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/plot_block_2.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/prepare_input_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/range_to_seq.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/real_evapo_transpiration.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/run_rabimo.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/yearly_height_to_volume_flow.html</loc>
-  </url>
-  <url>
-    <loc>https://kwb-r.github.io/kwb.rabimo/reference/y_ratio_3.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/404.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/authors.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/index.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/LICENSE-text.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/LICENSE.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/news/index.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/abimo_config_to_config.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/actual_evaporation_waterbody_or_pervious.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/BERLIN_TYPES_TO_LAND_TYPE_VEG_CLASS_IRRIGATION.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/calculate_delta_W.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/calculate_delta_W_1.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/data_to_natural.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/define_controls.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/distribute_measures.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/generate_rabimo_area.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/get_measure_stats.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/get_potential_evaporation.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/get_soil_properties.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/get_usage_tuple.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/index.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/index_string_to_integers.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/list_to_data_frame_with_keys.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/pipe.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/plot_block.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/plot_block_2.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/prepare_berlin_inputs.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/prepare_input_data.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/rabimo_inputs_2020.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/rabimo_inputs_2025.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/range_to_seq.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/read_column_info.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/real_evapo_transpiration.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/run_rabimo.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/run_rabimo_with_measures.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/test_api.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/triangle_of_fractions.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/yearly_height_to_volume_flow.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/y_ratio_3.html</loc></url>
 </urlset>
+
