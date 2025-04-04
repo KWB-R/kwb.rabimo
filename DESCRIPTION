@@ -23,13 +23,11 @@ Suggests:
     testthat (>= 3.0.0)
 Imports: 
     dplyr,
-    kwb.abimo,
     kwb.utils (>= 0.15.0),
     magrittr,
     parallel,
     rlang
 Remotes: 
-    github::kwb-r/kwb.abimo@dev,
     github::kwb-r/kwb.rect,
     github::kwb-r/kwb.utils
 Config/testthat/edition: 3

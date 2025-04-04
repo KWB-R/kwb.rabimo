@@ -268,6 +268,7 @@ is_wet_summer <- function(prec_summer, epot_summer)
 }
 
 # wet_summer_correction_factor -------------------------------------------------
+#' @importFrom stats approx
 wet_summer_correction_factor <- function(
     water_availability, epot_summer, use_abimo_approx = TRUE
 )
@@ -279,7 +280,7 @@ wet_summer_correction_factor <- function(
   if (use_abimo_approx) {
     interpolate(x = x, y = y, xout = xout)
   } else {
-    select_columns(approx(x = x, y = y, xout = xout, rule = 2L), "y")
+    select_columns(stats::approx(x = x, y = y, xout = xout, rule = 2L), "y")
   }
 }
 

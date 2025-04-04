@@ -1,7 +1,3 @@
-# approx -----------------------------------------------------------------------
-#' @importFrom stats approx
-approx <- stats::approx
-
 # cat_and_run ------------------------------------------------------------------
 #' @importFrom kwb.utils catAndRun
 cat_and_run <- kwb.utils::catAndRun
