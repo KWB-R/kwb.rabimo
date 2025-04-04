@@ -61,31 +61,3 @@
 #'   \item{`swale`}{vector of num with names `swale_evaporation_factor`}
 #' }
 "rabimo_inputs_2020"
-
-# Code to create a doc string above
-# paste0("`", names(kwb.rabimo::rabimo_inputs_2020$config$bagrov_values), "`", collapse = ", ")
-
-#' R-Abimo Inputs (Data and Config) for Berlin, 2025
-#'
-#' Data frame and configuration object that are required by the R-Abimo main
-#' function \code{\link{run_rabimo}}.
-#'
-#' @format ## `rabimo_inputs_2025`
-#' A list containing two elements:
-#' \describe{
-#'   \item{data}{a data frame with the input data in r-abimo format ...(number of vars)}
-#'   \item{config}{a list object with configuration data}
-#' }
-#' @format ## `rabimo_inputs_2025$data`
-#' \describe{
-#'   \item{CODE}{Variable 'CODE'}
-#'   ...
-#' }
-#' @format ## `rabimo_inputs_2025$config`
-#' \describe{
-#'   \item{runoff_factors}{Runoff factors}
-#'   \item{bagrov_values}{Bagrov values for sealed surfaces}
-#'   \item{swale}{Model parameter(s) related to the 'swale' measure}
-#' }
-#' @source <https://gdi.berlin.de/services/wfs/ua_gruendaecher_2020?REQUEST=GetCapabilities&SERVICE=wfs>
-"rabimo_inputs_2025"
