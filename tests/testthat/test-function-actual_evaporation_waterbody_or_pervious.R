@@ -2,7 +2,7 @@
 
 test_that("actual_evaporation_waterbody_or_pervious() works", {
 
-  f <- kwb.rabimo::actual_evaporation_waterbody_or_pervious
+  f <- kwb.rabimo:::actual_evaporation_waterbody_or_pervious
 
   expect_error(f())
 

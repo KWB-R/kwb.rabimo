@@ -1,6 +1,6 @@
 test_that("distribute_measures() works", {
 
-  f <- kwb.rabimo::distribute_measures
+  f <- kwb.rabimo:::distribute_measures
 
   expect_error(f())
 
