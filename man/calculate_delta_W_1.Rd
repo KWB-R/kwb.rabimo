@@ -16,14 +16,18 @@ calculate_delta_w_1(
 
 \item{urban}{R-Abimo results for the "urban" scenario}
 
-\item{cols_to_omit}{column names that not contain result data or code identifiers. Defaults to "total_area"}
+\item{cols_to_omit}{column names that not contain result data or code
+identifiers. Defaults to "total_area"}
 
-\item{return_codes}{a logical value determining whether the codes should be returned along the delta-w values}
+\item{return_codes}{a logical value determining whether the codes should be
+returned along the delta-w values}
 }
 \value{
-a dataframe containing the delta-w values (and optionally the areas' codes)
+a dataframe containing the delta-w values (and optionally the areas'
+codes)
 }
 \description{
 Calculate the deviation from the natural water balance (delta-W) given
 R-Abimo results as returned by \code{\link{run_rabimo}}.
 }
+\keyword{internal}

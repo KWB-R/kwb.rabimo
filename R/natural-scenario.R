@@ -97,9 +97,13 @@ calculate_delta_w <- function(natural, urban, ..., implementation = 3L)
 #'
 #' @param natural R-Abimo results for the natural scenario
 #' @param urban R-Abimo results for the "urban" scenario
-#' @param cols_to_omit column names that not contain result data or code identifiers. Defaults to "total_area"
-#' @param return_codes a logical value determining whether the codes should be returned along the delta-w values
-#' @return a dataframe containing the delta-w values (and optionally the areas' codes)
+#' @param cols_to_omit column names that not contain result data or code
+#'   identifiers. Defaults to "total_area"
+#' @param return_codes a logical value determining whether the codes should be
+#'   returned along the delta-w values
+#' @return a dataframe containing the delta-w values (and optionally the areas'
+#'   codes)
+#' @keywords internal
 calculate_delta_w_1 <- function(
     natural,
     urban,
