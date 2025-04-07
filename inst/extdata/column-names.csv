@@ -4,9 +4,9 @@ prec_yr,REGENJA,,Long-term average precipitation per year,mm,required,integer,60
 prec_s,REGENSO,,Long-term average precipitation per summer half year (May to October),mm,required,integer,300
 epot_yr,,,Long-term average potential evapotranspiration per year,mm,required,integer,700
 epot_s,,,Long-term average potential evapotranspiration per summer half year (May to October),mm,required,integer,500
-district,BEZIRK,,Specific to Berlin: identifier of city district,-,required?,character,0
+district,BEZIRK,,Specific to Berlin: identifier of city district,-,,character,0
 total_area,,,Total block area,m2,required,numeric,100
-main_frac,,,Non-road fraction of total_area,0..1,required,numeric,1.0
+main_frac,,,Non-road fraction of total_area,0..1,,numeric,1.0
 roof,PROBAU,x,Roof fraction of non-road built area,0..1,required,numeric,0.2
 green_roof,,,Green roof fraction of roof area,0..1,required,numeric,0.0
 swg_roof,KAN_BEB,x,Fraction of roof area connected to the sewer ,0..1,required,numeric,1.0
@@ -17,13 +17,13 @@ srf2_pvd,BELAG2,x,Fraction of paved area belonging to surface class 2,0..1,requi
 srf3_pvd,BELAG3,x,Fraction of paved area belonging to surface class 3,0..1,required,numeric,0.1
 srf4_pvd,BELAG4,x,Fraction of paved area belonging to surface class 4,0..1,required,numeric,0.1
 srf5_pvd,BELAG5,x,Fraction of paved area belonging to surface class 5,0..1,required,numeric,0.1
-road_frac,,,Road fraction of total_area,0..1,required,numeric,0.0
-pvd_r,VGSTRASSE,x,Paved fraction of road area,0..1,required,numeric,0.9
-swg_pvd_r,KAN_STR,x,Fraction of paved road area connected to the sewer,0..1,required,numeric,1.0
-srf1_pvd_r,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,required,numeric,0.9
-srf2_pvd_r,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,required,numeric,0.1
-srf3_pvd_r,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,required,numeric,0.0
-srf4_pvd_r,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,required,numeric,0.0
+road_frac,,,Road fraction of total_area,0..1,,numeric,0.0
+pvd_r,VGSTRASSE,x,Paved fraction of road area,0..1,,numeric,0.9
+swg_pvd_r,KAN_STR,x,Fraction of paved road area connected to the sewer,0..1,,numeric,1.0
+srf1_pvd_r,STR_BELAG1,x,Fraction of road area belonging to surface class 1,0..1,,numeric,0.9
+srf2_pvd_r,STR_BELAG2,x,Fraction of road area belonging to surface class 2,0..1,,numeric,0.1
+srf3_pvd_r,STR_BELAG3,x,Fraction of road area belonging to surface class 3,0..1,,numeric,0.0
+srf4_pvd_r,STR_BELAG4,x,Fraction of road area belonging to surface class 4,0..1,,numeric,0.0
 to_swale,,,Fraction of total area connected to an infiltration swale,0..1,required,numeric,0.0
 gw_dist,FLUR,,Depth to the water table,m,required,numeric,3.0
 ufc30,FELD_30,,Usable field capacity 0..30 cm,% by volume,required,numeric,13.0

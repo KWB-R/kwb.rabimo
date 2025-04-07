@@ -15,44 +15,42 @@
 #' @param data the input data in R-Abimo format
 #' @param type a character object containing the name of natural scenario.
 #'   Defaults to "undeveloped"
+#' @param veg_class vegetation class to assign to each row in \code{data}.
+#'   Default: 50
 #' @return a dataframe with R-Abimo input data for the chosen natural scenario
 #' @export
-data_to_natural <- function(data, type = "undeveloped")
+data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
 {
   # kwb.utils::assignPackageObjects("kwb.rabimo")
   # data <- kwb.rabimo::rabimo_inputs_2020$data; type = "undeveloped"
+  # data <- kwb.rabimo::rabimo_inputs_2025$data; type = "undeveloped"
 
-  # Check if data has R-Abimo format
+  # Check whether data look as expected
   stop_on_invalid_data(data)
 
   # Columns related to urbanisation
   urban_columns <- grep("pv|swg|roof", names(data), value = TRUE)
 
   # non urbanized state: no building, no pavements
-  nat_data <- data
-  nat_data[urban_columns] <- 0
+  data[urban_columns] <- 0
 
-  # vegetation class 50
-  nat_data["veg_class"] <- 50L
+  # set vegetation class
+  data["veg_class"] <- veg_class
 
-  if (type == "undeveloped") {
-    return(nat_data)
+  if (type != "undeveloped") {
+    land_types <- select_columns(data, "land_type")
+    is_waterbody <- land_type_is_waterbody(land_types)
+    data[["land_type"]][!is_waterbody] <- if (type == "forested") {
+      "forested"
+    } else if (type == "horticultural") {
+      "horticultural"
+    } else {
+      stop("please provide a known natural scenario type: undeveloped, horticultural or forested")
+    }
   }
 
-  land_types <- select_columns(data, "land_type")
-  is_waterbody <- land_type_is_waterbody(land_types)
-
-  nat_data[["land_type"]][!is_waterbody] <- if (type == "forested") {
-    "forested"
-  } else if (type == "horticultural") {
-    "horticultural"
-  } else {
-    stop("please provide a known natural scenario type: undeveloped, horticultural or forested")
-  }
-
-  # Convert data types as required
   check_or_convert_data_types(
-    nat_data,
+    data,
     types = get_expected_data_type(),
     convert = TRUE
   )

@@ -64,11 +64,11 @@ stop_on_invalid_data <- function(data)
     )
   )
 
-  surface_cols_no_rd <- matching_names(data, pattern_no_roads())
-  surface_cols_rd <- matching_names(data, pattern_roads())
+  check_sum_up_to_1_or_0(data, matching_names(data, pattern_no_roads()))
 
-  check_sum_up_to_1_or_0(data, surface_cols_no_rd)
-  check_sum_up_to_1_or_0(data, surface_cols_rd)
+  if (length(columns <- matching_names(data, pattern_roads()))) {
+    check_sum_up_to_1_or_0(data, columns)
+  }
 }
 
 # get_expected_data_type -------------------------------------------------------
