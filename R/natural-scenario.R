@@ -143,6 +143,7 @@ calculate_delta_w_1 <- function(
 }
 
 # calculate_delta_w_2 ----------------------------------------------------------
+#' @importFrom rlang .data
 calculate_delta_w_2 <- function(
     natural,
     urban,

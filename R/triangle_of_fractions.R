@@ -9,6 +9,7 @@
 #'   \code{fractions} and \code{fractions_2} are shown as horizontally
 #'   stacked bars below the triangle.
 #' @param cols vector of length three giving the colour names
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' # blue, red, green | left, right, bottom

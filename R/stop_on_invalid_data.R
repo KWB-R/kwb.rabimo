@@ -1,4 +1,5 @@
 # stop_on_invalid_data ---------------------------------------------------------
+#' @importFrom rlang .data
 stop_on_invalid_data <- function(data)
 {
   # Read information on column names and types
