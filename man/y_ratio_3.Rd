@@ -28,3 +28,4 @@ is implemented in the C++ code (converted to R:
 \description{
 Lookup y_ratio for given x_ratio on a BAGROV curve
 }
+\keyword{internal}

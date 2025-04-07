@@ -18,7 +18,7 @@
 #'   this number of digits. This reduces the number of BAGROV curves that need
 #'   to be calculated and thus improves the performance (by reducing the
 #'   precision of the output)
-#' @export
+#' @keywords internal
 actual_evaporation_waterbody_or_pervious <- function(
     usage_tuple,
     climate,

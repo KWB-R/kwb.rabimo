@@ -374,7 +374,7 @@ get_climate <- function(input)
 #'
 #' @param height height in mm
 #' @param area area in square metres
-#' @export
+#' @keywords internal
 yearly_height_to_volume_flow <- function(height, area)
 {
   height * 3.171 * area / 100000.0

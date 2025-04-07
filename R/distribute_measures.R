@@ -17,7 +17,7 @@
 #'   updated. In case of \code{intermediates = TRUE}, the data frame has
 #'   attributes \code{green_roof_table}, \code{unpaved_area_table},
 #'   \code{swale_connection_table}, carrying intermediate results.
-#' @export
+#' @keywords internal
 distribute_measures <- function(blocks, targets, intermediates = FALSE)
 {
   target_green_roof <- targets[["green_roof"]]
