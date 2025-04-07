@@ -17,6 +17,13 @@ calculate_delta_w(
 
 \item{urban}{R-Abimo results for the "urban" scenario}
 
+\item{columns_water_balance}{names of columns in \code{natural} and
+\code{urban}, respectively, containing the water balance components runoff,
+infiltration, evaporation. Default: \code{c("runoff", "infiltr", "evapor")}}
+
+\item{column_code}{name of column in \code{natural} and \code{urban},
+respectively, containing the block area identifiers.}
+
 \item{digits}{integer indicating the number of decimal places in the result}
 }
 \value{

@@ -7,6 +7,11 @@
 #'
 #' @param natural R-Abimo results for the "natural" scenario
 #' @param urban R-Abimo results for the "urban" scenario
+#' @param columns_water_balance names of columns in \code{natural} and
+#'   \code{urban}, respectively, containing the water balance components runoff,
+#'   infiltration, evaporation. Default: \code{c("runoff", "infiltr", "evapor")}
+#' @param column_code name of column in \code{natural} and \code{urban},
+#'   respectively, containing the block area identifiers.
 #' @param digits integer indicating the number of decimal places in the result
 #' @return a data frame with the area codes in column \code{code} and the
 #'   delta-W values in column \code{delta_w}
