@@ -4,17 +4,20 @@
 \alias{calculate_delta_w}
 \title{Deviation from Natural Water Balance (Delta-W)}
 \usage{
-calculate_delta_w(natural, urban, ..., implementation = 3L)
+calculate_delta_w(
+  natural,
+  urban,
+  columns_water_balance = c("runoff", "infiltr", "evapor"),
+  column_code = "code",
+  digits = 1L
+)
 }
 \arguments{
 \item{natural}{R-Abimo results for the "natural" scenario}
 
 \item{urban}{R-Abimo results for the "urban" scenario}
 
-\item{\dots}{further arguments passed to the implementation function as
-specified in \code{implementation}}
-
-\item{implementation}{one of 1, 2, 3, indicating a different implementation}
+\item{digits}{integer indicating the number of decimal places in the result}
 }
 \value{
 a data frame with the area codes in column \code{code} and the

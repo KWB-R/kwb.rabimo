@@ -9,7 +9,7 @@ test_that("calculate_delta_w() works", {
   # Define inputs
   natural <- data.frame(
     code = "a",
-    evapor = 1, # evaporation = 1
+    evapor = 10, # evaporation = 1
     infiltr = 2, # infiltration = 2
     runoff = 3 # runoff = 3
   )
@@ -23,39 +23,33 @@ test_that("calculate_delta_w() works", {
 
   df_3 <- data.frame(
     code = c("a", "b", "c"),
-    evapor = 1:3, # evaporation = 1
-    infiltr = 2:4, # infiltration = 2
-    runoff = 3:5 # runoff = 3
+    evapor = c(10, 2, 3),
+    infiltr = c(2, 7, 4),
+    runoff = c(1, 5, 8)
   )
+  stopifnot(all.equal(rowSums(df_3[, -1L]), 13:15))
 
   df_2 <- data.frame(
     code = c("a", "c"),
-    evapor = 4:5, # evaporation = 4
-    infiltr = 5:6, # infiltration = 5
-    runoff = 6:7
+    evapor = c(4, 5),
+    infiltr = c(5, 6),
+    runoff = c(4, 4)
   )
+  stopifnot(all.equal(rowSums(df_2[, -1L]), c(13, 15)))
 
-  expect_error(f(natural = natural, urban = urban, implementation = 4L))
+  base_check <- function(result) {
+    expect_true(is.data.frame(result))
+    expect_identical(names(result), c("code", "delta_w"))
+    result
+  }
 
-  # three implementations return the same results
-  result_1 <- f(natural = natural, urban = urban, implementation = 1L)
-  result_2 <- f(natural = natural, urban = urban, implementation = 2L)
-  result_3 <- f(natural = natural, urban = urban, implementation = 3L)
+  base_check(result_1 <- f(natural, urban))
+  base_check(result_2 <- f(urban, natural))
+  expect_equal(result_1, result_2)
 
-  expect_true(is.data.frame(result_1))
-  expect_true(is.data.frame(result_2))
-  expect_true(is.data.frame(result_3))
+  base_check(result_32 <- f(df_3, df_2))
+  base_check(result_23 <- f(df_2, df_3))
 
-  expect_identical(names(result_1), "delta_w")
-  expect_identical(names(result_2), c("code", "delta_w"))
-  expect_identical(names(result_3), c("code", "delta_w"))
-
-  f(df_3, df_2, implementation = 1L)
-  f(df_3, df_2, implementation = 2L)
-  f(df_3, df_2, implementation = 3L)
-
-  expect_error(f(df_2, df_3, implementation = 1L))
-  expect_error(f(df_2, df_3, implementation = 2L))
-  expect_error(f(df_2, df_3, implementation = 3L))
-
+  expect_true(all.equal(result_32$code, c("a", "c")))
+  expect_true(all.equal(result_32, result_23))
 })
