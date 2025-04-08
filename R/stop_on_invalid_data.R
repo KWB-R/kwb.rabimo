@@ -11,13 +11,24 @@ stop_on_invalid_data <- function(data)
     fetch("rabimo_berlin")[fetch(property) == value]
   }
 
+  # Helper function to check values in columns
+  check_columns <- function(data, columns, check, msg) {
+    for (column in columns) {
+      stopifnot(is.function(check))
+      failed <- !check(select_columns(data, column))
+      if (any(failed)) {
+        stop_formatted(msg, column, sum(failed))
+      }
+    }
+  }
+
   # Stop if any required column is missing
   missing <- setdiff(columns_with("type", "required"), names(data))
 
   if (length(missing)) {
     info <- dplyr::filter(column_info, .data[["rabimo_berlin"]] %in% missing)
     clean_stop("There are missing columns:\n", paste(collapse = "\n", sprintf(
-        "- %s (%s)", info$rabimo_berlin, info$meaning
+      "- %s (%s)", info$rabimo_berlin, info$meaning
     )))
   }
 
@@ -74,6 +85,11 @@ stop_on_invalid_data <- function(data)
 # get_expected_data_type -------------------------------------------------------
 get_expected_data_type <- function(columns = NULL)
 {
+  columns_to_named_vector <- function(data, key_column, value_column) {
+    select_columns(data, value_column) %>%
+      stats::setNames(select_columns(data, key_column))
+  }
+
   type_info <- read_column_info() %>%
     columns_to_named_vector(
       key_column = "rabimo_berlin",
