@@ -81,8 +81,12 @@ get_roof_area <- function(blocks)
 # get_main_area ----------------------------------------------------------------
 get_main_area <- function(blocks)
 {
-  select_columns(blocks, "total_area") *
-    select_columns(blocks, "main_frac")
+  main_frac <- if (is.null(blocks$main_frac)) {
+    1
+  } else {
+    blocks$main_frac
+  }
+  select_columns(blocks, "total_area") * main_frac
 }
 
 # get_green_roof_area ----------------------------------------------------------
