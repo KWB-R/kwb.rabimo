@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kwb.rabimo</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,13 +47,13 @@
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>data frame with columns as returned by
-<code><a href="prepare_input_data.html">prepare_input_data</a></code></p></dd>
+<dd><p>data frame similar to
+<code><a href="rabimo_inputs_2025.html">rabimo_inputs_2025</a>$data</code></p></dd>
 
 
 <dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
-<dd><p>configuration object (list) as returned by
-<code><a href="abimo_config_to_config.html">abimo_config_to_config</a></code></p></dd>
+<dd><p>configuration object (list) similar to
+<code><a href="rabimo_inputs_2025.html">rabimo_inputs_2025</a>$config</code></p></dd>
 
 
 <dt id="arg-controls">controls<a class="anchor" aria-label="anchor" href="#arg-controls"></a></dt>
@@ -94,7 +94,7 @@ the list returned by <code><a href="define_controls.html">define_controls()</a><
 <span class="r-in"><span><span class="va">results_2025</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">inputs_2025</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Collecting climate related data ... ok. (0.00 secs) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Preparing soil property data for all block areas ... ok. (0.02 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for impervious areas ... ok. (0.23 secs) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for impervious areas ... ok. (0.13 secs) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.04 secs) </span>
 </code></pre></div>
     </div>
