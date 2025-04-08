@@ -64,7 +64,7 @@ y_ratio <- function(bagrov_parameter, x_ratio)
 # y_ratio_2 --------------------------------------------------------------------
 y_ratio_2 <- function(bagrov_parameter, x_ratio)
 {
-  df <- kwb.abimo::calculate_bagrov_curve(
+  df <- calculate_bagrov_curve(
     effectivity = bagrov_parameter,
     P_over_Ep_max = x_ratio + 0.1,
     delta_Ea = 1
@@ -94,6 +94,7 @@ y_ratio_2 <- function(bagrov_parameter, x_ratio)
 #' @param use_abimo_algorithm whether or not to use the original algorithm that
 #'   is implemented in the C++ code (converted to R:
 #'   \code{kwb.rabimo:::yratio_cpp}). Default: \code{FALSE}
+#' @keywords internal
 y_ratio_3 <- function(
     bagrov_parameter,
     x_ratio,
@@ -144,7 +145,7 @@ y_ratio_3 <- function(
       bagrov <- combiset$bagrov_parameter[1L]
       cat_and_run(
         paste("Calculating BAGROV curve for BAGROV parameter =", bagrov),
-        kwb.abimo::calculate_bagrov_curve(
+        calculate_bagrov_curve(
           effectivity = bagrov,
           P_over_Ep_max = P_over_Ep_max,
           delta_Ea = 1

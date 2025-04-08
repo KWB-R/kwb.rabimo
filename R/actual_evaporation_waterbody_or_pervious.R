@@ -2,7 +2,8 @@
 
 #' Calculate Actual Evapotranspiration for Waterbodies or Pervious Areas
 #'
-#' @param usage_tuple list as returned by \code{\link{get_usage_tuple}}
+#' @param usage_tuple list with elements \code{land_type}, \code{veg_class},
+#'   \code{irrigation}
 #' @param climate list with elements \code{epot.year}, \code{epot.summer}
 #'   (potential evaporation in mm per year and in the summer period,
 #'   respecively), \code{prec.year}, \code{prec.summer} (precipitation in mm
@@ -17,7 +18,7 @@
 #'   this number of digits. This reduces the number of BAGROV curves that need
 #'   to be calculated and thus improves the performance (by reducing the
 #'   precision of the output)
-#' @export
+#' @keywords internal
 actual_evaporation_waterbody_or_pervious <- function(
     usage_tuple,
     climate,
@@ -267,6 +268,7 @@ is_wet_summer <- function(prec_summer, epot_summer)
 }
 
 # wet_summer_correction_factor -------------------------------------------------
+#' @importFrom stats approx
 wet_summer_correction_factor <- function(
     water_availability, epot_summer, use_abimo_approx = TRUE
 )
@@ -278,7 +280,7 @@ wet_summer_correction_factor <- function(
   if (use_abimo_approx) {
     interpolate(x = x, y = y, xout = xout)
   } else {
-    select_columns(approx(x = x, y = y, xout = xout, rule = 2L), "y")
+    select_columns(stats::approx(x = x, y = y, xout = xout, rule = 2L), "y")
   }
 }
 

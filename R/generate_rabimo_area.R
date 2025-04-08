@@ -1,6 +1,7 @@
 # generate_rabimo_area ---------------------------------------------------------
 
-#' Generate an area in R-ABIMO format with default values.
+#' Generate an area in R-ABIMO format with default values
+#'
 #' All default values can be overridden by entering new key-value pairs.
 #'
 #' @param code identifier of area

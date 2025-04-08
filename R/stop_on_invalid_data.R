@@ -1,9 +1,7 @@
 # stop_on_invalid_data ---------------------------------------------------------
+#' @importFrom rlang .data
 stop_on_invalid_data <- function(data)
 {
-  #kwb.utils::assignPackageObjects("kwb.rabimo")
-  #data <- prepare_input_data(kwb.abimo::abimo_input_2019, abimo_config_to_config(kwb.abimo::read_config()))
-
   # Read information on column names and types
   column_info <- read_column_info()
 
@@ -13,13 +11,24 @@ stop_on_invalid_data <- function(data)
     fetch("rabimo_berlin")[fetch(property) == value]
   }
 
+  # Helper function to check values in columns
+  check_columns <- function(data, columns, check, msg) {
+    for (column in columns) {
+      stopifnot(is.function(check))
+      failed <- !check(select_columns(data, column))
+      if (any(failed)) {
+        stop_formatted(msg, column, sum(failed))
+      }
+    }
+  }
+
   # Stop if any required column is missing
   missing <- setdiff(columns_with("type", "required"), names(data))
 
   if (length(missing)) {
     info <- dplyr::filter(column_info, .data[["rabimo_berlin"]] %in% missing)
     clean_stop("There are missing columns:\n", paste(collapse = "\n", sprintf(
-        "- %s (%s)", info$rabimo_berlin, info$meaning
+      "- %s (%s)", info$rabimo_berlin, info$meaning
     )))
   }
 
@@ -66,16 +75,21 @@ stop_on_invalid_data <- function(data)
     )
   )
 
-  surface_cols_no_rd <- matching_names(data, pattern_no_roads())
-  surface_cols_rd <- matching_names(data, pattern_roads())
+  check_sum_up_to_1_or_0(data, matching_names(data, pattern_no_roads()))
 
-  check_sum_up_to_1_or_0(data, surface_cols_no_rd)
-  check_sum_up_to_1_or_0(data, surface_cols_rd)
+  if (length(columns <- matching_names(data, pattern_roads()))) {
+    check_sum_up_to_1_or_0(data, columns)
+  }
 }
 
 # get_expected_data_type -------------------------------------------------------
 get_expected_data_type <- function(columns = NULL)
 {
+  columns_to_named_vector <- function(data, key_column, value_column) {
+    select_columns(data, value_column) %>%
+      stats::setNames(select_columns(data, key_column))
+  }
+
   type_info <- read_column_info() %>%
     columns_to_named_vector(
       key_column = "rabimo_berlin",

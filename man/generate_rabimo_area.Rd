@@ -2,8 +2,7 @@
 % Please edit documentation in R/generate_rabimo_area.R
 \name{generate_rabimo_area}
 \alias{generate_rabimo_area}
-\title{Generate an area in R-ABIMO format with default values.
-All default values can be overridden by entering new key-value pairs.}
+\title{Generate an area in R-ABIMO format with default values}
 \usage{
 generate_rabimo_area(code, ..., column_info = read_column_info())
 }
@@ -15,6 +14,5 @@ generate_rabimo_area(code, ..., column_info = read_column_info())
 \item{column_info}{data frame as returned by \code{\link{read_column_info}}}
 }
 \description{
-Generate an area in R-ABIMO format with default values.
 All default values can be overridden by entering new key-value pairs.
 }

@@ -7,11 +7,11 @@
 run_rabimo(data, config, controls = define_controls())
 }
 \arguments{
-\item{data}{data frame with columns as returned by
-\code{\link{prepare_input_data}}}
+\item{data}{data frame similar to
+\code{\link{rabimo_inputs_2025}$data}}
 
-\item{config}{configuration object (list) as returned by
-\code{\link{abimo_config_to_config}}}
+\item{config}{configuration object (list) similar to
+\code{\link{rabimo_inputs_2025}$config}}
 
 \item{controls}{list of settings that control how the function should behave.
 Use \code{\link{define_controls}} to define such a list. The default is

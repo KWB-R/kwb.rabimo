@@ -3,7 +3,7 @@
 test_that("run_rabimo() reproduces previous results", {
   config <- kwb.rabimo::rabimo_inputs_2020$config
   data <- kwb.rabimo::rabimo_inputs_2020$data
-  results <- kwb.rabimo::run_rabimo(data, config)
+  expect_output(results <- kwb.rabimo::run_rabimo(data, config))
   result <- colMeans(results[, c("runoff", "infiltr", "evapor")])
   expected_result <- c(runoff = 162.5073, infiltr = 184.4515, evapor = 284.8178)
   expect_equal(round(result, 4L), expected_result)

@@ -1,6 +1,7 @@
 # rescale_target_values --------------------------------------------------------
 rescale_target_values <- function(new_targets, blocks)
 {
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
   total_area <- sum(get_main_area(blocks))
   total_roof_area <- sum(get_roof_area(blocks))
   total_sealed_area <- sum(get_sealed_area(blocks))

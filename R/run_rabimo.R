@@ -2,10 +2,10 @@
 
 #' Run R-Abimo, the R-implementation of Water Balance Model Abimo
 #'
-#' @param data data frame with columns as returned by
-#'   \code{\link{prepare_input_data}}
-#' @param config configuration object (list) as returned by
-#'   \code{\link{abimo_config_to_config}}
+#' @param data data frame similar to
+#'   \code{\link{rabimo_inputs_2025}$data}
+#' @param config configuration object (list) similar to
+#'   \code{\link{rabimo_inputs_2025}$config}
 #' @param controls list of settings that control how the function should behave.
 #'   Use \code{\link{define_controls}} to define such a list. The default is
 #'   the list returned by \code{define_controls()}.
@@ -374,7 +374,7 @@ get_climate <- function(input)
 #'
 #' @param height height in mm
 #' @param area area in square metres
-#' @export
+#' @keywords internal
 yearly_height_to_volume_flow <- function(height, area)
 {
   height * 3.171 * area / 100000.0
@@ -402,8 +402,22 @@ yearly_height_to_volume_flow <- function(height, area)
 #' @export
 #' @examples
 #' inputs <- kwb.rabimo::rabimo_inputs_2020
-#' result <- run_rabimo(inputs$data, inputs$config)
-#' colMeans(as.matrix(result[, -1L]))
+#' test_data <- inputs$data[sample(seq_len(nrow(inputs$data)), size = 1000L), ]
+#' controls_default <- define_controls()
+#' controls_no_check <- define_controls(check = FALSE)
+#' controls_no_solver <- define_controls(use_abimo_bagrov_solver = FALSE)
+#' system.time(result_default <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_default
+#' ))
+#' system.time(result_no_check <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_no_check
+#' ))
+#' identical(result_default, result_no_check)
+#' \dontrun{
+#' system.time(result_no_solver <- kwb.rabimo::run_rabimo(
+#'   test_data, inputs$config, controls_no_solver
+#' ))
+#' }
 define_controls <- function(
     check = TRUE,
     use_abimo_bagrov_solver = TRUE,

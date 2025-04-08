@@ -17,7 +17,7 @@
 #'   updated. In case of \code{intermediates = TRUE}, the data frame has
 #'   attributes \code{green_roof_table}, \code{unpaved_area_table},
 #'   \code{swale_connection_table}, carrying intermediate results.
-#' @export
+#' @keywords internal
 distribute_measures <- function(blocks, targets, intermediates = FALSE)
 {
   target_green_roof <- targets[["green_roof"]]
@@ -81,8 +81,12 @@ get_roof_area <- function(blocks)
 # get_main_area ----------------------------------------------------------------
 get_main_area <- function(blocks)
 {
-  select_columns(blocks, "total_area") *
-    select_columns(blocks, "main_frac")
+  main_frac <- if (is.null(blocks$main_frac)) {
+    1
+  } else {
+    blocks$main_frac
+  }
+  select_columns(blocks, "total_area") * main_frac
 }
 
 # get_green_roof_area ----------------------------------------------------------
