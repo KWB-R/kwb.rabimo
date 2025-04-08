@@ -14,6 +14,7 @@ run_rabimo_with_measures <- function(
     config = kwb.rabimo::rabimo_inputs_2020$config
 )
 {
+  #kwb.utils::assignPackageObjects("kwb.rabimo")
   rescaled_targets <- rescale_target_values(
     new_targets = measures,
     blocks = blocks
