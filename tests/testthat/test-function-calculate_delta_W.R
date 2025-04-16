@@ -9,15 +9,15 @@ test_that("calculate_delta_w() works", {
   # Define inputs
   natural <- data.frame(
     code = "a",
-    evapor = 10, # evaporation = 1
-    infiltr = 2, # infiltration = 2
-    runoff = 3 # runoff = 3
+    evapor = 10,
+    infiltr = 2,
+    runoff = 3
   )
 
   urban <- data.frame(
     code = "a",
-    evapor = 4, # evaporation = 4
-    infiltr = 5, # infiltration = 5
+    evapor = 4,
+    infiltr = 5,
     runoff = 6
   )
 
