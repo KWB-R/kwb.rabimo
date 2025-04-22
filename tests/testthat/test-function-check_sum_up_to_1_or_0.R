@@ -4,7 +4,7 @@ test_that("check_sum_up_to_1_or_0() works", {
 
   expect_error(f())
 
-  expect_error(f(
+  expect_output(expect_error(f(
     data.frame(
       code = c("btf1", "btf2"),
       a = 1:2,
@@ -12,7 +12,7 @@ test_that("check_sum_up_to_1_or_0() works", {
       c = 3:4
     ),
     columns = c("a", "c")
-  ))
+  )))
 
   expect_null(f(
     data.frame(
