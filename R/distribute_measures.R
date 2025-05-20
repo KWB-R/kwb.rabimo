@@ -166,10 +166,15 @@ get_swale_connection_table <- function(unpaved_area_table, target, total_area)
   shares <- select_columns(unpaved_area_table, "corr_sca_frac")
   to_swale_areas <- select_columns(unpaved_area_table, "corr_sca") #???
   zeros <- rep(0, nrow(unpaved_area_table))
+  total_sealed_area <- sum(sealed_areas)
 
-  sealed_mean <- sum(sealed_areas) / total_area
+  sealed_mean <- total_sealed_area / total_area
 
-  to_swale_diff_rel <- target - sum(corrected_scas) / sum(sealed_areas)
+  to_swale_diff_rel <- if(total_sealed_area > 0) {
+    target - sum(corrected_scas) / total_sealed_area
+  } else {
+    0
+  }
   total_diff_area <- to_swale_diff_rel * sealed_mean * total_area
 
   to_increase <- total_diff_area > 0
