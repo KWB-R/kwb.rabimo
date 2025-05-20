@@ -1,4 +1,4 @@
-# kwb.rabimo 2.0.0 (2025-04-07)
+# kwb.rabimo 2.0.0 (2025-05-20)
 
 - contains new data for Berlin in which road areas do not belong to blocks 
   anymore but are blocks themselves
