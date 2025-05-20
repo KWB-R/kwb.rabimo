@@ -13,53 +13,63 @@ code of ABIMO 3.3: Water Balance Model for Urban Areas
 
 ## Installation
 
-For details on how to install KWB-R packages checkout our [installation tutorial](https://kwb-r.github.io/kwb.pkgbuild/articles/install.html).
-
 ```r
-### Optionally: specify GitHub Personal Access Token (GITHUB_PAT)
-### See here why this might be important for you:
-### https://kwb-r.github.io/kwb.pkgbuild/articles/install.html#set-your-github_pat
-
-# Sys.setenv(GITHUB_PAT = "mysecret_access_token")
-
 # Install package "remotes" from CRAN
-if (! require("remotes")) {
-  install.packages("remotes", repos = "https://cloud.r-project.org")
-}
+install.packages("remotes", repos = "https://cloud.r-project.org")
 
-# Install KWB package 'kwb.rabimo' from GitHub
+# Install package "kwb.rabimo" (latest "release") from GitHub
 remotes::install_github("KWB-R/kwb.rabimo")
+
+# Install package "kwb.rabimo" (development version) from GitHub
+remotes::install_github("KWB-R/kwb.rabimo@dev")
 ```
 
-## Basic usage
+## Basic Usage
+
+### Provide input data and configuration
+
+Compared to the original C++ version of Abimo we have modified the structures
+of input data, output data and configuration.
+
+For the German city of Berlin, we provide data in the new structures in the 
+package:
 
 ```r
-# Load Berlin data from the R-wrapper package kwb.abimo
-data <- kwb.abimo::abimo_input_2019
+# Load Berlin data in the original Abimo format
+abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
+```
 
-# Provide Abimo's default configuration 
-abimo_config <- kwb.abimo:::read_config()
+### Run R-Abimo for the status quo
 
-# Use the R-wrapper to run Abimo.exe
-abimo_result <- kwb.abimo::run_abimo(input_data = data, config = abimo_config)
+```r
+# Run R-Abimo, the R-implementation of Abimo
+rabimo_result <- kwb.rabimo::run_rabimo(
+  data = abimo_inputs$data, 
+  config = abimo_inputs$config
+)
 
-# Prepare a configuration for R-Abimo, based on the default Abimo configuration
-config <- kwb.rabimo::abimo_config_to_config(abimo_config)
-
-# Run R-Abimo, the R-implementation of Abimo in this package
-rabimo_result <- kwb.rabimo::run_rabimo(data, config)
-
-# Have a look at the first lines of the result data frames
-head(abimo_result)
+# Have a look at the first lines of the result data frame
 head(rabimo_result)
+```
 
-# Plot the differences between Abimo and R-Abimo, per variable
-for (name in names(abimo_result)[-1L]) {
-  x <- abimo_result[[name]]
-  y <- rabimo_result[[name]]
-  plot(x, y, xlab = "Abimo", ylab = "Rabimo", main = name, asp = 1)
-}
+### Run R-Abimo for a natural state scenario
 
+```r
+rabimo_result_natural <- kwb.rabimo::run_rabimo(
+  data = kwb.rabimo::data_to_natural(abimo_inputs$data), 
+  config = new_inputs$config
+)
+```
+
+### Calculate "Delta-W"
+
+For the first ten blocks, calculate the deviation from the natural state:
+
+```r
+kwb.rabimo::calculate_delta_w(
+  urban = rabimo_result[1:10, ],
+  natural = rabimo_result_natural
+)
 ```
 
 ## Documentation

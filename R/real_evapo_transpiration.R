@@ -24,6 +24,15 @@ real_evapo_transpiration <- function(
     ...
 )
 {
+
+  if(FALSE)
+  {
+    potential_evaporation = ep_year[i]
+    x_ratio = available_water / ep_year[i]
+    bagrov_parameter = bagrov_values
+    FUN_y_ratio = y_ratio_3
+  }
+
   # Calculate the x-factor of the Bagrov relation
   if (is.null(x_ratio)) {
     x_ratio <- precipitation / potential_evaporation
@@ -33,6 +42,7 @@ real_evapo_transpiration <- function(
 
   # ... and calculate the real evapotransporation using the estimated y-ratio
   FUN_y_ratio(bagrov_parameter, x_ratio, ...) * potential_evaporation
+  #FUN_y_ratio(bagrov_parameter, x_ratio, use_abimo_algorithm = TRUE) * potential_evaporation
 }
 
 # y_ratio ----------------------------------------------------------------------
@@ -54,7 +64,7 @@ y_ratio <- function(bagrov_parameter, x_ratio)
 # y_ratio_2 --------------------------------------------------------------------
 y_ratio_2 <- function(bagrov_parameter, x_ratio)
 {
-  df <- kwb.abimo::calculate_bagrov_curve(
+  df <- calculate_bagrov_curve(
     effectivity = bagrov_parameter,
     P_over_Ep_max = x_ratio + 0.1,
     delta_Ea = 1
@@ -84,6 +94,7 @@ y_ratio_2 <- function(bagrov_parameter, x_ratio)
 #' @param use_abimo_algorithm whether or not to use the original algorithm that
 #'   is implemented in the C++ code (converted to R:
 #'   \code{kwb.rabimo:::yratio_cpp}). Default: \code{FALSE}
+#' @keywords internal
 y_ratio_3 <- function(
     bagrov_parameter,
     x_ratio,
@@ -110,6 +121,7 @@ y_ratio_3 <- function(
     index = seq_along(bagrov_parameter)
   )
 
+  # TODO: Can we use kwb.utils::callWithData() here?
   combisets <- split(combis, combis$bagrov_parameter)
 
   if (use_abimo_algorithm) {
@@ -133,7 +145,7 @@ y_ratio_3 <- function(
       bagrov <- combiset$bagrov_parameter[1L]
       cat_and_run(
         paste("Calculating BAGROV curve for BAGROV parameter =", bagrov),
-        kwb.abimo::calculate_bagrov_curve(
+        calculate_bagrov_curve(
           effectivity = bagrov,
           P_over_Ep_max = P_over_Ep_max,
           delta_Ea = 1
@@ -160,7 +172,6 @@ y_ratio_3 <- function(
           ncores
         ),
         expr = {
-          # Call the call_with_data function in a (parallel) loop
           parallel::parLapply(cl, combisets, fun = getBagrovCurve)
         }
       )

@@ -5,28 +5,25 @@
 \title{Calculate Soil Properties}
 \usage{
 get_soil_properties(
-  usage,
-  yield,
+  land_type,
+  veg_class,
   depth_to_water_table,
   field_capacity_30,
   field_capacity_150,
-  default_for_waterbodies = NA,
   dbg = FALSE
 )
 }
 \arguments{
-\item{usage}{usage string, one of "vegetationless_D", "waterbody_G",
-"horticultural_K", "agricultural_L", "forested_W"}
+\item{land_type}{land_type string, one of "vegetationless", "waterbody",
+"horticultural", "urban", "forested"}
 
-\item{yield}{yield class}
+\item{veg_class}{vegetation class}
 
 \item{depth_to_water_table}{depth to water table}
 
 \item{field_capacity_30}{field capacity in 30 cm depth}
 
 \item{field_capacity_150}{field capacity in 150 cm depth}
-
-\item{default_for_waterbodies}{value to be used for waterbodies. Default: NA}
 
 \item{dbg}{logical indicating whether or not to show debug messages}
 }

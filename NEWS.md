@@ -1,3 +1,19 @@
+# kwb.rabimo 2.0.0 (2025-05-20)
+
+- contains new data for Berlin in which road areas do not belong to blocks 
+  anymore but are blocks themselves
+- change in input format
+  - new (English) column names,
+  - partial areas are given as fractions instead of percentages or absolute 
+    areas
+  - columns with redundant information are removed
+  - potential evaporation is now part of the input data (was originally 
+    configured in the configuration file)
+  - model-internal parameters "land_type", "yield" (renamed to: "veg_class"), 
+    and "irrigation", originally determined from Berlin-specific block area 
+    usage and structure, are now explicitly given in the input data
+- supports stormwater management measures
+
 # kwb.rabimo 1.0.0 (2023-11-09)
 
 First release of kwb.rabimo. This version tries to simulate exactly what
