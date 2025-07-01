@@ -106,10 +106,23 @@ get_expected_data_type <- function(columns = NULL)
 # check_sum_up_to_1_or_0 -------------------------------------------------------
 check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
 {
+  select_columns <- kwb.utils::selectColumns
+  
   # Helper function to check for equality allowing a tolerance
   equals <- function(a, b) abs(a - b) <= tolerance
 
-  sums <- rowSums(select_columns(data, columns))
+  column_data <- select_columns(data, columns)
+  
+  # Check for non-numeric columns
+  is_numeric <- sapply(column_data, is.numeric)
+  if (any(!is_numeric)) {
+    clean_stop(
+      "There are non-numeric columns in check_sum_up_to_1_or_0(): ",
+      paste0('"', columns[!is_numeric], '"', collapse = ", ")
+    )
+  }
+  
+  sums <- rowSums(column_data)
   ok <- equals(sums, 0) | equals(sums, 1)
 
   if (all(ok)) {

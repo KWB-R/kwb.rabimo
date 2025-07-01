@@ -1,9 +1,15 @@
+#library(testthat)
 test_that("check_sum_up_to_1_or_0() works", {
 
   f <- kwb.rabimo:::check_sum_up_to_1_or_0
 
   expect_error(f())
 
+  expect_error(
+    f(data = data.frame(a = "a", b = "b"), columns = c("a", "b")),
+    "There are non-numeric columns"
+  )
+  
   expect_output(expect_error(f(
     data.frame(
       code = c("btf1", "btf2"),
