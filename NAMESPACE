@@ -2,6 +2,7 @@
 
 export("%>%")
 export(calculate_delta_w)
+export(crop_box)
 export(data_to_natural)
 export(define_controls)
 export(generate_rabimo_area)

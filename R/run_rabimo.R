@@ -22,17 +22,18 @@
 #' # Run R-Abimo
 #' results_2020 <- kwb.rabimo::run_rabimo(data, inputs_2020$config)
 #'
-#' # Get input data and config for Berlin (version 2025)
+#' if (requireNamespace("sf")) {
+#' 
+#' #' # Get input data and config for Berlin (version 2025)
 #' inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
-#'
-#' # Randomly select 1000 blocks (to reduce runtime)
-#' data <- inputs_2025$data
-#' data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
+#' 
+#' # Crop a box (to reduce runtime)
+#' data <- crop_box(inputs_2025$data)
 #'
 #' # Run R-Abimo
 #' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
-#' if (requireNamespace("sf")) {
-#'   plot(results_2025)
+#'   
+#' plot(results_2025)
 #' }
 run_rabimo <- function(data, config, controls = define_controls())
 {
@@ -49,12 +50,7 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # If data inherits from "sf", save geometry columns and remove it from data
   if (inherits(data, "sf")) {
-    if (!requireNamespace("sf", quietly = TRUE)) {
-      stop(
-        "Package 'sf' required. Please install the package with ",
-        "'install.packages(\"sf\")'", call. = FALSE
-      )
-    }
+    check_sf_is_installed()
     sf_column <- attr(data, "sf_column")
     if (is.null(sf_column)) {
       stop("Missing attribute 'sf_column' in data.", call. = FALSE)
@@ -461,4 +457,43 @@ define_controls <- function(
     output_format = output_format,
     intermediates = intermediates
   )
+}
+
+check_sf_is_installed <- function()
+{
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop(
+      "Package 'sf' required. Please install the package with ",
+      "'install.packages(\"sf\")'", call. = FALSE
+    )
+  }
+}
+
+#' Crop a box out of a shape
+#' 
+#' @param x sf object
+#' @param scale fraction of total width/height of x to be taken
+#' @param xshift can be used to shift the box to the left/right
+#' @param yshift can be used to shift the box to the bottom/top
+#' @export
+crop_box <- function(x, scale = 0.02, xshift = 0, yshift = 0)
+{
+  stopifnot(inherits(x, "sf"))
+  check_sf_is_installed()
+  bb <- sf::st_bbox(x)
+  xmin <- bb[["xmin"]]
+  xmax <- bb[["xmax"]]
+  ymin <- bb[["ymin"]]
+  ymax <- bb[["ymax"]]
+  width <- scale * (xmax - xmin)
+  height <- scale * (ymax - ymin)
+  xmean <- (xmin + xmax) / 2
+  ymean <- (ymin + ymax) / 2
+  xmin <- xmean + xshift * xmean - width/2
+  ymin <- ymean + yshift * ymean - height/2
+  bb_new <- sf::st_bbox(
+    c(xmin = xmin, xmax = xmin + width, ymin = ymin, ymax = ymin + height), 
+    crs = sf::st_crs(x)
+  )
+  sf::st_crop(x, sf::st_as_sfc(bb_new))
 }
