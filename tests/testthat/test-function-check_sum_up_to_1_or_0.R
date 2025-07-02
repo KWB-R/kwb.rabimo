@@ -6,7 +6,7 @@ test_that("check_sum_up_to_1_or_0() works", {
   expect_error(f())
 
   expect_error(
-    f(data = data.frame(a = "a", b = "b"), columns = c("a", "b")),
+    f(data = data.frame(a = "a"), columns = "a"),
     "There are non-numeric columns"
   )
   

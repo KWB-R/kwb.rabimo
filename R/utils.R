@@ -9,6 +9,7 @@ clean_stop <- function(...)
 }
 
 # check_or_convert_data_types --------------------------------------------------
+#' @importFrom kwb.utils stopFormatted
 check_or_convert_data_types <- function(
     data, types, convert = FALSE, dbg = TRUE
 )
@@ -21,7 +22,7 @@ check_or_convert_data_types <- function(
     old_type <- class(data[[column]])[1L]
     if (old_type != new_type) {
       if (!convert) {
-        stop_formatted(
+        kwb.utils::stopFormatted(
           "Column '%s' (%s) does not have the expected data type (%s).",
           column, old_type, new_type
         )
@@ -173,12 +174,3 @@ select_columns <- kwb.utils::selectColumns
 # select_elements --------------------------------------------------------------
 #' @importFrom kwb.utils selectElements
 select_elements <- kwb.utils::selectElements
-
-# stop_formatted ---------------------------------------------------------------
-#' @importFrom kwb.utils stopFormatted
-stop_formatted <- kwb.utils::stopFormatted
-
-# string_list ------------------------------------------------------------------
-#' @importFrom kwb.utils stringList
-string_list <- kwb.utils::stringList
-

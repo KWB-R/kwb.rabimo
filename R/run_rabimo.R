@@ -31,6 +31,9 @@
 #'
 #' # Run R-Abimo
 #' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
+#' if (requireNamespace("sf")) {
+#'   plot(results_2025)
+#' }
 run_rabimo <- function(data, config, controls = define_controls())
 {
   # Provide functions and variables for debugging
@@ -38,11 +41,30 @@ run_rabimo <- function(data, config, controls = define_controls())
   if (FALSE)
   {
     kwb.utils::assignPackageObjects("kwb.rabimo")
-    inputs <- kwb.utils:::get_cached("rabimo_inputs_2020")
-    data <- inputs$data
-    config <- inputs$config
+    data <- kwb.rabimo::rabimo_inputs_2025$data
+    config <- kwb.rabimo::rabimo_inputs_2025$config
     controls <- define_controls()
     `%>%` <- magrittr::`%>%`
+  }
+
+  # If data inherits from "sf", save geometry columns and remove it from data
+  if (inherits(data, "sf")) {
+    if (!requireNamespace("sf", quietly = TRUE)) {
+      stop(
+        "Package 'sf' required. Please install the package with ",
+        "'install.packages(\"sf\")'", call. = FALSE
+      )
+    }
+    sf_column <- attr(data, "sf_column")
+    if (is.null(sf_column)) {
+      stop("Missing attribute 'sf_column' in data.", call. = FALSE)
+    }
+    # I used `geometry <- sf::st_geometry(data)` before but it complained that 
+    # data[[sf_column]] does not inherit from 'sfc'!
+    geometry <- sf::st_sfc(data[[sf_column]])
+    data <- sf::st_drop_geometry(data)
+  } else {
+    geometry <- NULL
   }
 
   # If road-area-specific columns are missing, create them
@@ -132,25 +154,27 @@ run_rabimo <- function(data, config, controls = define_controls())
   runoff_factors <- fetch_config("runoff_factors")
 
   # actual runoff from roof surface (area based, with no infiltration)
-  runoff_roof_actual <- with(data, main_frac *
-                               roof * (1 - green_roof) * swg_roof) *
-    runoff_factors[["roof"]] * runoff_roof
+  runoff_roof_actual <- with(
+    data, 
+    main_frac * roof * (1 - green_roof) * swg_roof
+  ) * runoff_factors[["roof"]] * runoff_roof
 
   # actual runoff from green roof surface (area based, with no infiltration)
-  runoff_green_roof_actual <- with(data, main_frac *
-                                     roof * green_roof * swg_roof) *
-    runoff_factors[["roof"]] * runoff_green_roof
+  runoff_green_roof_actual <- with(
+    data, 
+    main_frac * roof * green_roof * swg_roof
+  ) * runoff_factors[["roof"]] * runoff_green_roof
 
   # actual infiltration from roof surface (area based, with no runoff)
-  infiltration_roof_actual <- with(data, main_frac * roof *
-                                     (1-green_roof) * (1-swg_roof)) *
-    runoff_roof
+  infiltration_roof_actual <- with(
+    data, main_frac * roof * (1-green_roof) * (1-swg_roof)
+  ) * runoff_roof
 
   # actual infiltration from green_roof surface (area based, with no runoff)
-  infiltration_green_roof_actual <- with(data, main_frac * roof *
-                                           green_roof * (1-swg_roof)) *
-    runoff_green_roof
-
+  infiltration_green_roof_actual <- with(
+    data, 
+    main_frac * roof * green_roof * (1-swg_roof)
+  ) * runoff_green_roof
 
   # Calculate runoff for all surface classes at once
   # (contains both surface runoff and infiltration components)
@@ -297,9 +321,13 @@ run_rabimo <- function(data, config, controls = define_controls())
     clean_stop("controls$output_format must be either 'abimo' or 'rabimo'.")
   }
 
-  # Round all columns to three digits (skip first column: "CODE")
+  # Round all columns to three digits (skip first column: "code")
   result_data[-1L] <- lapply(result_data[-1L], round, 3L)
 
+  if (!is.null(geometry)) {
+    result_data <- sf::st_as_sf(cbind(result_data, geometry))
+  }
+    
   if (isFALSE(control("intermediates"))) {
     return(result_data)
   }

@@ -43,4 +43,7 @@ data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
 
 # Run R-Abimo
 results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
+if (requireNamespace("sf")) {
+  plot(results_2025)
+}
 }
