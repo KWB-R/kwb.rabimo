@@ -39,7 +39,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">crop_box</span><span class="op">(</span><span class="va">x</span>, scale <span class="op">=</span> <span class="fl">0.02</span>, xshift <span class="op">=</span> <span class="fl">0</span>, yshift <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">crop_box</span><span class="op">(</span><span class="va">x</span>, xoffset <span class="op">=</span> <span class="fl">0.45</span>, yoffset <span class="op">=</span> <span class="fl">0.45</span>, xscale <span class="op">=</span> <span class="fl">0.1</span>, yscale <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -50,16 +50,20 @@
 <dd><p>sf object</p></dd>
 
 
-<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>fraction of total width/height of x to be taken</p></dd>
+<dt id="arg-xoffset">xoffset<a class="anchor" aria-label="anchor" href="#arg-xoffset"></a></dt>
+<dd><p>x-offset as fraction of original width (0..1)</p></dd>
 
 
-<dt id="arg-xshift">xshift<a class="anchor" aria-label="anchor" href="#arg-xshift"></a></dt>
-<dd><p>can be used to shift the box to the left/right</p></dd>
+<dt id="arg-yoffset">yoffset<a class="anchor" aria-label="anchor" href="#arg-yoffset"></a></dt>
+<dd><p>y-offset as fraction of original height (0..1)</p></dd>
 
 
-<dt id="arg-yshift">yshift<a class="anchor" aria-label="anchor" href="#arg-yshift"></a></dt>
-<dd><p>can be used to shift the box to the bottom/top</p></dd>
+<dt id="arg-xscale">xscale<a class="anchor" aria-label="anchor" href="#arg-xscale"></a></dt>
+<dd><p>new width as fraction of original width (0..1)</p></dd>
+
+
+<dt id="arg-yscale">yscale<a class="anchor" aria-label="anchor" href="#arg-yscale"></a></dt>
+<dd><p>new height as fraction of original height (0..1)</p></dd>
 
 </dl></div>
 
