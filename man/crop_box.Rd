@@ -4,16 +4,18 @@
 \alias{crop_box}
 \title{Crop a box out of a shape}
 \usage{
-crop_box(x, scale = 0.02, xshift = 0, yshift = 0)
+crop_box(x, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
 }
 \arguments{
 \item{x}{sf object}
 
-\item{scale}{fraction of total width/height of x to be taken}
+\item{xoffset}{x-offset as fraction of original width (0..1)}
 
-\item{xshift}{can be used to shift the box to the left/right}
+\item{yoffset}{y-offset as fraction of original height (0..1)}
 
-\item{yshift}{can be used to shift the box to the bottom/top}
+\item{xscale}{new width as fraction of original width (0..1)}
+
+\item{yscale}{new height as fraction of original height (0..1)}
 }
 \description{
 Crop a box out of a shape

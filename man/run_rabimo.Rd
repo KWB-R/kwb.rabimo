@@ -36,15 +36,15 @@ results_2020 <- kwb.rabimo::run_rabimo(data, inputs_2020$config)
 
 if (requireNamespace("sf")) {
 
-#' # Get input data and config for Berlin (version 2025)
-inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
+  # Get input data and config for Berlin (version 2025)
+  inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
 
-# Crop a box (to reduce runtime)
-data <- crop_box(inputs_2025$data)
+  # Crop a box (to reduce runtime)
+  data <- crop_box(inputs_2025$data)
 
-# Run R-Abimo
-results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
+  # Run R-Abimo
+  results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
   
-plot(results_2025)
+  plot(results_2025[, -1L])
 }
 }
