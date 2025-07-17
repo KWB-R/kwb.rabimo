@@ -85,7 +85,7 @@ function <code><a href="run_rabimo.html">run_rabimo</a></code>.</p>
 <dd><p>Long-term average of annual potential evapotranspiration within summer months (May to October) in mm (integer)</p></dd>
 
 <dt><code>district</code></dt>
-<dd><p>Number of Berlin "Bezirk" (district) in which the block area is located (character)</p></dd>
+<dd><p>Number of Berlin "Bezirk" (district) in which the block area is located (character). This column is Berlin-specific and optional, i.e. not required by the model.</p></dd>
 
 <dt><code>total_area</code></dt>
 <dd><p>Total block area in square metres (numeric)</p></dd>
@@ -169,7 +169,7 @@ function <code><a href="run_rabimo.html">run_rabimo</a></code>.</p>
 <dd><p>Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character)</p></dd>
 
 
-</dl><p>Note 1: The sum of surface class fractions <code>srf1_pvd</code>, <code>srf1_pvd</code>, <code>srf1_pvd</code>, <code>srf1_pvd</code>, <code>srf1_pvd</code> should be 1.0 within each block area.</p>
+</dl><p>Note 1: The sum of surface class fractions <code>srf1_pvd</code>, <code>srf2_pvd</code>, <code>srf3_pvd</code>, <code>srf4_pvd</code>, <code>srf5_pvd</code> should be 1.0 within each block area.</p>
 <p>Note 2: The fields with suffix "_r" are all zero because rows are modelled as their own blocks. In an earlier version of the dataset, roads were modelled as parts of the block area.</p>
 </div>
 
