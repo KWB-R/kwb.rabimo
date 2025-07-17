@@ -17,7 +17,7 @@
 #'   \item{`prec_s`}{Long-term average of annual precipitation within summer months (May to October) in mm (integer)}
 #'   \item{`epot_yr`}{Long-term average of annual potential evapotranspiration in mm (integer)}
 #'   \item{`epot_s`}{Long-term average of annual potential evapotranspiration within summer months (May to October) in mm (integer)}
-#'   \item{`district`}{Number of Berlin "Bezirk" (district) in which the block area is located (character)}
+#'   \item{`district`}{Number of Berlin "Bezirk" (district) in which the block area is located (character). This column is Berlin-specific and optional, i.e. not required by the model.}
 #'   \item{`total_area`}{Total block area in square metres (numeric)}
 #'   \item{`main_frac`}{Fraction of the total area that is NOT considered as "road" area (numeric value between 0.0 and 1.0). This value should be 0.0 if roads are modelled separately, i.e. as block areas on their own.}
 #'   \item{`roof`}{Fraction of the total area that is considered as "roof" area (numeric value between 0.0 and 1.0)}
@@ -47,7 +47,7 @@
 #'   \item{`block_type`}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character)}
 #' }
 #'
-#' Note 1: The sum of surface class fractions `srf1_pvd`, `srf1_pvd`, `srf1_pvd`, `srf1_pvd`, `srf1_pvd` should be 1.0 within each block area.
+#' Note 1: The sum of surface class fractions `srf1_pvd`, `srf2_pvd`, `srf3_pvd`, `srf4_pvd`, `srf5_pvd` should be 1.0 within each block area.
 #'
 #' Note 2: The fields with suffix "_r" are all zero because rows are modelled as their own blocks. In an earlier version of the dataset, roads were modelled as parts of the block area.
 #'

@@ -18,10 +18,10 @@ code of ABIMO 3.3: Water Balance Model for Urban Areas
 install.packages("remotes", repos = "https://cloud.r-project.org")
 
 # Install package "kwb.rabimo" (latest "release") from GitHub
-remotes::install_github("KWB-R/kwb.rabimo")
+remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
 
 # Install package "kwb.rabimo" (development version) from GitHub
-remotes::install_github("KWB-R/kwb.rabimo@dev")
+remotes::install_github("KWB-R/kwb.rabimo@dev", build_vignettes = TRUE)
 ```
 
 ## Basic Usage

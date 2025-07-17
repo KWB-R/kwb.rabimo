@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_rabimo_area.R
 \name{generate_rabimo_area}
 \alias{generate_rabimo_area}
-\title{Generate an area in R-ABIMO format with default values}
+\title{Generate an area in R-Abimo format with default values}
 \usage{
 generate_rabimo_area(code, ..., column_info = read_column_info())
 }

@@ -14,42 +14,65 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Background
+## Background
 
 This package provides an R-implementation and extension of the simple water 
 balance model Berlin ABIMO 3.2, which was originally developed by the Federal
 Institute of Hydrology ([Bundesanstalt für Gewässerkunde](https://www.bafg.de)) 
-for rural areas and later adapted for urban areas, namely the German capital
-Berlin. In May 2022, the source code of the model was published on the developer
-platform [GitHub](https://github.com/umweltatlas/abimo). 
+for rural areas and later adapted for urban areas, namely for Berlin, Germany.
+In May 2022, the source code of the model was published on the developer
+platform GitHub ([https://github.com/umweltatlas/abimo](https://github.com/umweltatlas/abimo)). 
 
 During the research project [AMAREX](https://amarex-projekt.de/de) (an acronym 
 for the German translation of "adaptation of stormwater management to extreme
-events"), funded by the former Federal Ministry of Education and Research
-([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)), we, the authors from Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de) 
-started to work on the original program code, written in the programming language C++ [https://github.com/KWB-R/abimo](https://github.com/KWB-R/abimo/). 
-We decided to transfer the model to the programming language R, to rename it to
-R-ABIMO (see e.g. [here](https://amarex-projekt.de/en/news/abimo-r-abimo)) 
-and to publish it in the form of this R package ([kwb.rabimo](https://github.com/KWB-R/kwb.rabimo)). 
-Compared to the original model, R-ABIMO is more generic (i.e. can be more easily
+events"), funded by the former German Federal Ministry of Education and Research
+([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)), we, the package authors from [Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de) 
+started to work on the original program code, written in the programming language C++ ([https://github.com/KWB-R/abimo](https://github.com/KWB-R/abimo/)). 
+We then decided to transfer the model to the 
+[programming language R](https://www.r-project.org/), to rename it to
+R-Abimo (see e.g. [here](https://amarex-projekt.de/en/news/abimo-r-abimo)) 
+and to publish it in the form of this R package [kwb.rabimo](https://github.com/KWB-R/kwb.rabimo). 
+Compared to the original model, R-Abimo is more generic (i.e. can be more easily
 adapted to other cities than Berlin) and it contains some additional features:
 
-- simulation of rainmwater management measures (green roofs, swales)
-- "conversion" of urban areas to "natural" areas
-- calculation of delta-W, an indicator for the "distance" between status quo (urban) and "natural" state.
+- simulation of stormwater management measures (green roofs, swales),
+- "conversion" of urban areas to "natural" areas,
+- calculation of delta-W, an indicator for the "distance" between the urban (status quo) state and an assumed "natural" state.
+
+## Prerequisites
+
+To use the package, you need to have R installed in a version >= 4.3.1. 
+You can download the current version of R from [here](https://cran.r-project.org/bin/windows/base/).
+Not necessary, but useful is the usage of an Integrated Development Environment (IDE), such as RStudio Desktop that can be downloaded from
+[here](https://posit.co/download/rstudio-desktop/).
 
 ## Installation
 
-```{r setup}
-# Install package "remotes" from CRAN
-install.packages("remotes", repos = "https://cloud.r-project.org")
+In order to install kwb.rabimo directly from our GitHub account [KWB-R](https://github.com/kwb-r/), we recommend to install the R package 
+remotes first: 
 
+```{r install_remotes, eval = FALSE}
+# Install package "remotes" from CRAN
+install.packages("remotes")
+```
+
+You can then install kwb.rabimo either in the latest "official" version:
+
+```{r install_rabimo_release, eval = FALSE}
 # Install package "kwb.rabimo" (latest "release") from GitHub
 remotes::install_github("KWB-R/kwb.rabimo")
-
-# Install package "kwb.rabimo" (development version) from GitHub
-remotes::install_github("KWB-R/kwb.rabimo@dev")
 ```
+
+or in the latest "development" version:
+
+```{r install_rabimo_dev, eval = FALSE}
+# Install package "kwb.rabimo" (development version) from GitHub
+remotes::install_github("KWB-R/kwb.rabimo@dev", build_vignettes = TRUE)
+```
+
+By setting `build_vignettes = TRUE` you make sure that this tutorial vignette
+is installed together with the package. Please note that this tutorial is
+currently only available in the "development" version. 
 
 ## Basic Usage
 
@@ -57,14 +80,54 @@ remotes::install_github("KWB-R/kwb.rabimo@dev")
 
 Compared to the original C++ version of Abimo we have modified the structures
 of input data, output data and configuration.
-
-For the German city of Berlin, we provide data in the new structures in the 
+For Berlin, Germany, we provide data in the new structures in the 
 package:
 
-```r
+```{r load_berlin_data}
 # Load Berlin data in the original Abimo format
 abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
 ```
+
+The object `abimo_inputs` is a list with two elements:
+
+- `abimo_inputs$data` is a data frame containing the actual input data. Each row 
+represents a block area and each column represents a block area's property.
+- `abimo_inputs$config` is a list that configures runoff factors (for 
+runoff calculation) and Bagrov values (for evapotranspiration calculation) for 
+different surface types and the swale evaporation factor that determines which
+fraction of the water going into a swale becomes evaporation (the rest becomes
+infiltration).
+
+You may inspect the first rows of the input data with
+
+```{r view_input_data}
+head(abimo_inputs$data)
+```
+
+and you may print the whole configuration object with
+
+```{r view_input_config}
+print(abimo_inputs$config)
+```
+
+Please refer to the help page of `rabimo_inputs_2025` for further information. 
+To open the help page, run
+
+```{r help_input, eval = FALSE}
+?kwb.rabimo::rabimo_inputs_2025
+```
+
+Note: We provide also an object `rabimo_inputs_2020`, that refers to an older 
+version of the Berlin data set. It can be used in almost the same way as
+`rabimo_inputs_2020`. However, this old version does not contain geographic 
+information and we do not cover it within this tutorial.
+
+TODO: 
+
+- **Link zu Tabelle mit Erklärung der Input-Variablen**
+- **Plot der Input-Daten ohne Farben (für Visualisierung der Geometrie)**
+- **run_rabimo + Visualisierung der Ergebnisse**
+- **generate_rabimo_area mit default Werten**
 
 ### Run R-Abimo for the status quo
 
@@ -104,3 +167,15 @@ kwb.rabimo::calculate_delta_w(
 Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
 
 Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
+
+
+
+
+Delta-W:
+Bedeutung + Formel DeltaW
+data_to_natural + WHH im nat. Referenzszenario berechnen. (evtl. hier Korrektur erforderlich weil Geodaten nicht supported)
+calculate_delta_w
+ RWBM
+sehr kurze Intro zu den implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?)
+wie man gezielt einen Wert in einer bestimmten Spalte (z.B. green_roof) oder in alle Spalten ändert
+Plot von vorher vs. nachher

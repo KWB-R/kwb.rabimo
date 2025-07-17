@@ -9,18 +9,18 @@
 #' @format ## `rabimo_inputs_2025`
 #' A list containing two elements:
 #' \describe{
-#'   \item{data}{a data frame with the input data in r-abimo format ...(number of vars)}
-#'   \item{config}{a list object with configuration data}
+#'   \item{data}{a data frame with the input data in R-Abimo format (see below)}
+#'   \item{config}{a list object with configuration data (see below)}
 #' }
 #' @format ## `rabimo_inputs_2025$data`
-#' A data.frame with 58531 observations of 25 variables:
+#' A data.frame with 58531 observations of 26 variables:
 #' \describe{
 #'   \item{`code`}{Unique block area identifier (character)}
 #'   \item{`prec_yr`}{Long-term average of annual precipitation in mm (integer)}
 #'   \item{`prec_s`}{Long-term average of annual precipitation within summer months (May to October) in mm (integer)}
 #'   \item{`epot_yr`}{Long-term average of annual potential evapotranspiration in mm (integer)}
 #'   \item{`epot_s`}{Long-term average of annual potential evapotranspiration within summer months (May to October) in mm (integer)}
-#'   \item{`district`}{Number of Berlin "Bezirk" (district) in which the block area is located (character)}
+#'   \item{`district`}{Number of Berlin "Bezirk" (district) in which the block area is located (character). This column is Berlin-specific and optional, i.e. not required by the model.}
 #'   \item{`total_area`}{Total block area in square metres (numeric)}
 #'   \item{`roof`}{Fraction of the total area that is considered as "roof" area (numeric value between 0.0 and 1.0)}
 #'   \item{`green_roof`}{Fraction of the roof area that belongs to green roofs (numeric value between 0.0 and 1.0). A value of 1.0 means that all roofs in the block area are green roofs.}
@@ -32,15 +32,19 @@
 #'   \item{`srf3_pvd`}{Fraction of the paved area that belongs to surface class 3 (numeric value between 0.0 and 1.0, see note 1 below)}
 #'   \item{`srf4_pvd`}{Fraction of the paved area that belongs to surface class 4 (numeric value between 0.0 and 1.0, see note 1 below)}
 #'   \item{`srf5_pvd`}{Fraction of the paved area that belongs to surface class 5 (numeric value between 0.0 and 1.0, see note 1 below)}
-#'   \item{`to_swale`}{Fraction of sealed area (roof area + paved area) that is connected to an infiltration swale (numeric)}
+#'   \item{`to_swale`}{Fraction of sealed area (roof area + paved area) that is connected to an infiltration swale (numeric value between 0.0 and 1.0)}
 #'   \item{`gw_dist`}{Distance between groundwater table and surface in metres (numeric)}
 #'   \item{`ufc30`}{field capacity in 30 cm depth (numeric)}
 #'   \item{`ufc150`}{field capacity in 150 cm depth (numeric)}
 #'   \item{`land_type`}{land type, one of `forested`, `horticultural`, `urban`, `vegetationless`, `waterbody` (character)}
-#'   \item{`veg_class`}{vegetation class index (numeric), derived from an analysis tree volumes}
+#'   \item{`veg_class`}{vegetation class index (numeric), derived from an analysis of tree volumes}
 #'   \item{`irrigation`}{irrigation in mm per year (integer)}
-#'   \item{`block_type`}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character)}
+#'   \item{`block_type`}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character). This column is Berlin-specific and optional, i.e. not required by the model.}
+#'   \item{`Shape`}{List structure containing geometry information on the different block areas. This column is optional. If provided, it will be appended to the model output so that model results can be plotted in the form of maps.}
 #' }
+#' 
+#' Note 1: The sum of surface class fractions `srf1_pvd`, `srf2_pvd`, `srf3_pvd`, `srf4_pvd`, `srf5_pvd` should be 1.0 within each block area.
+#' 
 #' @format ## `rabimo_inputs_2025$config`
 #' A list with 3 named elements:
 #' \describe{
