@@ -66,33 +66,79 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KWB-R/kwb.rabimo" class="external-link">kwb.rabimo</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>The R package kwb.rabimo is a result of the research project <a href="https://amarex-projekt.de/de" class="external-link">AMAREX</a> (an acronym for the
+<p>This package provides an R-implementation and extension of the simple
+water balance model Berlin ABIMO 3.2, which was originally developed by
+the Federal Institute of Hydrology (<a href="https://www.bafg.de" class="external-link">Bundesanstalt für Gewässerkunde</a>) for
+rural areas and later adapted for urban areas, namely the German capital
+Berlin. In May 2022, the source code of the model was published on the
+developer platform <a href="https://github.com/umweltatlas/abimo" class="external-link">GitHub</a>.</p>
+<p>During the research project <a href="https://amarex-projekt.de/de" class="external-link">AMAREX</a> (an acronym for the
 German translation of “adaptation of stormwater management to extreme
 events”), funded by the former Federal Ministry of Education and
 Research (<a href="https://www.bmbf.de/DE/Home/home_node.html" class="external-link">Bundesministerium für
-Bildung und Forschung – BMBF</a>).</p>
-<p>In this project, the Water Balance Model ABIMO ()</p>
-<p><a href="https://github.com/umweltatlas/abimo" class="external-link">Wasserhaushaltsmodell
-Berlin ABIMO 3.2</a></p>
-<p>code in this package has been transferred from the C++ code of ABIMO
-3.3: Water Balance Model for Urban Areas (<a href="https://github.com/KWB-R/abimo/" class="external-link uri">https://github.com/KWB-R/abimo/</a>).</p>
+Bildung und Forschung – BMBF</a>), we, the authors from Kompetenzzentrum
+Wasser Berlin gGmbH (KWB)](<a href="https://kompetenz-wasser.de/de" class="external-link uri">https://kompetenz-wasser.de/de</a>) started to work on the
+original program code, written in the programming language C++ <a href="https://github.com/KWB-R/abimo/" class="external-link">https://github.com/KWB-R/abimo</a>.
+We decided to transfer the model to the programming language R, to
+rename it to R-ABIMO (see e.g. <a href="https://amarex-projekt.de/en/news/abimo-r-abimo" class="external-link">here</a>) and to
+publish it in the form of this R package (<a href="https://github.com/KWB-R/kwb.rabimo" class="external-link">kwb.rabimo</a>). Compared to
+the original model, R-ABIMO is more generic (i.e. can be more easily
+adapted to other cities than Berlin) and it contains some additional
+features:</p>
+<ul>
+<li>simulation of rainmwater management measures (green roofs,
+swales)</li>
+<li>“conversion” of urban areas to “natural” areas</li>
+<li>calculation of delta-W, an indicator for the “distance” between
+status quo (urban) and “natural” state.</li>
+</ul>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install package "remotes" from CRAN</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Installing package into 'D:/a/_temp/Library'</span></span>
+<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
+<span><span class="co">#&gt; package 'remotes' successfully unpacked and MD5 sums checked</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The downloaded binary packages are in</span></span>
+<span><span class="co">#&gt;  C:\Users\runneradmin\AppData\Local\Temp\Rtmpqiw1FW\downloaded_packages</span></span>
 <span></span>
 <span><span class="co"># Install package "kwb.rabimo" (latest "release") from GitHub</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT. Use `gitcreds::gitcreds_set()` and unset GITHUB_PAT in .Renviron (or elsewhere) if you want to use the more secure git credential store instead.</span></span>
+<span><span class="co">#&gt; Downloading GitHub repo KWB-R/kwb.rabimo@HEAD</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB;">R CMD build</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; * checking for file 'C:\Users\runneradmin\AppData\Local\Temp\Rtmpqiw1FW\remotes1e20457862cd\KWB-R-kwb.rabimo-5104cdb/DESCRIPTION' ... OK</span></span>
+<span><span class="co">#&gt; * preparing 'kwb.rabimo':</span></span>
+<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
+<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
+<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
+<span><span class="co">#&gt; * building 'kwb.rabimo_2.0.0.tar.gz'</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Installing package into 'D:/a/_temp/Library'</span></span>
+<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span></span>
 <span><span class="co"># Install package "kwb.rabimo" (development version) from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo@dev"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo@dev"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT. Use `gitcreds::gitcreds_set()` and unset GITHUB_PAT in .Renviron (or elsewhere) if you want to use the more secure git credential store instead.</span></span>
+<span><span class="co">#&gt; Downloading GitHub repo KWB-R/kwb.rabimo@dev</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB;">R CMD build</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; * checking for file 'C:\Users\runneradmin\AppData\Local\Temp\Rtmpqiw1FW\remotes1e2052e46979\KWB-R-kwb.rabimo-786d9c2/DESCRIPTION' ... OK</span></span>
+<span><span class="co">#&gt; * preparing 'kwb.rabimo':</span></span>
+<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
+<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
+<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
+<span><span class="co">#&gt; * building 'kwb.rabimo_2.0.0.9000.tar.gz'</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Installing package into 'D:/a/_temp/Library'</span></span>
+<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
@@ -104,14 +150,14 @@ Berlin ABIMO 3.2</a></p>
 structures of input data, output data and configuration.</p>
 <p>For the German city of Berlin, we provide data in the new structures
 in the package:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load Berlin data in the original Abimo format</span></span>
 <span><span class="va">abimo_inputs</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="../reference/rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="run-r-abimo-for-the-status-quo">Run R-Abimo for the status quo<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo"></a>
 </h4>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run R-Abimo, the R-implementation of Abimo</span></span>
 <span><span class="va">rabimo_result</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span>, </span>
@@ -124,7 +170,7 @@ in the package:</p>
 <div class="section level4">
 <h4 id="run-r-abimo-for-a-natural-state-scenario">Run R-Abimo for a natural state scenario<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-a-natural-state-scenario"></a>
 </h4>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rabimo_result_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/data_to_natural.html">data_to_natural</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span>, </span>
 <span>  config <span class="op">=</span> <span class="va">new_inputs</span><span class="op">$</span><span class="va">config</span></span>
@@ -135,7 +181,7 @@ in the package:</p>
 </h4>
 <p>For the first ten blocks, calculate the deviation from the natural
 state:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
 <span>  urban <span class="op">=</span> <span class="va">rabimo_result</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>,</span>
 <span>  natural <span class="op">=</span> <span class="va">rabimo_result_natural</span></span>
