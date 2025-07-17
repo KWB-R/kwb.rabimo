@@ -119,7 +119,7 @@ To open the help page, run
 
 Note: We provide also an object `rabimo_inputs_2020`, that refers to an older 
 version of the Berlin data set. It can be used in almost the same way as
-`rabimo_inputs_2020`. However, this old version does not contain geographic 
+`rabimo_inputs_2025`. However, this old version does not contain geographic 
 information and we do not cover it within this tutorial.
 
 TODO: 
