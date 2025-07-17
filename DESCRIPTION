@@ -19,7 +19,9 @@ RoxygenNote: 7.3.1
 Suggests: 
     ggplot2,
     jsonlite,
+    knitr,
     plumber,
+    rmarkdown,
     sf,
     testthat (>= 3.0.0)
 Imports: 
@@ -35,3 +37,4 @@ Depends:
     R (>= 3.5.0)
 LazyData: true
 LazyDataCompression: xz
+VignetteBuilder: knitr
