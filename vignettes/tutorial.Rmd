@@ -14,30 +14,33 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(kwb.rabimo)
-```
-
 # Background
 
-The R package kwb.rabimo is a result of the research project 
-[AMAREX](https://amarex-projekt.de/de) (an acronym for the German translation of 
-"adaptation of stormwater management to extreme events"), funded by the former 
-Federal Ministry of Education and Research ([Bundesministerium für Bildung und 
-Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)).
+This package provides an R-implementation and extension of the simple water 
+balance model Berlin ABIMO 3.2, which was originally developed by the Federal
+Institute of Hydrology ([Bundesanstalt für Gewässerkunde](https://www.bafg.de)) 
+for rural areas and later adapted for urban areas, namely the German capital
+Berlin. In May 2022, the source code of the model was published on the developer
+platform [GitHub](https://github.com/umweltatlas/abimo). 
 
-In this project, the Water Balance Model ABIMO ()
+During the research project [AMAREX](https://amarex-projekt.de/de) (an acronym 
+for the German translation of "adaptation of stormwater management to extreme
+events"), funded by the former Federal Ministry of Education and Research
+([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)), we, the authors from Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de) 
+started to work on the original program code, written in the programming language C++ [https://github.com/KWB-R/abimo](https://github.com/KWB-R/abimo/). 
+We decided to transfer the model to the programming language R, to rename it to
+R-ABIMO (see e.g. [here](https://amarex-projekt.de/en/news/abimo-r-abimo)) 
+and to publish it in the form of this R package ([kwb.rabimo](https://github.com/KWB-R/kwb.rabimo)). 
+Compared to the original model, R-ABIMO is more generic (i.e. can be more easily
+adapted to other cities than Berlin) and it contains some additional features:
 
-[Wasserhaushaltsmodell Berlin ABIMO 3.2](https://github.com/umweltatlas/abimo)
-
-
-code in this package has been transferred from the C++
-code of ABIMO 3.3: Water Balance Model for Urban Areas
-(https://github.com/KWB-R/abimo/).
+- simulation of rainmwater management measures (green roofs, swales)
+- "conversion" of urban areas to "natural" areas
+- calculation of delta-W, an indicator for the "distance" between status quo (urban) and "natural" state.
 
 ## Installation
 
-```r
+```{r setup}
 # Install package "remotes" from CRAN
 install.packages("remotes", repos = "https://cloud.r-project.org")
 
