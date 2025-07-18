@@ -234,7 +234,7 @@ indicator for the vulnerability of an urban area to climate-related effects
 (such as heat, flooding, negative impacts on the surface water quality). 
 As a measure of deviation we introduce $\Delta W$ that is calculated as follows:
 
-$$\Delta W = \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}$$
+$$ \Delta W = \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P} $$
 with 
 
 - $e_{nat}$ and $e_{urb}$ = evaporation for the natural and urban state, respectively, in mm, 
@@ -269,7 +269,7 @@ water_balance_natural <- kwb.rabimo::run_rabimo(
 )
 ```
 
-### Calculate "Delta-W"
+### Calculate and plot "Delta-W"
 
 Calculate the deviation from the natural state in percent:
 
@@ -321,7 +321,7 @@ R-Abimo currently allows to simulate three rainwater management measures:
 - unsealing of paved areas,
 - infiltration swales.
 
-#### Simulation of green roofs
+#### Simulate green roofs
 
 Green roofs increase the evaporation and reduce the runoff. In order to be able
 to simulate the effect of green roofs in R-Abimo, we have introduced a column
@@ -369,7 +369,7 @@ plot_delta_w(delta_w_green_roof, main = "Delta-W (>= 50 % green roofs)")
 The colours become brighter referring to lower Delta-W values i.e. 
 more "natural" water balances.
 
-#### Unsealing of paved areas
+#### Simulate the unsealing of paved areas
 
 The column `pvd` refers to the fractions of the total areas that are paved. In
 order to simulate that paved areas are unsealed we decrease the fraction of
@@ -409,7 +409,7 @@ plot_delta_w(delta_w_unsealed, main = "Delta-W (pavement reduced by 50 %)")
 We see an effect similar to that of the green roof scenario: colours become 
 brighter referring to smaller Delta-W values.
 
-#### Infiltration swales
+#### Simulate infiltration swales
 
 In order to simulate infiltration swales we introduced a column `to_swale` to 
 the input data. The values in this column indicate the fraction of the total
