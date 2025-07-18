@@ -122,9 +122,28 @@ version of the Berlin data set. It can be used in almost the same way as
 `rabimo_inputs_2025`. However, this old version does not contain geographic 
 information and we do not cover it within this tutorial.
 
+Since the we provide the Berlin dataset together with geographical information 
+we can plot the data in forms of maps. In the following we plot 
+
+```{r}
+# Load the sf package (simple features) to allow for geographical plotting
+library(sf)
+
+# Provide a subset of the data representing a zoom into the centre of Berlin
+berlin_zoom <- kwb.rabimo::crop_box(
+  abimo_inputs$data, 
+  xoffset = 0.35, 
+  yoffset = 0.5, 
+  xscale = 0.07, 
+  yscale = 0.07
+)
+
+# Plot annual precipitation and annual potential evaporation
+plot(berlin_zoom[, c("prec_yr", "epot_yr")])
+```
+
 TODO: 
 
-- **Link zu Tabelle mit Erklärung der Input-Variablen**
 - **Plot der Input-Daten ohne Farben (für Visualisierung der Geometrie)**
 - **run_rabimo + Visualisierung der Ergebnisse**
 - **generate_rabimo_area mit default Werten**

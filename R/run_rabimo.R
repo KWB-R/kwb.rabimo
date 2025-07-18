@@ -10,6 +10,7 @@
 #'   Use \code{\link{define_controls}} to define such a list. The default is
 #'   the list returned by \code{define_controls()}.
 #' @return data frame with columns as returned by Abimo
+#' @importFrom sf st_as_sf st_drop_geometry st_sfc
 #' @export
 #' @examples
 #' # Get input data and config for Berlin (version 2020)
@@ -22,19 +23,16 @@
 #' # Run R-Abimo
 #' results_2020 <- kwb.rabimo::run_rabimo(data, inputs_2020$config)
 #'
-#' if (requireNamespace("sf")) {
+#' # Get input data and config for Berlin (version 2025)
+#' inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
 #' 
-#'   # Get input data and config for Berlin (version 2025)
-#'   inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
-#' 
-#'   # Crop a box (to reduce runtime)
-#'   data <- crop_box(inputs_2025$data)
+#' # Crop a box (to reduce runtime)
+#' data <- crop_box(inputs_2025$data)
 #'
-#'   # Run R-Abimo
-#'   results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
+#' # Run R-Abimo
+#' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
 #'   
-#'   plot(results_2025[, -1L])
-#' }
+#' plot(results_2025[, -1L])
 run_rabimo <- function(data, config, controls = define_controls())
 {
   # Provide functions and variables for debugging
@@ -50,7 +48,6 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # If data inherits from "sf", save geometry columns and remove it from data
   if (inherits(data, "sf")) {
-    check_sf_is_installed()
     sf_column <- attr(data, "sf_column")
     if (is.null(sf_column)) {
       stop("Missing attribute 'sf_column' in data.", call. = FALSE)
@@ -459,16 +456,6 @@ define_controls <- function(
   )
 }
 
-check_sf_is_installed <- function()
-{
-  if (!requireNamespace("sf", quietly = TRUE)) {
-    stop(
-      "Package 'sf' required. Please install the package with ",
-      "'install.packages(\"sf\")'", call. = FALSE
-    )
-  }
-}
-
 #' Crop a box out of a shape
 #' 
 #' @param x sf object
@@ -476,11 +463,11 @@ check_sf_is_installed <- function()
 #' @param yoffset y-offset as fraction of original height (0..1)
 #' @param xscale new width as fraction of original width (0..1)
 #' @param yscale new height as fraction of original height (0..1)
+#' @importFrom sf st_as_sfc st_bbox st_crop
 #' @export
 crop_box <- function(x, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
 {
   stopifnot(inherits(x, "sf"))
-  check_sf_is_installed()
   sf::st_crop(x, sf::st_as_sfc(scale_bbox(
     bbox = sf::st_bbox(x), xoffset, yoffset, xscale, yscale
   )))

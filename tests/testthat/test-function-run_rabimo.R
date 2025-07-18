@@ -88,7 +88,6 @@ test_that("run_rabimo() keeps the row order", {
 })
 
 test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
-  skip_if_not_installed("sf")
   inputs <- kwb.rabimo::rabimo_inputs_2025
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
   expect_true("sf" %in% class(data))

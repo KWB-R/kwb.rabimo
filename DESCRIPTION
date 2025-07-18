@@ -22,14 +22,14 @@ Suggests:
     knitr,
     plumber,
     rmarkdown,
-    sf,
     testthat (>= 3.0.0)
 Imports: 
     dplyr,
     kwb.utils (>= 0.15.0),
     magrittr,
     parallel,
-    rlang
+    rlang,
+    sf
 Remotes: 
     github::kwb-r/kwb.utils
 Config/testthat/edition: 3

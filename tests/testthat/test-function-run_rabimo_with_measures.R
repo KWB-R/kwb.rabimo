@@ -43,8 +43,6 @@ test_that("run_rabimo_with_measures() works", {
   }
   
   test_me(data = kwb.rabimo::rabimo_inputs_2020$data)
-  
-  skip_if_not_installed("sf")
   test_me(data = kwb.rabimo::rabimo_inputs_2025$data)
   
 })
