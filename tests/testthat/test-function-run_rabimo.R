@@ -81,13 +81,14 @@ test_that("run_rabimo() works", {
 })
 
 test_that("run_rabimo() keeps the row order", {
-  inputs <- kwb.rabimo::rabimo_inputs_2025
+  inputs <- kwb.rabimo::rabimo_inputs_2020
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
   expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
   expect_identical(data$code, result$code)
 })
 
 test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
+  skip_if_not_installed("sf")
   inputs <- kwb.rabimo::rabimo_inputs_2025
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
   expect_true("sf" %in% class(data))
