@@ -92,7 +92,7 @@ features:</p>
 <li>simulation of stormwater management measures (green roofs,
 swales),</li>
 <li>“conversion” of urban areas to “natural” areas,</li>
-<li>calculation of delta-W, an indicator for the “distance” between the
+<li>calculation of delta-W, an indicator for the deviation between the
 urban (status quo) state and an assumed “natural” state.</li>
 </ul>
 </div>
@@ -101,7 +101,7 @@ urban (status quo) state and an assumed “natural” state.</li>
 </h2>
 <p>To use the package, you need to have R installed in a version &gt;=
 4.3.1. You can download the current version of R from <a href="https://cran.r-project.org/bin/windows/base/" class="external-link">here</a>. Not
-necessary, but useful is the usage of an Integrated Development
+necessary, but useful, is the usage of an Integrated Development
 Environment (IDE), such as RStudio Desktop that can be downloaded from
 <a href="https://posit.co/download/rstudio-desktop/" class="external-link">here</a>.</p>
 </div>
@@ -223,7 +223,7 @@ annual precipitation) in the form of a map:</p>
 <span></span>
 <span><span class="co"># Plot annual precipitation</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">[</span>, <span class="st">"prec_yr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual precipitation in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-2-1.png" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="run-r-abimo-for-the-status-quo">Run R-Abimo for the status quo<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo"></a>
@@ -240,7 +240,7 @@ function:</p>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
 <span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
 <span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
@@ -406,7 +406,7 @@ found in a park (a mixture of meadows, bushes and trees).</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
 <span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
 <span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.01 secs)</span></span></code></pre></div>
 </div>
 <div class="section level3">
