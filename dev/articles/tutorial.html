@@ -363,9 +363,9 @@ climate-related effects (such as heat, flooding, negative impacts on the
 surface water quality). As a measure of deviation we introduce
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
 that is calculated as follows:</p>
-<p><span class="math display">$$\Delta W =
-\frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}$$</span>
-with</p>
+<p><span class="math display">$$ \Delta W =
+\frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}
+$$</span> with</p>
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">e_{nat}</annotation></semantics></math>
@@ -423,7 +423,7 @@ mixture of meadows, bushes and trees).</p>
 <span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.01 secs)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="calculate-delta-w">Calculate “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-delta-w"></a>
+<h3 id="calculate-and-plot-delta-w">Calculate and plot “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-and-plot-delta-w"></a>
 </h3>
 <p>Calculate the deviation from the natural state in percent:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -481,7 +481,7 @@ measures:</p>
 <li>infiltration swales.</li>
 </ul>
 <div class="section level4">
-<h4 id="simulation-of-green-roofs">Simulation of green roofs<a class="anchor" aria-label="anchor" href="#simulation-of-green-roofs"></a>
+<h4 id="simulate-green-roofs">Simulate green roofs<a class="anchor" aria-label="anchor" href="#simulate-green-roofs"></a>
 </h4>
 <p>Green roofs increase the evaporation and reduce the runoff. In order
 to be able to simulate the effect of green roofs in R-Abimo, we have
@@ -532,7 +532,7 @@ green roofs is at least 50 percent:</p>
 more “natural” water balances.</p>
 </div>
 <div class="section level4">
-<h4 id="unsealing-of-paved-areas">Unsealing of paved areas<a class="anchor" aria-label="anchor" href="#unsealing-of-paved-areas"></a>
+<h4 id="simulate-the-unsealing-of-paved-areas">Simulate the unsealing of paved areas<a class="anchor" aria-label="anchor" href="#simulate-the-unsealing-of-paved-areas"></a>
 </h4>
 <p>The column <code>pvd</code> refers to the fractions of the total
 areas that are paved. In order to simulate that paved areas are unsealed
@@ -572,7 +572,7 @@ we reduce the fraction by 50 percent:</p>
 become brighter referring to smaller Delta-W values.</p>
 </div>
 <div class="section level4">
-<h4 id="infiltration-swales">Infiltration swales<a class="anchor" aria-label="anchor" href="#infiltration-swales"></a>
+<h4 id="simulate-infiltration-swales">Simulate infiltration swales<a class="anchor" aria-label="anchor" href="#simulate-infiltration-swales"></a>
 </h4>
 <p>In order to simulate infiltration swales we introduced a column
 <code>to_swale</code> to the input data. The values in this column
