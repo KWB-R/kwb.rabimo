@@ -229,7 +229,7 @@ annual precipitation) in the form of a map:</p>
 <h3 id="run-r-abimo-for-the-status-quo">Run R-Abimo for the status quo<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo"></a>
 </h3>
 <p>To run R-Abimo, call the main function <code><a href="../reference/run_rabimo.html">run_rabimo()</a></code> by
-passing both, the input data and the configuration object, to the
+passing both the input data and the configuration object to the
 function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run R-Abimo</span></span>
@@ -276,17 +276,17 @@ results can be plotted in terms of maps:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot model output "runoff"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"runoff"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual runoff in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_results-1.png" width="700"></p>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-1.png" width="480"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Plot model output "infiltration"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"infiltr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual infiltratio in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_results-2.png" width="700"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"infiltr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual infiltration in mm"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-2.png" width="480"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Plot model output "evaporation"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"evapor"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual evaporation in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_results-3.png" width="700"></p>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-3.png" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="generate-your-own-block-areas">Generate your own block areas<a class="anchor" aria-label="anchor" href="#generate-your-own-block-areas"></a>
@@ -349,40 +349,43 @@ according to the names of the input columns:</p>
 <h2 id="comparison-of-urban-state-with-natural-state">Comparison of urban state with natural state<a class="anchor" aria-label="anchor" href="#comparison-of-urban-state-with-natural-state"></a>
 </h2>
 <p>In the research project <a href="https://amarex-projekt.de/de" class="external-link">AMAREX</a> we propose to use the
-deviation of the water balances that are simulated for both, the current
-(urban) state and for an assumed “natural” state as an indicator for the
-vulnerability of an urban area to climate change effects (such as heat,
-flooding, negative impacts on the surface water quality). As a measure
-of deviation we introduce
+deviation of the (urban) water balance from its assumed “natural” state
+as an indicator for the vulnerability of an urban area to
+climate-related effects (such as heat, flooding, negative impacts on the
+surface water quality). As a measure of deviation we introduce
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
 that is calculated as follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>e</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>i</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>i</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>r</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>r</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta W = \frac{1}{2}(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)</annotation></semantics></math>
+<p><span class="math display">$$\Delta W =
+\frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}$$</span>
 with</p>
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">e_{nat}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">e_{urb}</annotation></semantics></math>
-= evaporation for the natural and urban state, respectively,</li>
+= evaporation for the natural and urban state in mm, respectively,</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">i_{nat}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">i_{urb}</annotation></semantics></math>
-= infiltration for the natural and urban state, respectively,</li>
+= infiltration for the natural and urban state in mm, respectively,</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">r_{nat}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">r_{urb}</annotation></semantics></math>
-= runoff for the natural and urban state, respectively.</li>
+= runoff for the natural and urban state in mm, respectively,</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+= annual precipitation in mm.</li>
 </ul>
 <p>The higher the value of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-the more different are the water balance components, i.e. the less
-similar the urban area is to a natural area. The lower the value of
+the higher the deviation from the natural water balance, i.e. the area
+is less similar to a natural area. The lower the value of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-the less different are the water balance components, i.e. the more
+the lower is the deviation from the natural water balance, i.e. the more
 similar the urban area is to a natural area.</p>
-<p>The hypothesis is that a lower value of
+<p>Our hypothesis is that a lower value of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
 indicates a better preparedness to climate change effects (e.g. because
 increased evaporation as it occurs in a natural state scenario leads to
@@ -412,17 +415,46 @@ found in a park (a mixture of meadows, bushes and trees).</p>
 <div class="section level3">
 <h3 id="calculate-delta-w">Calculate “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-delta-w"></a>
 </h3>
-<p>For the first ten blocks, calculate the deviation from the natural
-state:</p>
+<p>Calculate the deviation from the natural state in %:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
-<span>  urban <span class="op">=</span> <span class="va">rabimo_result</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>,</span>
-<span>  natural <span class="op">=</span> <span class="va">rabimo_result_natural</span></span>
+<code class="sourceCode R"><span><span class="va">delta_w</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
+<span>  urban <span class="op">=</span> <span class="va">water_balance_urban</span>,</span>
+<span>  natural <span class="op">=</span> <span class="va">water_balance_natural</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>TODO: - calculate_delta_w - RWBM - sehr kurze Intro zu den
-implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?) - wie
-man gezielt einen Wert in einer bestimmten Spalte (z.B. green_roof) oder
-in alle Spalten ändert - Plot von vorher vs. nachher</p>
+<p>The function <code>claculate_delta_w</code> returns a dataframe with
+two columns: - the code of the areas - the value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math></p>
+<p>If the water balance results were provided together with their
+geographical information,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+can be visualised:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># plot deviation from natural water balance</span></span>
+<span><span class="va">delta_w_zoom</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/crop_box.html">crop_box</a></span><span class="op">(</span></span>
+<span>  <span class="va">delta_w</span>, </span>
+<span>  xoffset <span class="op">=</span> <span class="fl">0.35</span>, </span>
+<span>  yoffset <span class="op">=</span> <span class="fl">0.5</span>, </span>
+<span>  xscale <span class="op">=</span> <span class="fl">0.07</span>, </span>
+<span>  yscale <span class="op">=</span> <span class="fl">0.07</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
+<span><span class="co">#&gt; all geometries</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta_w_zoom</span><span class="op">[</span>, <span class="st">"delta_w"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Deviation from natural water balance in %"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>TODO:</p>
+<ul>
+<li>calculate_delta_w</li>
+<li>RWBM
+<ul>
+<li>sehr kurze Intro zu den implementierten RWBM (inkl. dass man den pvd
+Anteil ändern kann?)</li>
+<li>wie man gezielt einen Wert in einer bestimmten Spalte (z.B.
+green_roof) oder in alle Spalten ändert</li>
+<li>Plot von vorher vs. nachher</li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
