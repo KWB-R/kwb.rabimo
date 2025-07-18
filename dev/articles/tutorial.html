@@ -240,7 +240,7 @@ function:</p>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
 <span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
 <span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
@@ -409,7 +409,7 @@ found in a park (a mixture of meadows, bushes and trees).</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
 <span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
 <span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.01 secs)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -421,30 +421,36 @@ found in a park (a mixture of meadows, bushes and trees).</p>
 <span>  urban <span class="op">=</span> <span class="va">water_balance_urban</span>,</span>
 <span>  natural <span class="op">=</span> <span class="va">water_balance_natural</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The function <code>claculate_delta_w</code> returns a dataframe with
-two columns: - the code of the areas - the value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math></p>
+<p>The function <code>claculate_delta_w</code> returns a data frame with
+two columns:</p>
+<ul>
+<li>
+<code>code</code>: the code of the areas</li>
+<li>
+<code>delta_w</code>: the value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Show the first rows of the delta_w data frame (without geometry) </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">delta_w</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               code delta_w</span></span>
+<span><span class="co">#&gt; 1 0200010761000000    62.7</span></span>
+<span><span class="co">#&gt; 2 0200010901000100    15.7</span></span>
+<span><span class="co">#&gt; 3 0200010901000200    39.6</span></span>
+<span><span class="co">#&gt; 4 0200010901000300    37.7</span></span>
+<span><span class="co">#&gt; 5 0200010941000100    47.3</span></span>
+<span><span class="co">#&gt; 6 0200010941000200    66.6</span></span></code></pre></div>
 <p>If the water balance results were provided together with their
 geographical information,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
 can be visualised:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># plot deviation from natural water balance</span></span>
-<span><span class="va">delta_w_zoom</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/crop_box.html">crop_box</a></span><span class="op">(</span></span>
-<span>  <span class="va">delta_w</span>, </span>
-<span>  xoffset <span class="op">=</span> <span class="fl">0.35</span>, </span>
-<span>  yoffset <span class="op">=</span> <span class="fl">0.5</span>, </span>
-<span>  xscale <span class="op">=</span> <span class="fl">0.07</span>, </span>
-<span>  yscale <span class="op">=</span> <span class="fl">0.07</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
-<span><span class="co">#&gt; all geometries</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta_w_zoom</span><span class="op">[</span>, <span class="st">"delta_w"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Deviation from natural water balance in %"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot deviation from natural water balance</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta_w</span><span class="op">[</span>, <span class="st">"delta_w"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Deviation from natural water balance in %"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-5-1.png" width="480"></p>
 <p>TODO:</p>
 <ul>
-<li>calculate_delta_w</li>
 <li>RWBM
 <ul>
 <li>sehr kurze Intro zu den implementierten RWBM (inkl. dass man den pvd
