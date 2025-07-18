@@ -37,13 +37,13 @@ adapted to other cities than Berlin) and it contains some additional features:
 
 - simulation of stormwater management measures (green roofs, swales),
 - "conversion" of urban areas to "natural" areas,
-- calculation of delta-W, an indicator for the "distance" between the urban (status quo) state and an assumed "natural" state.
+- calculation of delta-W, an indicator for the deviation between the urban (status quo) state and an assumed "natural" state.
 
 ## Prerequisites
 
 To use the package, you need to have R installed in a version >= 4.3.1. 
 You can download the current version of R from [here](https://cran.r-project.org/bin/windows/base/).
-Not necessary, but useful is the usage of an Integrated Development Environment (IDE), such as RStudio Desktop that can be downloaded from
+Not necessary, but useful, is the usage of an Integrated Development Environment (IDE), such as RStudio Desktop that can be downloaded from
 [here](https://posit.co/download/rstudio-desktop/).
 
 ## Installation
@@ -127,7 +127,7 @@ Since the we provide the Berlin dataset together with geographical information
 we can plot the spatial distribution of a variable (e.g. the annual 
 precipitation) in the form of a map:
 
-```{r}
+```{r, fig.width=5}
 # Load the sf package (simple features) to allow for geographical plotting
 library(sf)
 
