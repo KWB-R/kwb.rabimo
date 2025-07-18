@@ -153,14 +153,10 @@ swale evaporation factor that determines which fraction of the water
 going into a swale becomes evaporation (the rest becomes
 infiltration).</li>
 </ul>
-<p>You may inspect the first rows of the input data with</p>
+<p>You may inspect the first rows (and only the most relevant columns)
+of the input data with</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Simple feature collection with 6 features and 25 fields</span></span>
-<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
-<span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 389221.4 ymin: 5821678 xmax: 389842.4 ymax: 5822110</span></span>
-<span><span class="co">#&gt; Projected CRS: ETRS89 / UTM zone 33N</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">24</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               code prec_yr prec_s epot_yr epot_s district total_area      roof</span></span>
 <span><span class="co">#&gt; 1 0100980011000100     608    324     666    509        1   4623.972 0.3243243</span></span>
 <span><span class="co">#&gt; 2 0100980011000200     607    324     666    509        1  13430.944 0.0004668</span></span>
@@ -181,24 +177,10 @@ infiltration).</li>
 <span><span class="co">#&gt; 3        0        0     4.5    13     10     urban       1.5          0</span></span>
 <span><span class="co">#&gt; 4        0        0     5.4    13     10     urban       5.3          0</span></span>
 <span><span class="co">#&gt; 5        0        0     5.6    12     10     urban      13.2         50</span></span>
-<span><span class="co">#&gt; 6        0        0     4.5    11     10     urban       2.7          0</span></span>
-<span><span class="co">#&gt;                                                                                           block_type</span></span>
-<span><span class="co">#&gt; 1 10_11_Residential_Free_row_development_with_landscaped_settlement_greenery_1950s_1970s_2_6_stories</span></span>
-<span><span class="co">#&gt; 2                                                     80_91_Traffic_area_excluding_roads_Parking_lot</span></span>
-<span><span class="co">#&gt; 3                           10_73_Residential_Multi_story_apartment_buildings_of_the_1990s_and_later</span></span>
-<span><span class="co">#&gt; 4                 10_8_Residential_Heterogeneous_inner_city_mixed_development_gap_closure_after_1945</span></span>
-<span><span class="co">#&gt; 5                                                                   50_46_Community_service_Hospital</span></span>
-<span><span class="co">#&gt; 6                                                       60_32_Suppy_and_disposal_Supply_and_disposal</span></span>
-<span><span class="co">#&gt;                            Shape</span></span>
-<span><span class="co">#&gt; 1 MULTIPOLYGON (((389326.2 58...</span></span>
-<span><span class="co">#&gt; 2 MULTIPOLYGON (((389262 5821...</span></span>
-<span><span class="co">#&gt; 3 MULTIPOLYGON (((389262 5821...</span></span>
-<span><span class="co">#&gt; 4 MULTIPOLYGON (((389382.3 58...</span></span>
-<span><span class="co">#&gt; 5 MULTIPOLYGON (((389382.3 58...</span></span>
-<span><span class="co">#&gt; 6 MULTIPOLYGON (((389567.3 58...</span></span></code></pre></div>
+<span><span class="co">#&gt; 6        0        0     4.5    11     10     urban       2.7          0</span></span></code></pre></div>
 <p>and you may print the whole configuration object with</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="co">#&gt; $runoff_factors</span></span>
 <span><span class="co">#&gt;     roof surface1 surface2 surface3 surface4 surface5 </span></span>
 <span><span class="co">#&gt;     1.00     0.90     0.70     0.40     0.10     0.48 </span></span>
@@ -214,14 +196,15 @@ infiltration).</li>
 further information. To open the help page, run</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="../reference/rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></code></pre></div>
-<p>Note: We provide also an object <code>rabimo_inputs_2020</code>, that
-refers to an older version of the Berlin data set. It can be used in
-almost the same way as <code>rabimo_inputs_2025</code>. However, this
-old version does not contain geographic information and we do not cover
-it within this tutorial.</p>
+<p><strong>Note:</strong> We provide also an object
+<code>rabimo_inputs_2020</code>, that refers to an older version of the
+Berlin data set. It can be used in almost the same way as
+<code>rabimo_inputs_2025</code>. However, this old version does not
+contain geographical information and we do not cover it within this
+tutorial.</p>
 <p>Since the we provide the Berlin dataset together with geographical
-information we can plot the data in forms of maps. In the following we
-plot</p>
+information we can plot the spatial distribution of a variable (e.g. the
+annual precipitation) in the form of a map:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the sf package (simple features) to allow for geographical plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
@@ -238,62 +221,209 @@ plot</p>
 <span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
 <span><span class="co">#&gt; all geometries</span></span>
 <span></span>
-<span><span class="co"># Plot annual precipitation and annual potential evaporation</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prec_yr"</span>, <span class="st">"epot_yr"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Plot annual precipitation</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">[</span>, <span class="st">"prec_yr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual precipitation in mm"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="tutorial_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<p>TODO:</p>
-<ul>
-<li><strong>Plot der Input-Daten ohne Farben (für Visualisierung der
-Geometrie)</strong></li>
-<li><strong>run_rabimo + Visualisierung der Ergebnisse</strong></li>
-<li><strong>generate_rabimo_area mit default Werten</strong></li>
-</ul>
 </div>
 <div class="section level3">
 <h3 id="run-r-abimo-for-the-status-quo">Run R-Abimo for the status quo<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo"></a>
 </h3>
+<p>To run R-Abimo, call the main function <code><a href="../reference/run_rabimo.html">run_rabimo()</a></code> by
+passing both, the input data and the configuration object, to the
+function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run R-Abimo, the R-implementation of Abimo</span></span>
-<span><span class="va">rabimo_result</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span>, </span>
+<code class="sourceCode R"><span><span class="co"># Run R-Abimo</span></span>
+<span><span class="va">water_balance_urban</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">berlin_zoom</span>, </span>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
+<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rabimo_result</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               code      area  runoff infiltr  evapor</span></span>
+<span><span class="co">#&gt; 1 0200010761000000 85207.227 378.040 108.615 116.345</span></span>
+<span><span class="co">#&gt; 2 0200010901000100 14948.442   0.000  97.119 512.881</span></span>
+<span><span class="co">#&gt; 3 0200010901000200  8911.477 199.563 171.552 240.885</span></span>
+<span><span class="co">#&gt; 4 0200010901000300 29381.735  21.930 317.488 272.581</span></span>
+<span><span class="co">#&gt; 5 0200010941000100 22281.140 285.523 123.478 194.999</span></span>
+<span><span class="co">#&gt; 6 0200010941000200  8264.302 405.532  75.383 128.085</span></span></code></pre></div>
+<p>The result data frame contains two columns that are copied from the
+input data:</p>
+<ul>
+<li>
+<code>code</code> - unique identifier of each block area,</li>
+<li>
+<code>area</code> - the total block area in square metres in column
+`area</li>
+</ul>
+<p>as well as three columns containing the model outputs, namely the
+water balance components:</p>
+<ul>
+<li>
+<code>runoff</code> - surface runoff in mm,</li>
+<li>
+<code>infiltration</code> - infiltration in mm, and</li>
+<li>
+<code>evapor</code> - evaporation in mm.</li>
+</ul>
+<p>If the model inputs contained geographical information (as in our
+case) that information is restored in the output so that the model
+results can be plotted in terms of maps:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot model output "runoff"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"runoff"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual runoff in mm"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-1.png" width="700"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Plot model output "infiltration"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"infiltr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual infiltratio in mm"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-2.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Plot model output "evaporation"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"evapor"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual evaporation in mm"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/plot_rabimo_results-3.png" width="700"></p>
 </div>
+<div class="section level3">
+<h3 id="generate-your-own-block-areas">Generate your own block areas<a class="anchor" aria-label="anchor" href="#generate-your-own-block-areas"></a>
+</h3>
+<p>The package provides a function to generate a row in the format that
+R-Abimo requires. You need to pass at least the unique identifier(s)
+(<code>code</code>) for the block area(s). If you leave all the other
+arguments blank, you get (a) default block area(s). However, you can
+override the default values by passing arguments that are named
+according to the names of the input columns:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate artificial block areas, using default values and differing only in </span></span>
+<span><span class="co"># the fractions of the areas that are refer to roofs</span></span>
+<span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"area-"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">art_blocks</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/generate_rabimo_area.html">generate_rabimo_area</a></span><span class="op">(</span></span>
+<span>  code <span class="op">=</span> <span class="va">codes</span>, </span>
+<span>  roof <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Have a look at the data</span></span>
+<span><span class="va">art_blocks</span></span>
+<span><span class="co">#&gt;     code prec_yr prec_s epot_yr epot_s district total_area main_frac roof</span></span>
+<span><span class="co">#&gt; 1 area-1     600    300     700    500        0        100         1 0.00</span></span>
+<span><span class="co">#&gt; 2 area-2     600    300     700    500        0        100         1 0.25</span></span>
+<span><span class="co">#&gt; 3 area-3     600    300     700    500        0        100         1 0.50</span></span>
+<span><span class="co">#&gt; 4 area-4     600    300     700    500        0        100         1 0.75</span></span>
+<span><span class="co">#&gt; 5 area-5     600    300     700    500        0        100         1 1.00</span></span>
+<span><span class="co">#&gt;   green_roof swg_roof pvd swg_pvd srf1_pvd srf2_pvd srf3_pvd srf4_pvd srf5_pvd</span></span>
+<span><span class="co">#&gt; 1          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
+<span><span class="co">#&gt; 2          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
+<span><span class="co">#&gt; 3          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
+<span><span class="co">#&gt; 4          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
+<span><span class="co">#&gt; 5          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
+<span><span class="co">#&gt;   road_frac pvd_r swg_pvd_r srf1_pvd_r srf2_pvd_r srf3_pvd_r srf4_pvd_r</span></span>
+<span><span class="co">#&gt; 1         0   0.9         1        0.9        0.1          0          0</span></span>
+<span><span class="co">#&gt; 2         0   0.9         1        0.9        0.1          0          0</span></span>
+<span><span class="co">#&gt; 3         0   0.9         1        0.9        0.1          0          0</span></span>
+<span><span class="co">#&gt; 4         0   0.9         1        0.9        0.1          0          0</span></span>
+<span><span class="co">#&gt; 5         0   0.9         1        0.9        0.1          0          0</span></span>
+<span><span class="co">#&gt;   to_swale gw_dist ufc30 ufc150 land_type veg_class irrigation</span></span>
+<span><span class="co">#&gt; 1        0       3    13     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 2        0       3    13     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 3        0       3    13     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 4        0       3    13     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 5        0       3    13     13     urban        35          0</span></span>
+<span></span>
+<span><span class="co"># Run R-Abimo on the block areas</span></span>
+<span><span class="va">art_water_balance</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span><span class="va">art_blocks</span>, config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
+<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.00 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.01 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.00 secs)</span></span>
+<span></span>
+<span><span class="co"># How does the roof area influence the runoff?</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">art_blocks</span><span class="op">$</span><span class="va">roof</span>, <span class="va">art_water_balance</span><span class="op">$</span><span class="va">runoff</span><span class="op">)</span></span></code></pre></div>
+<p><img src="tutorial_files/figure-html/generate_block_areas-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="comparison-of-urban-state-with-natural-state">Comparison of urban state with natural state<a class="anchor" aria-label="anchor" href="#comparison-of-urban-state-with-natural-state"></a>
+</h2>
+<p>In the research project <a href="https://amarex-projekt.de/de" class="external-link">AMAREX</a> we propose to use the
+deviation of the water balances that are simulated for both, the current
+(urban) state and for an assumed “natural” state as an indicator for the
+vulnerability of an urban area to climate change effects (such as heat,
+flooding, negative impacts on the surface water quality). As a measure
+of deviation we introduce
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+that is calculated as follows:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>e</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>i</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>i</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>r</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>r</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta W = \frac{1}{2}(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)</annotation></semantics></math>
+with</p>
+<ul>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">e_{nat}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">e_{urb}</annotation></semantics></math>
+= evaporation for the natural and urban state, respectively,</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">i_{nat}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">i_{urb}</annotation></semantics></math>
+= infiltration for the natural and urban state, respectively,</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">r_{nat}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">r_{urb}</annotation></semantics></math>
+= runoff for the natural and urban state, respectively.</li>
+</ul>
+<p>The higher the value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+the more different are the water balance components, i.e. the less
+similar the urban area is to a natural area. The lower the value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+the less different are the water balance components, i.e. the more
+similar the urban area is to a natural area.</p>
+<p>The hypothesis is that a lower value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+indicates a better preparedness to climate change effects (e.g. because
+increased evaporation as it occurs in a natural state scenario leads to
+a reduction of heat).</p>
 <div class="section level3">
 <h3 id="run-r-abimo-for-a-natural-state-scenario">Run R-Abimo for a natural state scenario<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-a-natural-state-scenario"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rabimo_result_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/data_to_natural.html">data_to_natural</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span>, </span>
-<span>  config <span class="op">=</span> <span class="va">new_inputs</span><span class="op">$</span><span class="va">config</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>In the package we provide a function <code><a href="../reference/data_to_natural.html">data_to_natural()</a></code>
+that converts a set of urban block areas to corresponding “natural”
+block areas. The function converts all roof areas and unbuilt paved
+areas to pervious areas and assumes an overall vegetation as it can be
+found in a park (a mixture of meadows, bushes and trees).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert urban state to "natural" state</span></span>
+<span><span class="va">berlin_zoom_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/data_to_natural.html">data_to_natural</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate the water balance for the "natural" state</span></span>
+<span><span class="va">water_balance_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">berlin_zoom_natural</span>, </span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
+<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.01 secs)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="calculate-delta-w">Calculate “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-delta-w"></a>
 </h3>
 <p>For the first ten blocks, calculate the deviation from the natural
 state:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
 <span>  urban <span class="op">=</span> <span class="va">rabimo_result</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>,</span>
 <span>  natural <span class="op">=</span> <span class="va">rabimo_result_natural</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
-</h2>
-<p>Release: <a href="https://kwb-r.github.io/kwb.rabimo">https://kwb-r.github.io/kwb.rabimo</a></p>
-<p>Development: <a href="https://kwb-r.github.io/kwb.rabimo/dev">https://kwb-r.github.io/kwb.rabimo/dev</a></p>
-<p>Delta-W: Bedeutung + Formel DeltaW data_to_natural + WHH im nat.
-Referenzszenario berechnen. (evtl. hier Korrektur erforderlich weil
-Geodaten nicht supported) calculate_delta_w RWBM sehr kurze Intro zu den
-implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?) wie
+<p>TODO: - calculate_delta_w - RWBM - sehr kurze Intro zu den
+implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?) - wie
 man gezielt einen Wert in einer bestimmten Spalte (z.B. green_roof) oder
-in alle Spalten ändert Plot von vorher vs. nachher</p>
+in alle Spalten ändert - Plot von vorher vs. nachher</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
