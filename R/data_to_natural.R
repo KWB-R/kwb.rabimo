@@ -25,6 +25,18 @@ data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
   # data <- kwb.rabimo::rabimo_inputs_2020$data; type = "undeveloped"
   # data <- kwb.rabimo::rabimo_inputs_2025$data; type = "undeveloped"
 
+  # If data inherits from "sf", save geometry column and remove it from data
+  if (inherits(data, "sf")) {
+    sf_column <- attr(data, "sf_column")
+    if (is.null(sf_column)) {
+      stop("Missing attribute 'sf_column' in data.", call. = FALSE)
+    }
+    geometry <- sf::st_sfc(data[[sf_column]])
+    data <- sf::st_drop_geometry(data)
+  } else {
+    geometry <- NULL
+  }
+  
   # Check whether data look as expected
   stop_on_invalid_data(data)
 
@@ -49,9 +61,16 @@ data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
     }
   }
 
-  check_or_convert_data_types(
+  data <- check_or_convert_data_types(
     data,
     types = get_expected_data_type(),
     convert = TRUE
   )
+  
+  # If required, restore geographical information
+  if (is.null(geometry)) {
+    data
+  } else {
+    sf::st_as_sf(cbind(data, geometry))
+  }
 }

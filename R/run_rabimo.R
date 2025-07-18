@@ -46,7 +46,7 @@ run_rabimo <- function(data, config, controls = define_controls())
     `%>%` <- magrittr::`%>%`
   }
 
-  # If data inherits from "sf", save geometry columns and remove it from data
+  # If data inherits from "sf", save geometry column and remove it from data
   if (inherits(data, "sf")) {
     sf_column <- attr(data, "sf_column")
     if (is.null(sf_column)) {

@@ -98,16 +98,17 @@ different surface types and the swale evaporation factor that determines which
 fraction of the water going into a swale becomes evaporation (the rest becomes
 infiltration).
 
-You may inspect the first rows of the input data with
+You may inspect the first rows (and only the most relevant columns) of the input 
+data with
 
 ```{r view_input_data}
-head(abimo_inputs$data)
+head(as.data.frame(abimo_inputs$data)[, 1:24])
 ```
 
 and you may print the whole configuration object with
 
 ```{r view_input_config}
-print(abimo_inputs$config)
+abimo_inputs$config
 ```
 
 Please refer to the help page of `rabimo_inputs_2025` for further information. 
@@ -117,13 +118,14 @@ To open the help page, run
 ?kwb.rabimo::rabimo_inputs_2025
 ```
 
-Note: We provide also an object `rabimo_inputs_2020`, that refers to an older 
+**Note:** We provide also an object `rabimo_inputs_2020`, that refers to an older 
 version of the Berlin data set. It can be used in almost the same way as
-`rabimo_inputs_2025`. However, this old version does not contain geographic 
+`rabimo_inputs_2025`. However, this old version does not contain geographical 
 information and we do not cover it within this tutorial.
 
 Since the we provide the Berlin dataset together with geographical information 
-we can plot the data in forms of maps. In the following we plot 
+we can plot the spatial distribution of a variable (e.g. the annual 
+precipitation) in the form of a map:
 
 ```{r}
 # Load the sf package (simple features) to allow for geographical plotting
@@ -138,35 +140,121 @@ berlin_zoom <- kwb.rabimo::crop_box(
   yscale = 0.07
 )
 
-# Plot annual precipitation and annual potential evaporation
-plot(berlin_zoom[, c("prec_yr", "epot_yr")])
+# Plot annual precipitation
+plot(berlin_zoom[, "prec_yr"], main = "Annual precipitation in mm")
 ```
-
-TODO: 
-
-- **Plot der Input-Daten ohne Farben (für Visualisierung der Geometrie)**
-- **run_rabimo + Visualisierung der Ergebnisse**
-- **generate_rabimo_area mit default Werten**
 
 ### Run R-Abimo for the status quo
 
-```r
-# Run R-Abimo, the R-implementation of Abimo
-rabimo_result <- kwb.rabimo::run_rabimo(
-  data = abimo_inputs$data, 
+To run R-Abimo, call the main function `run_rabimo()` by passing both, the input 
+data and the configuration object, to the function:
+
+
+```{r run_rabimo}
+# Run R-Abimo
+water_balance_urban <- kwb.rabimo::run_rabimo(
+  data = berlin_zoom, 
   config = abimo_inputs$config
 )
 
 # Have a look at the first lines of the result data frame
-head(rabimo_result)
+head(sf::st_drop_geometry(water_balance_urban))
 ```
+The result data frame contains two columns that are copied from the input data:
+
+- `code` - unique identifier of each block area,
+- `area` - the total block area in square metres in column `area
+
+as well as three columns containing the model outputs, namely the water balance
+components:
+
+- `runoff` - surface runoff in mm,
+- `infiltration` - infiltration in mm, and
+- `evapor` - evaporation in mm.
+
+If the model inputs contained geographical information (as in our case) that 
+information is restored in the output so that the model results can be plotted
+in terms of maps:
+
+```{r plot_rabimo_results}
+# Plot model output "runoff"
+plot(water_balance_urban[, "runoff"], main = "Annual runoff in mm")
+
+# Plot model output "infiltration"
+plot(water_balance_urban[, "infiltr"], main = "Annual infiltratio in mm")
+
+# Plot model output "evaporation"
+plot(water_balance_urban[, "evapor"], main = "Annual evaporation in mm")
+```
+
+### Generate your own block areas
+
+The package provides a function to generate a row in the format that R-Abimo
+requires. You need to pass at least the unique identifier(s) (`code`) for the 
+block area(s). If you leave all the other arguments blank, you get (a) default 
+block area(s). 
+However, you can override the default values by passing arguments that are named
+according to the names of the input columns:
+
+```{r generate_block_areas}
+# Generate artificial block areas, using default values and differing only in 
+# the fractions of the areas that are refer to roofs
+codes <- paste0("area-", 1:5)
+art_blocks <- kwb.rabimo::generate_rabimo_area(
+  code = codes, 
+  roof = seq(0, 1, length.out = length(codes))
+)
+
+# Have a look at the data
+art_blocks
+
+# Run R-Abimo on the block areas
+art_water_balance <- kwb.rabimo::run_rabimo(art_blocks, config = abimo_inputs$config)
+
+# How does the roof area influence the runoff?
+plot(art_blocks$roof, art_water_balance$runoff)
+```
+
+## Comparison of urban state with natural state
+
+In the research project [AMAREX](https://amarex-projekt.de/de) we propose to 
+use the deviation of the water balances that are simulated for both, the current 
+(urban) state and for an assumed "natural" state as an indicator for the 
+vulnerability of an urban area to climate change effects (such as heat, 
+flooding, negative impacts on the surface water quality). As a measure of
+deviation we introduce $\Delta W$ that is calculated as follows:
+
+$$\Delta W = \frac{1}{2}(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)$$
+with 
+
+- $e_{nat}$ and $e_{urb}$ = evaporation for the natural and urban state, respectively,
+- $i_{nat}$ and $i_{urb}$ = infiltration for the natural and urban state, respectively,
+- $r_{nat}$ and $r_{urb}$ = runoff for the natural and urban state, respectively.
+
+The higher the value of $\Delta W$ the more different are the water balance 
+components, i.e. the less similar the urban area is to a natural area. 
+The lower the value of  $\Delta W$ the less different are the water balance 
+components, i.e. the more similar the urban area is to a natural area.
+
+The hypothesis is that a lower value of $\Delta W$ indicates a better 
+preparedness to climate change effects (e.g. because increased evaporation as 
+it occurs in a natural state scenario leads to a reduction of heat).
 
 ### Run R-Abimo for a natural state scenario
 
-```r
-rabimo_result_natural <- kwb.rabimo::run_rabimo(
-  data = kwb.rabimo::data_to_natural(abimo_inputs$data), 
-  config = new_inputs$config
+In the package we provide a function `data_to_natural()` that converts a set of 
+urban block areas to corresponding "natural" block areas. The function converts 
+all roof areas and unbuilt paved areas to pervious areas and assumes an overall 
+vegetation as it can be found in a park (a mixture of meadows, bushes and trees).
+
+```{r calculate_natural_state}
+# Convert urban state to "natural" state
+berlin_zoom_natural <- kwb.rabimo::data_to_natural(berlin_zoom)
+
+# Calculate the water balance for the "natural" state
+water_balance_natural <- kwb.rabimo::run_rabimo(
+  data = berlin_zoom_natural, 
+  config = abimo_inputs$config
 )
 ```
 
@@ -181,20 +269,9 @@ kwb.rabimo::calculate_delta_w(
 )
 ```
 
-## Documentation
-
-Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
-
-Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
-
-
-
-
-Delta-W:
-Bedeutung + Formel DeltaW
-data_to_natural + WHH im nat. Referenzszenario berechnen. (evtl. hier Korrektur erforderlich weil Geodaten nicht supported)
-calculate_delta_w
- RWBM
-sehr kurze Intro zu den implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?)
-wie man gezielt einen Wert in einer bestimmten Spalte (z.B. green_roof) oder in alle Spalten ändert
-Plot von vorher vs. nachher
+TODO:
+- calculate_delta_w
+- RWBM
+  - sehr kurze Intro zu den implementierten RWBM (inkl. dass man den pvd Anteil ändern kann?)
+  - wie man gezielt einen Wert in einer bestimmten Spalte (z.B. green_roof) oder in alle Spalten ändert
+  - Plot von vorher vs. nachher
