@@ -27,6 +27,18 @@ calculate_delta_w <- function(
   #kwb.utils::assignPackageObjects("kwb.rabimo")
   #columns_water_balance = c("runoff", "infiltr", "evapor");column_code = "code"
 
+  # If urban inherits from "sf", save geometry column and remove it
+  if (inherits(urban, "sf")) {
+    sf_column <- attr(urban, "sf_column")
+    if (is.null(sf_column)) {
+      stop("Missing attribute 'sf_column' in data.", call. = FALSE)
+    }
+    geometry <- sf::st_sfc(urban[[sf_column]])
+    urban <- sf::st_drop_geometry(urban)
+  } else {
+    geometry <- NULL
+  }
+
   columns <- c(column_code, columns_water_balance)
   data_urban <- select_columns(urban, columns)
   data_natural <- select_columns(natural, columns)
@@ -40,9 +52,16 @@ calculate_delta_w <- function(
   delta_ws <- rowSums(abs(joined_urban - joined_natural)) /
     rowSums(joined_natural) * 100 / 2
 
-  data.frame(
+  delta_w <- data.frame(
     code = joined[[column_code]],
     delta_w = unname(round(delta_ws, digits)),
     stringsAsFactors = FALSE
   )
+  
+  # If applicable, add the geometry again
+  if (is.null(geometry)) {
+    delta_w
+  } else {
+    sf::st_as_sf(cbind(delta_w, geometry[match(delta_w$code, urban$code)]))  
+  }
 }
