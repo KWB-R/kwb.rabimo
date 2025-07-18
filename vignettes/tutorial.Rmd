@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+FIGURE_WIDTH <- 5
 ```
 
 ## Background
@@ -127,7 +128,7 @@ Since the we provide the Berlin dataset together with geographical information
 we can plot the spatial distribution of a variable (e.g. the annual 
 precipitation) in the form of a map:
 
-```{r, fig.width=5}
+```{r, fig.width = FIGURE_WIDTH}
 # Load the sf package (simple features) to allow for geographical plotting
 library(sf)
 
@@ -146,8 +147,8 @@ plot(berlin_zoom[, "prec_yr"], main = "Annual precipitation in mm")
 
 ### Run R-Abimo for the status quo
 
-To run R-Abimo, call the main function `run_rabimo()` by passing both, the input 
-data and the configuration object, to the function:
+To run R-Abimo, call the main function `run_rabimo()` by passing both the input 
+data and the configuration object to the function:
 
 
 ```{r run_rabimo}
@@ -176,12 +177,12 @@ If the model inputs contained geographical information (as in our case) that
 information is restored in the output so that the model results can be plotted
 in terms of maps:
 
-```{r plot_rabimo_results}
+```{r plot_rabimo_results,  fig.width = FIGURE_WIDTH}
 # Plot model output "runoff"
 plot(water_balance_urban[, "runoff"], main = "Annual runoff in mm")
 
 # Plot model output "infiltration"
-plot(water_balance_urban[, "infiltr"], main = "Annual infiltratio in mm")
+plot(water_balance_urban[, "infiltr"], main = "Annual infiltration in mm")
 
 # Plot model output "evaporation"
 plot(water_balance_urban[, "evapor"], main = "Annual evaporation in mm")
@@ -218,25 +219,25 @@ plot(art_blocks$roof, art_water_balance$runoff)
 ## Comparison of urban state with natural state
 
 In the research project [AMAREX](https://amarex-projekt.de/de) we propose to 
-use the deviation of the water balances that are simulated for both, the current 
-(urban) state and for an assumed "natural" state as an indicator for the 
-vulnerability of an urban area to climate change effects (such as heat, 
-flooding, negative impacts on the surface water quality). As a measure of
-deviation we introduce $\Delta W$ that is calculated as follows:
+use the deviation of the (urban) water balance from its assumed "natural" state as an 
+indicator for the vulnerability of an urban area to climate-related effects 
+(such as heat, flooding, negative impacts on the surface water quality). 
+As a measure of deviation we introduce $\Delta W$ that is calculated as follows:
 
-$$\Delta W = \frac{1}{2}(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)$$
+$$\Delta W = \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}$$
 with 
 
-- $e_{nat}$ and $e_{urb}$ = evaporation for the natural and urban state, respectively,
-- $i_{nat}$ and $i_{urb}$ = infiltration for the natural and urban state, respectively,
-- $r_{nat}$ and $r_{urb}$ = runoff for the natural and urban state, respectively.
+- $e_{nat}$ and $e_{urb}$ = evaporation for the natural and urban state in mm, respectively,
+- $i_{nat}$ and $i_{urb}$ = infiltration for the natural and urban state in mm, respectively,
+- $r_{nat}$ and $r_{urb}$ = runoff for the natural and urban state in mm, respectively,
+- $P$ = annual precipitation in mm.
 
-The higher the value of $\Delta W$ the more different are the water balance 
-components, i.e. the less similar the urban area is to a natural area. 
-The lower the value of  $\Delta W$ the less different are the water balance 
-components, i.e. the more similar the urban area is to a natural area.
+The higher the value of $\Delta W$ the higher the deviation from the natural
+water balance, i.e. the area is less similar to a natural area. 
+The lower the value of  $\Delta W$ the lower is the deviation from the natural
+water balance, i.e. the more similar the urban area is to a natural area.
 
-The hypothesis is that a lower value of $\Delta W$ indicates a better 
+Our hypothesis is that a lower value of $\Delta W$ indicates a better 
 preparedness to climate change effects (e.g. because increased evaporation as 
 it occurs in a natural state scenario leads to a reduction of heat).
 
@@ -260,13 +261,33 @@ water_balance_natural <- kwb.rabimo::run_rabimo(
 
 ### Calculate "Delta-W"
 
-For the first ten blocks, calculate the deviation from the natural state:
+Calculate the deviation from the natural state in %:
 
-```r
-kwb.rabimo::calculate_delta_w(
-  urban = rabimo_result[1:10, ],
-  natural = rabimo_result_natural
+```{r}
+delta_w <- kwb.rabimo::calculate_delta_w(
+  urban = water_balance_urban,
+  natural = water_balance_natural
 )
+```
+
+The function `claculate_delta_w` returns a dataframe with two columns: 
+- the code of the areas
+- the value of $\Delta W$
+
+If the water balance results were provided together with their geographical 
+information, $\Delta W$ can be visualised:
+
+```{r}
+# plot deviation from natural water balance
+delta_w_zoom <- kwb.rabimo::crop_box(
+  delta_w, 
+  xoffset = 0.35, 
+  yoffset = 0.5, 
+  xscale = 0.07, 
+  yscale = 0.07
+)
+
+plot(delta_w_zoom[, "delta_w"], main = "Deviation from natural water balance in %")
 ```
 
 TODO:
