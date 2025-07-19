@@ -60,25 +60,74 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
+<div class="section level1">
+<div class="page-header"><h1 id="kwbrabimo">kwb.rabimo<a class="anchor" aria-label="anchor" href="#kwbrabimo"></a>
+</h1></div>
 <p>The code in this package has been transferred from the C++ code of ABIMO 3.3: Water Balance Model for Urban Areas (<a href="https://github.com/KWB-R/abimo/" class="external-link uri">https://github.com/KWB-R/abimo/</a>).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>For details on how to install KWB-R packages checkout our <a href="https://kwb-r.github.io/kwb.pkgbuild/articles/install.html" class="external-link">installation tutorial</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">### Optionally: specify GitHub Personal Access Token (GITHUB_PAT)</span></span>
-<span><span class="co">### See here why this might be important for you:</span></span>
-<span><span class="co">### https://kwb-r.github.io/kwb.pkgbuild/articles/install.html#set-your-github_pat</span></span>
+<code class="sourceCode R"><span><span class="co"># Install package "remotes" from CRAN</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Sys.setenv(GITHUB_PAT = "mysecret_access_token")</span></span>
+<span><span class="co"># Install package "kwb.rabimo" (latest "release") from GitHub</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Install package "remotes" from CRAN</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span><span class="co"># Install package "kwb.rabimo" (development version) from GitHub</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo@dev"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+</h2>
+<div class="section level3">
+<h3 id="provide-input-data-and-configuration">Provide input data and configuration<a class="anchor" aria-label="anchor" href="#provide-input-data-and-configuration"></a>
+</h3>
+<p>Compared to the original C++ version of Abimo we have modified the structures of input data, output data and configuration.</p>
+<p>For the German city of Berlin, we provide data in the new structures in the package:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load Berlin data in the original Abimo format</span></span>
+<span><span class="va">abimo_inputs</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="reference/rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="run-r-abimo-for-the-status-quo">Run R-Abimo for the status quo<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run R-Abimo, the R-implementation of Abimo</span></span>
+<span><span class="va">rabimo_result</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span>, </span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Install KWB package 'kwb.rabimo' from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KWB-R/kwb.rabimo"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Have a look at the first lines of the result data frame</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rabimo_result</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="run-r-abimo-for-a-natural-state-scenario">Run R-Abimo for a natural state scenario<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-a-natural-state-scenario"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rabimo_result_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="reference/data_to_natural.html">data_to_natural</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span>, </span>
+<span>  config <span class="op">=</span> <span class="va">new_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="calculate-delta-w">Calculate “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-delta-w"></a>
+</h3>
+<p>For the first ten blocks, calculate the deviation from the natural state:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
+<span>  urban <span class="op">=</span> <span class="va">rabimo_result</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>,</span>
+<span>  natural <span class="op">=</span> <span class="va">rabimo_result_natural</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
+<p>Release: <a href="https://kwb-r.github.io/kwb.rabimo">https://kwb-r.github.io/kwb.rabimo</a></p>
+<p>Development: <a href="https://kwb-r.github.io/kwb.rabimo/dev">https://kwb-r.github.io/kwb.rabimo/dev</a></p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
