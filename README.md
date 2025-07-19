@@ -14,6 +14,8 @@ R-implementation of a simple water balance model for urban areas,
   within [BMBF](https://www.bmbf.de/EN/Home/home_node.html)-funded 
   research project [AMAREX](https://amarex-projekt.de/en).
 
+For our Tutorial, click [here](https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html) (see also Documentation below).
+
 ## Installation
 
 ```r
@@ -79,9 +81,9 @@ kwb.rabimo::calculate_delta_w(
 
 ### R-package kwb.rabimo
 
-- Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
-- Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
-- Tutorial: [https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html]
+- Release: https://kwb-r.github.io/kwb.rabimo
+- Development: https://kwb-r.github.io/kwb.rabimo/dev
+- Tutorial: https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html
 
 ### Original software "Wasserhaushaltsmodell Berlin ABIMO 3.2"
 
