@@ -8,7 +8,7 @@
 # kwb.rabimo
 
 R-implementation of a simple water balance model for urban areas, 
-based on ABIMO 3.2 (see https://github.com/umweltatlas/abimo).
+based on "Wasserhaushaltsmodell Berlin ABIMO 3.2" (see Documentation below)
 
 ## Installation
 
@@ -73,6 +73,13 @@ kwb.rabimo::calculate_delta_w(
 
 ## Documentation
 
+### R-package kwb.rabimo
+
 Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
 Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
 Tutorial: [https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html]
+
+### Original software "Wasserhaushaltsmodell Berlin ABIMO 3.2"
+
+- source code (C++): https://github.com/umweltatlas/abimo, 
+- user manual (in German): https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf
