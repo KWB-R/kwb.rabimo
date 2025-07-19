@@ -106,10 +106,7 @@ urban (status quo) state and an assumed “natural” state.</li>
 <h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
 </h2>
 <p>To use the package, you need to have R installed in a version &gt;=
-4.3.1. You can download the current version of R from <a href="https://cran.r-project.org/bin/windows/base/" class="external-link">here</a>. Not
-necessary, but useful, is the usage of an Integrated Development
-Environment (IDE), such as RStudio Desktop that can be downloaded from
-<a href="https://posit.co/download/rstudio-desktop/" class="external-link">here</a>.</p>
+4.3.1. You can download the current version of R from <a href="https://cran.r-project.org/bin/windows/base/" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -247,9 +244,9 @@ function:</p>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
+<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.02 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.11 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
@@ -275,7 +272,7 @@ water balance components:</p>
 <li>
 <code>runoff</code> - surface runoff in mm,</li>
 <li>
-<code>infiltration</code> - infiltration in mm, and</li>
+<code>infiltr</code> - infiltration in mm, and</li>
 <li>
 <code>evapor</code> - evaporation in mm.</li>
 </ul>
@@ -364,9 +361,9 @@ as an indicator for the vulnerability of an urban area to
 climate-related effects (such as heat, flooding, negative impacts on the
 surface water quality). As a measure of deviation we introduce <span class="math inline">\(\Delta W\)</span> that is calculated as
 follows:</p>
-<p><span class="math display">\[ \Delta W =
-\frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}
-\]</span> with</p>
+<p><span class="math display">\[\Delta W =
+\frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}\]</span></p>
+<p>with</p>
 <ul>
 <li>
 <span class="math inline">\(e_{nat}\)</span> and <span class="math inline">\(e_{urb}\)</span> = evaporation for the natural and
@@ -398,6 +395,10 @@ that converts urban block areas to corresponding “natural” block areas.
 The function converts all roof areas and unbuilt paved areas to pervious
 areas and assumes an overall vegetation as it can be found in a park (a
 mixture of meadows, bushes and trees).</p>
+<p>Let’s use this function to simulate the water balance for the
+“natural” equivalent of our urban area in the Berlin city centre. In all
+following calls to <code><a href="../reference/run_rabimo.html">run_rabimo()</a></code> we will set
+<code>silent = TRUE</code> so that console outputs are suppressed.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert urban state to "natural" state</span></span>
 <span><span class="va">berlin_zoom_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/data_to_natural.html">data_to_natural</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">)</span></span>
@@ -405,12 +406,9 @@ mixture of meadows, bushes and trees).</p>
 <span><span class="co"># Calculate the water balance for the "natural" state</span></span>
 <span><span class="va">water_balance_natural</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">berlin_zoom_natural</span>, </span>
-<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.02 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.01 secs)</span></span></code></pre></div>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="calculate-and-plot-delta-w">Calculate and plot “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-and-plot-delta-w"></a>
@@ -495,12 +493,9 @@ green roofs is at least 50 percent:</p>
 <span><span class="co"># Simulate the water balance</span></span>
 <span><span class="va">water_balance_green_roof</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">zoom_green_roof</span>, </span>
-<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_green_roof</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
@@ -523,8 +518,8 @@ more “natural” water balances.</p>
 </h4>
 <p>The column <code>pvd</code> refers to the fractions of the total
 areas that are paved. In order to simulate that paved areas are unsealed
-we decrease the fraction of paved areas by a constant factor, let’s say
-we reduce the fraction by 50 percent:</p>
+we decrease the fractions of paved areas by a constant factor, let’s say
+we reduce the fractions by 50 percent:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a copy of the original input data</span></span>
 <span><span class="va">zoom_unsealed</span> <span class="op">&lt;-</span> <span class="va">berlin_zoom</span></span>
@@ -535,12 +530,9 @@ we reduce the fraction by 50 percent:</p>
 <span><span class="co"># Simulate the water balance</span></span>
 <span><span class="va">water_balance_unsealed</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">zoom_unsealed</span>, </span>
-<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_unsealed</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
@@ -584,12 +576,9 @@ would that change Delta-W?</p>
 <span><span class="co"># Simulate the water balance</span></span>
 <span><span class="va">water_balance_swale</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">zoom_swale</span>, </span>
-<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_swale</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
