@@ -6,7 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>How to Simulate Water Balance with R-Abimo • kwb.rabimo</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -356,45 +362,33 @@ R-Abimo model.</p>
 deviation of the (urban) water balance from its assumed “natural” state
 as an indicator for the vulnerability of an urban area to
 climate-related effects (such as heat, flooding, negative impacts on the
-surface water quality). As a measure of deviation we introduce
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-that is calculated as follows:</p>
-<p><span class="math display">$$ \Delta W =
+surface water quality). As a measure of deviation we introduce <span class="math inline">\(\Delta W\)</span> that is calculated as
+follows:</p>
+<p><span class="math display">\[ \Delta W =
 \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}
-$$</span> with</p>
+\]</span> with</p>
 <ul>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">e_{nat}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">e_{urb}</annotation></semantics></math>
-= evaporation for the natural and urban state, respectively, in mm,</li>
+<span class="math inline">\(e_{nat}\)</span> and <span class="math inline">\(e_{urb}\)</span> = evaporation for the natural and
+urban state, respectively, in mm,</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">i_{nat}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>i</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">i_{urb}</annotation></semantics></math>
-= infiltration for the natural and urban state, respectively, in
-mm,</li>
+<span class="math inline">\(i_{nat}\)</span> and <span class="math inline">\(i_{urb}\)</span> = infiltration for the natural
+and urban state, respectively, in mm,</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>n</mi><mi>a</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">r_{nat}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mrow><mi>u</mi><mi>r</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">r_{urb}</annotation></semantics></math>
-= runoff for the natural and urban state, respectively, in mm,</li>
+<span class="math inline">\(r_{nat}\)</span> and <span class="math inline">\(r_{urb}\)</span> = runoff for the natural and
+urban state, respectively, in mm,</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
-= annual precipitation in mm.</li>
+<span class="math inline">\(P\)</span> = annual precipitation in
+mm.</li>
 </ul>
-<p>The higher the value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
+<p>The higher the value of <span class="math inline">\(\Delta W\)</span>
 the higher the deviation from the natural water balance, i.e. the area
-is less similar to a natural area. The lower the value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-the lower is the deviation from the natural water balance, i.e. the more
-similar the urban area is to a natural area.</p>
-<p>Our hypothesis is that a lower value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-indicates a better preparedness to climate change effects (e.g. because
-increased evaporation as it occurs in a natural state scenario leads to
-a reduction of heat).</p>
+is less similar to a natural area. The lower the value of <span class="math inline">\(\Delta W\)</span> the lower is the deviation from
+the natural water balance, i.e. the more similar the urban area is to a
+natural area.</p>
+<p>Our hypothesis is that a lower value of <span class="math inline">\(\Delta W\)</span> indicates a better preparedness
+to climate change effects (e.g. because increased evaporation as it
+occurs in a natural state scenario leads to a reduction of heat).</p>
 </div>
 <div class="section level3">
 <h3 id="run-r-abimo-for-a-natural-state-scenario">Run R-Abimo for a natural state scenario<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-a-natural-state-scenario"></a>
@@ -433,9 +427,7 @@ two columns:</p>
 <li>
 <code>code</code> - the code of the areas,</li>
 <li>
-<code>delta_w</code> - the value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-in percent.</li>
+<code>delta_w</code> - the value of <span class="math inline">\(\Delta W\)</span> in percent.</li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show the first rows of the delta_w data frame (without geometry) </span></span>
@@ -448,9 +440,8 @@ in percent.</li>
 <span><span class="co">#&gt; 5 0200010941000100    47.3</span></span>
 <span><span class="co">#&gt; 6 0200010941000200    66.6</span></span></code></pre></div>
 <p>If the water balance results were provided together with their
-geographical information, the spatial distribution of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\Delta W</annotation></semantics></math>
-values can be visualised in a map.</p>
+geographical information, the spatial distribution of <span class="math inline">\(\Delta W\)</span> values can be visualised in a
+map.</p>
 <p>In order to do so, we first define a helper function for plotting
 Delta-W with a nice colour palette:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
