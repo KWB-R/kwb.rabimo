@@ -24,7 +24,7 @@ for rural areas and later adapted for urban areas, namely for Berlin, Germany.
 In May 2022, the source code of the model was published on the developer
 platform GitHub ([https://github.com/umweltatlas/abimo](https://github.com/umweltatlas/abimo)). 
 
-During the research project [AMAREX](https://amarex-projekt.de/de) (an acronym 
+During the research project [AMAREX](https://amarex-projekt.de/en) (an acronym
 for the German translation of "adaptation of stormwater management to extreme
 events"), funded by the former German Federal Ministry of Education and Research
 ([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)), we, the package authors from [Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de) 
