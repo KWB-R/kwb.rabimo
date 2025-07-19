@@ -9,6 +9,8 @@
 #' @param controls list of settings that control how the function should behave.
 #'   Use \code{\link{define_controls}} to define such a list. The default is
 #'   the list returned by \code{define_controls()}.
+#' @param silent logical indicating whether to suppress console outputs,
+#'   the default is \code{FALSE}
 #' @return data frame with columns as returned by Abimo
 #' @importFrom sf st_as_sf st_drop_geometry st_sfc
 #' @export
@@ -33,7 +35,9 @@
 #' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
 #'   
 #' plot(results_2025[, -1L])
-run_rabimo <- function(data, config, controls = define_controls())
+run_rabimo <- function(
+  data, config, controls = define_controls(), silent = FALSE
+)
 {
   # Provide functions and variables for debugging
   # (Go to inst/scripts/test-rabimo.R to provide data and config for debugging)
@@ -64,6 +68,7 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # Get climate data
   climate <- cat_and_run(
+    dbg = !silent,
     "Collecting climate related data",
     get_climate(data)
   )
@@ -77,6 +82,7 @@ run_rabimo <- function(data, config, controls = define_controls())
   # actual evapotranspiration of unsealed areas. In the case of water bodies,
   # all values are 0.0. (hsonne: really?)
   soil_properties <- cat_and_run(
+    dbg = !silent,
     "Preparing soil property data for all block areas",
     expr = get_soil_properties(
       land_type = fetch_data("land_type"),
@@ -90,6 +96,7 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # Pre-calculate all results of realEvapoTranspiration()
   evaporation_sealed <- cat_and_run(
+    dbg = !silent,
     "Precalculating actual evapotranspirations for impervious areas",
     expr = fetch_config("bagrov_values") %>%
       lapply(function(x) {
@@ -105,6 +112,7 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # Pre-calculate all results of actualEvaporationWaterbodyOrPervious()
   evaporation_unsealed <- cat_and_run(
+    dbg = !silent,
     paste(
       "Precalculating actual evapotranspirations for waterbodies or pervious",
       "areas"

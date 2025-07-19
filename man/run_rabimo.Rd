@@ -4,7 +4,7 @@
 \alias{run_rabimo}
 \title{Run R-Abimo, the R-implementation of Water Balance Model Abimo}
 \usage{
-run_rabimo(data, config, controls = define_controls())
+run_rabimo(data, config, controls = define_controls(), silent = FALSE)
 }
 \arguments{
 \item{data}{data frame similar to
@@ -16,6 +16,9 @@ run_rabimo(data, config, controls = define_controls())
 \item{controls}{list of settings that control how the function should behave.
 Use \code{\link{define_controls}} to define such a list. The default is
 the list returned by \code{define_controls()}.}
+
+\item{silent}{logical indicating whether to suppress console outputs,
+the default is \code{FALSE}}
 }
 \value{
 data frame with columns as returned by Abimo

@@ -73,11 +73,16 @@ test_that("run_rabimo() works", {
     )
   )
 
-  expect_output(result <- f(data, config, controls = define_controls()))
+  expect_output(
+    result_1 <- f(data, config, controls = define_controls())
+  )
+  expect_silent(
+    result_2 <- f(data, config, controls = define_controls(), silent = TRUE)
+  )
 
-  expect_s3_class(result, "data.frame")
-  expect_true(nrow(result) == nrow(data))
-
+  expect_s3_class(result_1, "data.frame")
+  expect_true(nrow(result_1) == nrow(data))
+  expect_identical(result_1, result_2)
 })
 
 test_that("run_rabimo() keeps the row order", {

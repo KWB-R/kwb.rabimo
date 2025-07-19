@@ -44,8 +44,6 @@ adapted to other cities than Berlin) and it contains some additional features:
 
 To use the package, you need to have R installed in a version >= 4.3.1. 
 You can download the current version of R from [here](https://cran.r-project.org/bin/windows/base/).
-Not necessary, but useful, is the usage of an Integrated Development Environment (IDE), such as RStudio Desktop that can be downloaded from
-[here](https://posit.co/download/rstudio-desktop/).
 
 ## Installation
 
@@ -170,7 +168,7 @@ as well as three columns containing the model outputs, namely the water balance
 components:
 
 - `runoff` - surface runoff in mm,
-- `infiltration` - infiltration in mm, and
+- `infiltr` - infiltration in mm, and
 - `evapor` - evaporation in mm.
 
 If the model inputs contained geographical information (as in our case) that 
@@ -231,8 +229,9 @@ indicator for the vulnerability of an urban area to climate-related effects
 (such as heat, flooding, negative impacts on the surface water quality). 
 As a measure of deviation we introduce $\Delta W$ that is calculated as follows:
 
-$$ \Delta W = \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P} $$
-with 
+$$\Delta W = \frac{1}{2}\space(|e_{nat}-e_{urb}|+|i_{nat}-i_{urb}|+|r_{nat}-r_{urb}|)\space\frac{100\%}{P}$$
+
+with
 
 - $e_{nat}$ and $e_{urb}$ = evaporation for the natural and urban state, respectively, in mm, 
 - $i_{nat}$ and $i_{urb}$ = infiltration for the natural and urban state, respectively, in mm, 
@@ -255,6 +254,10 @@ block areas to corresponding "natural" block areas. The function converts
 all roof areas and unbuilt paved areas to pervious areas and assumes an overall 
 vegetation as it can be found in a park (a mixture of meadows, bushes and trees).
 
+Let's use this function to simulate the water balance for the "natural" equivalent
+of our urban area in the Berlin city centre. In all following calls to `run_rabimo()`
+we will set `silent = TRUE` so that console outputs are suppressed.
+
 ```{r calculate_natural_state}
 # Convert urban state to "natural" state
 berlin_zoom_natural <- kwb.rabimo::data_to_natural(berlin_zoom)
@@ -262,7 +265,8 @@ berlin_zoom_natural <- kwb.rabimo::data_to_natural(berlin_zoom)
 # Calculate the water balance for the "natural" state
 water_balance_natural <- kwb.rabimo::run_rabimo(
   data = berlin_zoom_natural, 
-  config = abimo_inputs$config
+  config = abimo_inputs$config,
+  silent = TRUE
 )
 ```
 
@@ -343,7 +347,8 @@ zoom_green_roof$green_roof[needs_green_roofs] <- green_roof_target
 # Simulate the water balance
 water_balance_green_roof <- kwb.rabimo::run_rabimo(
   data = zoom_green_roof, 
-  config = abimo_inputs$config
+  config = abimo_inputs$config,
+  silent = TRUE
 )
 
 # Calculate Delta-W
@@ -369,8 +374,8 @@ more "natural" water balances.
 #### Simulate the unsealing of paved areas
 
 The column `pvd` refers to the fractions of the total areas that are paved. In
-order to simulate that paved areas are unsealed we decrease the fraction of
-paved areas by a constant factor, let's say we reduce the fraction by 50 
+order to simulate that paved areas are unsealed we decrease the fractions of
+paved areas by a constant factor, let's say we reduce the fractions by 50
 percent:
 
 ```{r}
@@ -383,7 +388,8 @@ zoom_unsealed$pvd <- zoom_unsealed$pvd * 0.5
 # Simulate the water balance
 water_balance_unsealed <- kwb.rabimo::run_rabimo(
   data = zoom_unsealed, 
-  config = abimo_inputs$config
+  config = abimo_inputs$config,
+  silent = TRUE
 )
 
 # Calculate Delta-W
@@ -429,7 +435,8 @@ zoom_swale$to_swale <- 0.5
 # Simulate the water balance
 water_balance_swale <- kwb.rabimo::run_rabimo(
   data = zoom_swale, 
-  config = abimo_inputs$config
+  config = abimo_inputs$config,
+  silent = TRUE
 )
 
 # Calculate Delta-W
