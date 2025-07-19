@@ -46,19 +46,9 @@ run_rabimo <- function(data, config, controls = define_controls())
     `%>%` <- magrittr::`%>%`
   }
 
-  # If data inherits from "sf", save geometry column and remove it from data
-  if (inherits(data, "sf")) {
-    sf_column <- attr(data, "sf_column")
-    if (is.null(sf_column)) {
-      stop("Missing attribute 'sf_column' in data.", call. = FALSE)
-    }
-    # I used `geometry <- sf::st_geometry(data)` before but it complained that 
-    # data[[sf_column]] does not inherit from 'sfc'!
-    geometry <- sf::st_sfc(data[[sf_column]])
-    data <- sf::st_drop_geometry(data)
-  } else {
-    geometry <- NULL
-  }
+  data <- remove_geo_column_if_required(data)
+  # Save eventual geometry data that the above function stored as an attribute
+  geometry <- attr(data, "geometry")
 
   # If road-area-specific columns are missing, create them
   data <- handle_missing_columns(data)
@@ -317,10 +307,10 @@ run_rabimo <- function(data, config, controls = define_controls())
   # Round all columns to three digits (skip first column: "code")
   result_data[-1L] <- lapply(result_data[-1L], round, 3L)
 
-  if (!is.null(geometry)) {
-    result_data <- sf::st_as_sf(cbind(result_data, geometry))
-  }
-    
+  result_data <- restore_geo_column_if_required(
+    result_data, geometry = geometry
+  )
+
   if (isFALSE(control("intermediates"))) {
     return(result_data)
   }

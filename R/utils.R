@@ -159,6 +159,24 @@ matching_names <- function(data, pattern)
 #' @importFrom kwb.utils printIf
 print_if <- kwb.utils::printIf
 
+# remove_geo_column_if_required ------------------------------------------------
+remove_geo_column_if_required <- function(data)
+{
+  if (inherits(data, "sf")) {
+    if (is.null(sf_column <- attr(data, "sf_column"))) {
+      clean_stop("Missing attribute 'sf_column' in data.")
+    }
+    # save the geometry in attribute "geometry" and the original name of the
+    # geometry column in its attribute "sf_column"
+    structure(
+      sf::st_drop_geometry(data),
+      geometry = structure(sf::st_sfc(data[[sf_column]]), sf_column = sf_column)
+    )
+  } else {
+    data
+  }
+}
+
 # rename_and_select ------------------------------------------------------------
 #' @importFrom kwb.utils renameAndSelect
 rename_and_select <- kwb.utils::renameAndSelect
@@ -166,6 +184,24 @@ rename_and_select <- kwb.utils::renameAndSelect
 # rename_columns ---------------------------------------------------------------
 #' @importFrom kwb.utils renameColumns
 rename_columns <- kwb.utils::renameColumns
+
+# restore_geo_column_if_required -----------------------------------------------
+#' @importFrom sf st_as_sf
+restore_geo_column_if_required <- function(
+  data, geometry = attr(data, "geometry")
+)
+{
+  # Is there something stored in attribute "geometry"?
+  if (is.null(geometry)) {
+    data
+  } else {
+    # remove attribute "geometry"
+    attr(data, "geometry") <- NULL
+    # use original name for geometry column and remove attribute "sf_column"
+    data[[attr(geometry, "sf_column")]] <- structure(geometry, sf_column = NULL)
+    sf::st_as_sf(data)
+  }
+}
 
 # select_columns ---------------------------------------------------------------
 #' @importFrom kwb.utils selectColumns

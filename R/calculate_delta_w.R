@@ -25,19 +25,9 @@ calculate_delta_w <- function(
 )
 {
   #kwb.utils::assignPackageObjects("kwb.rabimo")
-  #columns_water_balance = c("runoff", "infiltr", "evapor");column_code = "code"
+  #columns_water_balance=c("runoff","infiltr","evapor");column_code="code";digits=1L
 
-  # If urban inherits from "sf", save geometry column and remove it
-  if (inherits(urban, "sf")) {
-    sf_column <- attr(urban, "sf_column")
-    if (is.null(sf_column)) {
-      stop("Missing attribute 'sf_column' in data.", call. = FALSE)
-    }
-    geometry <- sf::st_sfc(urban[[sf_column]])
-    urban <- sf::st_drop_geometry(urban)
-  } else {
-    geometry <- NULL
-  }
+  urban <- remove_geo_column_if_required(urban)
 
   columns <- c(column_code, columns_water_balance)
   data_urban <- select_columns(urban, columns)
@@ -58,10 +48,16 @@ calculate_delta_w <- function(
     stringsAsFactors = FALSE
   )
   
-  # If applicable, add the geometry again
-  if (is.null(geometry)) {
+  if (is.null(geometry <- attr(urban, "geometry"))) {
     delta_w
   } else {
-    sf::st_as_sf(cbind(delta_w, geometry[match(delta_w$code, urban$code)]))  
+    restore_geo_column_if_required(
+      delta_w,
+      # unfortunately, the [] selection removes the attribute "sf_column"
+      geometry = structure(
+        geometry[match(delta_w$code, urban$code)],
+        sf_column = attr(geometry, "sf_column")
+      )
+    )
   }
 }
