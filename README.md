@@ -7,9 +7,8 @@
 
 # kwb.rabimo
 
-The code in this package has been transferred from the C++
-code of ABIMO 3.3: Water Balance Model for Urban Areas
-(https://github.com/KWB-R/abimo/).
+R-implementation of a simple water balance model for urban areas, 
+based on ABIMO 3.2 (see https://github.com/umweltatlas/abimo).
 
 ## Installation
 
@@ -75,5 +74,5 @@ kwb.rabimo::calculate_delta_w(
 ## Documentation
 
 Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
-
 Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
+Tutorial: [https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html]
