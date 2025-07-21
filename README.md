@@ -24,20 +24,14 @@ install.packages("remotes", repos = "https://cloud.r-project.org")
 
 # Install package "kwb.rabimo" (latest "release") from GitHub
 remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
-
-# Install package "kwb.rabimo" (development version) from GitHub
-remotes::install_github("KWB-R/kwb.rabimo@dev", build_vignettes = TRUE)
 ```
 
 ## Basic Usage
 
 ### Provide input data and configuration
 
-Compared to the original C++ version of Abimo we have modified the structures
-of input data, output data and configuration.
-
-For the German city of Berlin, we provide data in the new structures in the 
-package:
+For Berlin, the capital of Germany, we provide input data and model parameters
+in the package:
 
 ```r
 # Load Berlin data in the original Abimo format
@@ -81,8 +75,7 @@ kwb.rabimo::calculate_delta_w(
 
 ### R-package kwb.rabimo
 
-- Release: https://kwb-r.github.io/kwb.rabimo
-- Development: https://kwb-r.github.io/kwb.rabimo/dev
+- Package Home: https://kwb-r.github.io/kwb.rabimo
 - Tutorial: https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html
 
 ### Original software "Wasserhaushaltsmodell Berlin ABIMO 3.2"

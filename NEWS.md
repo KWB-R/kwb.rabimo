@@ -1,3 +1,17 @@
+# kwb.rabimo 2.1.0 (2025-07-21)
+
+Contains a tutorial in the form of a vignette. To view the vignette, install
+the package with
+
+`remotes::install_github("kwb-r/kwb.rabimo@dev", build_vignettes = TRUE)`
+
+and open the vignette with
+
+`vignette("tutorial", package = "kwb.rabimo")`
+
+You can read the tutorial also on our GitHub page: 
+https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html
+
 # kwb.rabimo 2.0.0 (2025-05-20)
 
 - contains new data for Berlin in which road areas do not belong to blocks 

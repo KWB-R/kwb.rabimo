@@ -55,23 +55,15 @@ remotes first:
 install.packages("remotes")
 ```
 
-You can then install kwb.rabimo either in the latest "official" version:
+You can then install kwb.rabimo in the latest "official" version:
 
 ```{r install_rabimo_release, eval = FALSE}
 # Install package "kwb.rabimo" (latest "release") from GitHub
-remotes::install_github("KWB-R/kwb.rabimo")
-```
-
-or in the latest "development" version:
-
-```{r install_rabimo_dev, eval = FALSE}
-# Install package "kwb.rabimo" (development version) from GitHub
-remotes::install_github("KWB-R/kwb.rabimo@dev", build_vignettes = TRUE)
+remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
 ```
 
 By setting `build_vignettes = TRUE` you make sure that this tutorial vignette
-is installed together with the package. Please note that this tutorial is
-currently only available in the "development" version. 
+is installed together with the package. 
 
 ## Usage
 
