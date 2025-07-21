@@ -58,7 +58,7 @@ jobs:
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-3-
 
       - name: Install system dependencies
-        if: runner.os == 'Linux (no, skip this!)'
+        if: runner.os == 'Linux'
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
