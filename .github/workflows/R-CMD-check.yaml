@@ -57,10 +57,9 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-3-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-3-
 
-      - name: Pre-Install packages on linux
+      - name: Install system dependencies on Linux
         if: runner.os == 'Linux'
-        shell: Rscript {0}
-        run: install.packages("units")
+        run: sudo apt install libudunits2
 
       - name: Install system dependencies
         if: runner.os == 'Linux (no, skip!)'
