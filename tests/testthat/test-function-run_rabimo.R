@@ -68,12 +68,34 @@ test_that("run_rabimo() works", {
       surface4 = -5,
       surface5 = -6
     ),
-    swale = list(swale_evaporation_factor = 1)
+    swale = list(
+      swale_evaporation_factor = 1
+    )
   )
 
-  expect_output(result <- f(data, config, controls = define_controls()))
+  expect_output(
+    result_1 <- f(data, config, controls = define_controls())
+  )
+  expect_silent(
+    result_2 <- f(data, config, controls = define_controls(), silent = TRUE)
+  )
 
-  expect_s3_class(result, "data.frame")
-  expect_true(nrow(result) == nrow(data))
+  expect_s3_class(result_1, "data.frame")
+  expect_true(nrow(result_1) == nrow(data))
+  expect_identical(result_1, result_2)
+})
 
+test_that("run_rabimo() keeps the row order", {
+  inputs <- kwb.rabimo::rabimo_inputs_2020
+  data <- inputs$data[sample(nrow(inputs$data), 10L), ]
+  expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
+  expect_identical(data$code, result$code)
+})
+
+test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
+  inputs <- kwb.rabimo::rabimo_inputs_2025
+  data <- inputs$data[sample(nrow(inputs$data), 10L), ]
+  expect_true("sf" %in% class(data))
+  expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
+  expect_true("sf" %in% class(result))
 })

@@ -25,6 +25,8 @@ data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
   # data <- kwb.rabimo::rabimo_inputs_2020$data; type = "undeveloped"
   # data <- kwb.rabimo::rabimo_inputs_2025$data; type = "undeveloped"
 
+  data <- remove_geo_column_if_required(data)
+
   # Check whether data look as expected
   stop_on_invalid_data(data)
 
@@ -45,13 +47,18 @@ data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
     } else if (type == "horticultural") {
       "horticultural"
     } else {
-      stop("please provide a known natural scenario type: undeveloped, horticultural or forested")
+      clean_stop(
+        'Please provide a known natural scenario type: "undeveloped", ',
+        '"horticultural" or "forested"'
+      )
     }
   }
 
-  check_or_convert_data_types(
+  data <- check_or_convert_data_types(
     data,
     types = get_expected_data_type(),
     convert = TRUE
   )
+  
+  restore_geo_column_if_required(data)
 }

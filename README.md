@@ -7,9 +7,14 @@
 
 # kwb.rabimo
 
-The code in this package has been transferred from the C++
-code of ABIMO 3.3: Water Balance Model for Urban Areas
-(https://github.com/KWB-R/abimo/).
+R-implementation of a simple water balance model for urban areas,
+
+- based on "Wasserhaushaltsmodell Berlin ABIMO 3.2" (see Documentation below) and
+- further developed by [KWB](https://kompetenz-wasser.de) 
+  within [BMBF](https://www.bmbf.de/EN/Home/home_node.html)-funded 
+  research project [AMAREX](https://amarex-projekt.de/en).
+
+For our Tutorial, click [here](https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html) (see also Documentation below).
 
 ## Installation
 
@@ -18,21 +23,15 @@ code of ABIMO 3.3: Water Balance Model for Urban Areas
 install.packages("remotes", repos = "https://cloud.r-project.org")
 
 # Install package "kwb.rabimo" (latest "release") from GitHub
-remotes::install_github("KWB-R/kwb.rabimo")
-
-# Install package "kwb.rabimo" (development version) from GitHub
-remotes::install_github("KWB-R/kwb.rabimo@dev")
+remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
 ```
 
 ## Basic Usage
 
 ### Provide input data and configuration
 
-Compared to the original C++ version of Abimo we have modified the structures
-of input data, output data and configuration.
-
-For the German city of Berlin, we provide data in the new structures in the 
-package:
+For Berlin, the capital of Germany, we provide input data and model parameters
+in the package:
 
 ```r
 # Load Berlin data in the original Abimo format
@@ -74,6 +73,12 @@ kwb.rabimo::calculate_delta_w(
 
 ## Documentation
 
-Release: [https://kwb-r.github.io/kwb.rabimo](https://kwb-r.github.io/kwb.rabimo)
+### R-package kwb.rabimo
 
-Development: [https://kwb-r.github.io/kwb.rabimo/dev](https://kwb-r.github.io/kwb.rabimo/dev)
+- Package Home: https://kwb-r.github.io/kwb.rabimo
+- Tutorial: https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.html
+
+### Original software "Wasserhaushaltsmodell Berlin ABIMO 3.2"
+
+- Source code (C++): https://github.com/umweltatlas/abimo, 
+- User manual (in German): https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf

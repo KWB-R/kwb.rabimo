@@ -9,6 +9,7 @@ clean_stop <- function(...)
 }
 
 # check_or_convert_data_types --------------------------------------------------
+#' @importFrom kwb.utils stopFormatted
 check_or_convert_data_types <- function(
     data, types, convert = FALSE, dbg = TRUE
 )
@@ -21,7 +22,7 @@ check_or_convert_data_types <- function(
     old_type <- class(data[[column]])[1L]
     if (old_type != new_type) {
       if (!convert) {
-        stop_formatted(
+        kwb.utils::stopFormatted(
           "Column '%s' (%s) does not have the expected data type (%s).",
           column, old_type, new_type
         )
@@ -158,6 +159,24 @@ matching_names <- function(data, pattern)
 #' @importFrom kwb.utils printIf
 print_if <- kwb.utils::printIf
 
+# remove_geo_column_if_required ------------------------------------------------
+remove_geo_column_if_required <- function(data)
+{
+  if (inherits(data, "sf")) {
+    if (is.null(sf_column <- attr(data, "sf_column"))) {
+      clean_stop("Missing attribute 'sf_column' in data.")
+    }
+    # save the geometry in attribute "geometry" and the original name of the
+    # geometry column in its attribute "sf_column"
+    structure(
+      sf::st_drop_geometry(data),
+      geometry = structure(sf::st_sfc(data[[sf_column]]), sf_column = sf_column)
+    )
+  } else {
+    data
+  }
+}
+
 # rename_and_select ------------------------------------------------------------
 #' @importFrom kwb.utils renameAndSelect
 rename_and_select <- kwb.utils::renameAndSelect
@@ -166,6 +185,24 @@ rename_and_select <- kwb.utils::renameAndSelect
 #' @importFrom kwb.utils renameColumns
 rename_columns <- kwb.utils::renameColumns
 
+# restore_geo_column_if_required -----------------------------------------------
+#' @importFrom sf st_as_sf
+restore_geo_column_if_required <- function(
+  data, geometry = attr(data, "geometry")
+)
+{
+  # Is there something stored in attribute "geometry"?
+  if (is.null(geometry)) {
+    data
+  } else {
+    # remove attribute "geometry"
+    attr(data, "geometry") <- NULL
+    # use original name for geometry column and remove attribute "sf_column"
+    data[[attr(geometry, "sf_column")]] <- structure(geometry, sf_column = NULL)
+    sf::st_as_sf(data)
+  }
+}
+
 # select_columns ---------------------------------------------------------------
 #' @importFrom kwb.utils selectColumns
 select_columns <- kwb.utils::selectColumns
@@ -173,12 +210,3 @@ select_columns <- kwb.utils::selectColumns
 # select_elements --------------------------------------------------------------
 #' @importFrom kwb.utils selectElements
 select_elements <- kwb.utils::selectElements
-
-# stop_formatted ---------------------------------------------------------------
-#' @importFrom kwb.utils stopFormatted
-stop_formatted <- kwb.utils::stopFormatted
-
-# string_list ------------------------------------------------------------------
-#' @importFrom kwb.utils stringList
-string_list <- kwb.utils::stringList
-

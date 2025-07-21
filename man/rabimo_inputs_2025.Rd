@@ -9,21 +9,21 @@
 
 A list containing two elements:
 \describe{
-\item{data}{a data frame with the input data in r-abimo format ...(number of vars)}
-\item{config}{a list object with configuration data}
+\item{data}{a data frame with the input data in R-Abimo format (see below)}
+\item{config}{a list object with configuration data (see below)}
 }
 }
 
 \subsection{\code{rabimo_inputs_2025$data}}{
 
-A data.frame with 58531 observations of 25 variables:
+A data.frame with 58531 observations of 26 variables:
 \describe{
 \item{\code{code}}{Unique block area identifier (character)}
 \item{\code{prec_yr}}{Long-term average of annual precipitation in mm (integer)}
 \item{\code{prec_s}}{Long-term average of annual precipitation within summer months (May to October) in mm (integer)}
 \item{\code{epot_yr}}{Long-term average of annual potential evapotranspiration in mm (integer)}
 \item{\code{epot_s}}{Long-term average of annual potential evapotranspiration within summer months (May to October) in mm (integer)}
-\item{\code{district}}{Number of Berlin "Bezirk" (district) in which the block area is located (character)}
+\item{\code{district}}{Number of Berlin "Bezirk" (district) in which the block area is located (character). This column is Berlin-specific and optional, i.e. not required by the model.}
 \item{\code{total_area}}{Total block area in square metres (numeric)}
 \item{\code{roof}}{Fraction of the total area that is considered as "roof" area (numeric value between 0.0 and 1.0)}
 \item{\code{green_roof}}{Fraction of the roof area that belongs to green roofs (numeric value between 0.0 and 1.0). A value of 1.0 means that all roofs in the block area are green roofs.}
@@ -35,24 +35,42 @@ A data.frame with 58531 observations of 25 variables:
 \item{\code{srf3_pvd}}{Fraction of the paved area that belongs to surface class 3 (numeric value between 0.0 and 1.0, see note 1 below)}
 \item{\code{srf4_pvd}}{Fraction of the paved area that belongs to surface class 4 (numeric value between 0.0 and 1.0, see note 1 below)}
 \item{\code{srf5_pvd}}{Fraction of the paved area that belongs to surface class 5 (numeric value between 0.0 and 1.0, see note 1 below)}
-\item{\code{to_swale}}{Fraction of sealed area (roof area + paved area) that is connected to an infiltration swale (numeric)}
+\item{\code{to_swale}}{Fraction of sealed area (roof area + paved area) that is connected to an infiltration swale (numeric value between 0.0 and 1.0)}
 \item{\code{gw_dist}}{Distance between groundwater table and surface in metres (numeric)}
 \item{\code{ufc30}}{field capacity in 30 cm depth (numeric)}
 \item{\code{ufc150}}{field capacity in 150 cm depth (numeric)}
 \item{\code{land_type}}{land type, one of \code{forested}, \code{horticultural}, \code{urban}, \code{vegetationless}, \code{waterbody} (character)}
-\item{\code{veg_class}}{vegetation class index (numeric), derived from an analysis tree volumes}
+\item{\code{veg_class}}{vegetation class index (numeric), derived from an analysis of tree volumes}
 \item{\code{irrigation}}{irrigation in mm per year (integer)}
-\item{\code{block_type}}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character)}
+\item{\code{block_type}}{Block type identifier of the form "usage-type-id_block-type-id_usage-type-description_block-type-description" (character). This column is Berlin-specific and optional, i.e. not required by the model.}
+\item{\code{Shape}}{List structure containing geometry information on the different block areas. This column is optional. If provided, it will be appended to the model output so that model results can be plotted in the form of maps.}
 }
+
+Note 1: The sum of surface class fractions \code{srf1_pvd}, \code{srf2_pvd}, \code{srf3_pvd}, \code{srf4_pvd}, \code{srf5_pvd} should be 1.0 within each block area.
 }
 
 \subsection{\code{rabimo_inputs_2025$config}}{
 
 A list with 3 named elements:
 \describe{
-\item{runoff_factors}{Runoff factors, vector of numeric with names \code{roof}, \code{surface1}, \code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}}
-\item{bagrov_values}{Bagrov values for sealed surfaces, vector of numeric with names \code{roof}, \code{green_roof}, \code{surface1}, \code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}}
-\item{swale}{Model parameter(s) related to the 'swale' measure, vector of numeric with currently one value, named \code{swale_evaporation_factor}}
+\item{runoff_factors}{Runoff factors for roofs and five different surface
+types, given as a vector of numeric with element names \code{roof}, \code{surface1},
+\code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}. A runoff factor determines
+the proportion of precipitation that, after subtraction of
+evapotranspiration, becomes surface runoff from a paved area. The higher
+the factor, the less permeable is the surface.}
+\item{bagrov_values}{Bagrov values to calculate evapotranspiration from
+paved surfaces, given as a vector of numeric with element names \code{roof},
+\code{green_roof}, \code{surface1}, \code{surface2}, \code{surface3}, \code{surface4}, \code{surface5}.
+The higher the Bagrov value, the more evapotranspiration is generated by
+the model. For a description of the evapotranspiration model and for a
+figure that shows the influence of the Bagrov values (n) on the
+evapotranspiration (in German), see \url{https://www.berlin.de/umweltatlas/wasser/wasserhaushalt/2001/methode/}}
+\item{swale}{Model parameter(s) related to the 'swale' measure, given as a
+vector of numeric with currently one value, named
+\code{swale_evaporation_factor}. The swale evaporation factor determines which
+fraction of the water going into a swale becomes evapotranspiration (the
+rest becomes infiltration).}
 }
 }
 }

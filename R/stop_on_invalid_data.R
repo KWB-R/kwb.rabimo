@@ -1,5 +1,6 @@
 # stop_on_invalid_data ---------------------------------------------------------
 #' @importFrom rlang .data
+#' @importFrom kwb.utils stopFormatted
 stop_on_invalid_data <- function(data)
 {
   # Read information on column names and types
@@ -17,7 +18,7 @@ stop_on_invalid_data <- function(data)
       stopifnot(is.function(check))
       failed <- !check(select_columns(data, column))
       if (any(failed)) {
-        stop_formatted(msg, column, sum(failed))
+        kwb.utils::stopFormatted(msg, column, sum(failed))
       }
     }
   }
@@ -104,12 +105,26 @@ get_expected_data_type <- function(columns = NULL)
 }
 
 # check_sum_up_to_1_or_0 -------------------------------------------------------
+#' @importFrom kwb.utils stopFormatted stringList
 check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
 {
+  select_columns <- kwb.utils::selectColumns
+  
   # Helper function to check for equality allowing a tolerance
   equals <- function(a, b) abs(a - b) <= tolerance
 
-  sums <- rowSums(select_columns(data, columns))
+  column_data <- select_columns(data, columns, drop = FALSE)
+  
+  # Check for non-numeric columns
+  is_numeric <- sapply(column_data, is.numeric)
+  if (any(!is_numeric)) {
+    clean_stop(
+      "There are non-numeric columns in check_sum_up_to_1_or_0(): ",
+      kwb.utils::stringList(columns[!is_numeric])
+    )
+  }
+  
+  sums <- rowSums(column_data)
   ok <- equals(sums, 0) | equals(sums, 1)
 
   if (all(ok)) {
@@ -122,7 +137,7 @@ check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
     utils::head() %>%
     print()
 
-  stop_formatted(string_list(columns), tolerance, x = paste(
+  kwb.utils::stopFormatted(kwb.utils::stringList(columns), tolerance, x = paste(
     "The sum of columns %s is not 1 or 0 in each row as expected",
     "(see above). The tolerance was: %f"
   ))

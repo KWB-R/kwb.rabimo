@@ -9,7 +9,10 @@
 #' @param controls list of settings that control how the function should behave.
 #'   Use \code{\link{define_controls}} to define such a list. The default is
 #'   the list returned by \code{define_controls()}.
+#' @param silent logical indicating whether to suppress console outputs,
+#'   the default is \code{FALSE}
 #' @return data frame with columns as returned by Abimo
+#' @importFrom sf st_as_sf st_drop_geometry st_sfc
 #' @export
 #' @examples
 #' # Get input data and config for Berlin (version 2020)
@@ -24,26 +27,33 @@
 #'
 #' # Get input data and config for Berlin (version 2025)
 #' inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
-#'
-#' # Randomly select 1000 blocks (to reduce runtime)
-#' data <- inputs_2025$data
-#' data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
+#' 
+#' # Crop a box (to reduce runtime)
+#' data <- crop_box(inputs_2025$data)
 #'
 #' # Run R-Abimo
 #' results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
-run_rabimo <- function(data, config, controls = define_controls())
+#'   
+#' plot(results_2025[, -1L])
+run_rabimo <- function(
+  data, config, controls = define_controls(), silent = FALSE
+)
 {
   # Provide functions and variables for debugging
   # (Go to inst/scripts/test-rabimo.R to provide data and config for debugging)
   if (FALSE)
   {
     kwb.utils::assignPackageObjects("kwb.rabimo")
-    inputs <- kwb.utils:::get_cached("rabimo_inputs_2020")
-    data <- inputs$data
-    config <- inputs$config
+    data <- kwb.rabimo::rabimo_inputs_2025$data
+    config <- kwb.rabimo::rabimo_inputs_2025$config
     controls <- define_controls()
     `%>%` <- magrittr::`%>%`
   }
+
+  data <- remove_geo_column_if_required(data)
+  
+  # Save geometry data that may have stored in attribute "geometry"
+  geometry <- attr(data, "geometry")
 
   # If road-area-specific columns are missing, create them
   data <- handle_missing_columns(data)
@@ -59,11 +69,12 @@ run_rabimo <- function(data, config, controls = define_controls())
 
   # Get climate data
   climate <- cat_and_run(
+    dbg = !silent,
     "Collecting climate related data",
     get_climate(data)
   )
 
-  # Create accessor functions to data columns and config elements
+  # Create access functions to data columns and config elements
   fetch_data <- create_accessor(data)
   fetch_config <- create_accessor(config)
   fetch_climate <- create_accessor(climate)
@@ -72,6 +83,7 @@ run_rabimo <- function(data, config, controls = define_controls())
   # actual evapotranspiration of unsealed areas. In the case of water bodies,
   # all values are 0.0. (hsonne: really?)
   soil_properties <- cat_and_run(
+    dbg = !silent,
     "Preparing soil property data for all block areas",
     expr = get_soil_properties(
       land_type = fetch_data("land_type"),
@@ -83,8 +95,9 @@ run_rabimo <- function(data, config, controls = define_controls())
     )
   )
 
-  # Pre-calculate all results of realEvapoTranspiration()
+  # Precalculate actual evapotranspirations for impervious areas
   evaporation_sealed <- cat_and_run(
+    dbg = !silent,
     "Precalculating actual evapotranspirations for impervious areas",
     expr = fetch_config("bagrov_values") %>%
       lapply(function(x) {
@@ -98,8 +111,9 @@ run_rabimo <- function(data, config, controls = define_controls())
       do.call(what = data.frame)
   )
 
-  # Pre-calculate all results of actualEvaporationWaterbodyOrPervious()
+  # Precalculate actual evapotranspirations for waterbodies or pervious areas
   evaporation_unsealed <- cat_and_run(
+    dbg = !silent,
     paste(
       "Precalculating actual evapotranspirations for waterbodies or pervious",
       "areas"
@@ -132,25 +146,27 @@ run_rabimo <- function(data, config, controls = define_controls())
   runoff_factors <- fetch_config("runoff_factors")
 
   # actual runoff from roof surface (area based, with no infiltration)
-  runoff_roof_actual <- with(data, main_frac *
-                               roof * (1 - green_roof) * swg_roof) *
-    runoff_factors[["roof"]] * runoff_roof
+  runoff_roof_actual <- with(
+    data, 
+    main_frac * roof * (1 - green_roof) * swg_roof
+  ) * runoff_factors[["roof"]] * runoff_roof
 
   # actual runoff from green roof surface (area based, with no infiltration)
-  runoff_green_roof_actual <- with(data, main_frac *
-                                     roof * green_roof * swg_roof) *
-    runoff_factors[["roof"]] * runoff_green_roof
+  runoff_green_roof_actual <- with(
+    data, 
+    main_frac * roof * green_roof * swg_roof
+  ) * runoff_factors[["roof"]] * runoff_green_roof
 
   # actual infiltration from roof surface (area based, with no runoff)
-  infiltration_roof_actual <- with(data, main_frac * roof *
-                                     (1-green_roof) * (1-swg_roof)) *
-    runoff_roof
+  infiltration_roof_actual <- with(
+    data, main_frac * roof * (1-green_roof) * (1-swg_roof)
+  ) * runoff_roof
 
   # actual infiltration from green_roof surface (area based, with no runoff)
-  infiltration_green_roof_actual <- with(data, main_frac * roof *
-                                           green_roof * (1-swg_roof)) *
-    runoff_green_roof
-
+  infiltration_green_roof_actual <- with(
+    data, 
+    main_frac * roof * green_roof * (1-swg_roof)
+  ) * runoff_green_roof
 
   # Calculate runoff for all surface classes at once
   # (contains both surface runoff and infiltration components)
@@ -297,8 +313,12 @@ run_rabimo <- function(data, config, controls = define_controls())
     clean_stop("controls$output_format must be either 'abimo' or 'rabimo'.")
   }
 
-  # Round all columns to three digits (skip first column: "CODE")
+  # Round all columns to three digits (skip first column: "code")
   result_data[-1L] <- lapply(result_data[-1L], round, 3L)
+
+  result_data <- restore_geo_column_if_required(
+    result_data, geometry = geometry
+  )
 
   if (isFALSE(control("intermediates"))) {
     return(result_data)
@@ -432,5 +452,43 @@ define_controls <- function(
     reproduce_abimo_error = reproduce_abimo_error,
     output_format = output_format,
     intermediates = intermediates
+  )
+}
+
+#' Crop a box out of a shape
+#' 
+#' @param x sf object
+#' @param xoffset x-offset as fraction of original width (0..1)
+#' @param yoffset y-offset as fraction of original height (0..1)
+#' @param xscale new width as fraction of original width (0..1)
+#' @param yscale new height as fraction of original height (0..1)
+#' @importFrom sf st_as_sfc st_bbox st_crop
+#' @export
+crop_box <- function(x, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
+{
+  stopifnot(inherits(x, "sf"))
+  sf::st_crop(x, sf::st_as_sfc(scale_bbox(
+    bbox = sf::st_bbox(x), xoffset, yoffset, xscale, yscale
+  )))
+}
+
+scale_bbox <- function(bbox, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
+{
+  xmin <- bbox[["xmin"]]
+  xmax <- bbox[["xmax"]]
+  ymin <- bbox[["ymin"]]
+  ymax <- bbox[["ymax"]]
+  width <- xmax - xmin
+  height <- ymax - ymin
+  xmin_new <- xmin + xoffset * width
+  ymin_new <- ymin + yoffset * height
+  sf::st_bbox(
+    c(
+      xmin = xmin_new, 
+      xmax = xmin_new + xscale * width, 
+      ymin = ymin_new, 
+      ymax = ymin_new + yscale * height
+    ), 
+    crs = sf::st_crs(bbox)
   )
 }
