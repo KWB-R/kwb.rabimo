@@ -27,7 +27,7 @@ platform GitHub ([https://github.com/umweltatlas/abimo](https://github.com/umwel
 During the research project [AMAREX](https://amarex-projekt.de/en) (an acronym
 for the German translation of "adaptation of stormwater management to extreme
 events"), funded by the former German Federal Ministry of Education and Research
-([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/DE/Home/home_node.html)), we, the package authors from [Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de) 
+([Bundesministerium für Bildung und Forschung -- BMBF](https://www.bmbf.de/EN/Home/home_node.html)), we, the package authors from [Kompetenzzentrum Wasser Berlin gGmbH (KWB)](https://kompetenz-wasser.de/de)
 started to work on the original program code, written in the programming language C++ ([https://github.com/KWB-R/abimo](https://github.com/KWB-R/abimo/)). 
 We then decided to transfer the model to the 
 [programming language R](https://www.r-project.org/), to rename it to
