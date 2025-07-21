@@ -84,7 +84,7 @@ developer platform GitHub (<a href="https://github.com/umweltatlas/abimo" class=
 <p>During the research project <a href="https://amarex-projekt.de/en" class="external-link">AMAREX</a> (an acronym for the
 German translation of “adaptation of stormwater management to extreme
 events”), funded by the former German Federal Ministry of Education and
-Research (<a href="https://www.bmbf.de/DE/Home/home_node.html" class="external-link">Bundesministerium für
+Research (<a href="https://www.bmbf.de/EN/Home/home_node.html" class="external-link">Bundesministerium für
 Bildung und Forschung – BMBF</a>), we, the package authors from <a href="https://kompetenz-wasser.de/de" class="external-link">Kompetenzzentrum Wasser Berlin
 gGmbH (KWB)</a> started to work on the original program code, written in
 the programming language C++ (<a href="https://github.com/KWB-R/abimo/" class="external-link">https://github.com/KWB-R/abimo</a>).
@@ -149,12 +149,25 @@ Germany, we provide data in the new structures in the package:</p>
 input data. Each row represents a block area and each column represents
 a block area’s property.</li>
 <li>
-<code>abimo_inputs$config</code> is a list that configures runoff
-factors (for runoff calculation) and Bagrov values (for
-evapotranspiration calculation) for different surface types and the
-swale evaporation factor that determines which fraction of the water
-going into a swale becomes evaporation (the rest becomes
-infiltration).</li>
+<code>abimo_inputs$config</code> is a list of parameters that
+configure the calculation of runoff and evapotranspiration,
+respectively, and the infiltration swale model.</li>
+</ul>
+<p>Please refer to the help page of <code>rabimo_inputs_2025</code> for
+further information on the different input columns and model
+parameters.</p>
+<p>To open the help page, run</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="../reference/rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></code></pre></div>
+<p>In addition to the short descriptions given on the help page you may
+refer</p>
+<ul>
+<li>to the <a href="https://www.berlin.de/umweltatlas/wasser/wasserhaushalt/2017/methode/" class="external-link">description
+of the original ABIMO model approaches given by Berlin’s Senate
+Department for Urban Development, Building and Housing (in German)</a>
+or</li>
+<li>to the <a href="https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf" class="external-link">original
+ABIMO user manual (in German)</a>.</li>
 </ul>
 <p><strong>Note:</strong> We provide also an object
 <code>rabimo_inputs_2020</code>, that refers to an older version of the
@@ -168,7 +181,7 @@ tutorial.</p>
 </h3>
 <p>You may inspect the first rows (and only the most relevant columns)
 of the input data with</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">24</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               code prec_yr prec_s epot_yr epot_s district total_area      roof</span></span>
 <span><span class="co">#&gt; 1 0100980011000100     608    324     666    509        1   4623.972 0.3243243</span></span>
@@ -192,7 +205,7 @@ of the input data with</p>
 <span><span class="co">#&gt; 5        0        0     5.6    12     10     urban      13.2         50</span></span>
 <span><span class="co">#&gt; 6        0        0     4.5    11     10     urban       2.7          0</span></span></code></pre></div>
 <p>and you may print the whole configuration object with</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="co">#&gt; $runoff_factors</span></span>
 <span><span class="co">#&gt;     roof surface1 surface2 surface3 surface4 surface5 </span></span>
@@ -205,10 +218,6 @@ of the input data with</p>
 <span><span class="co">#&gt; $swale</span></span>
 <span><span class="co">#&gt; swale_evaporation_factor </span></span>
 <span><span class="co">#&gt;                      0.1</span></span></code></pre></div>
-<p>Please refer to the help page of <code>rabimo_inputs_2025</code> for
-further information. To open the help page, run</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="../reference/rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualise-the-input-data">Visualise the input data<a class="anchor" aria-label="anchor" href="#visualise-the-input-data"></a>
@@ -464,6 +473,26 @@ measures:</p>
 <li>green roofs,</li>
 <li>unsealing of paved areas,</li>
 <li>infiltration swales.</li>
+</ul>
+<p>These rainwater management measures are shortly demonstrated in the
+sections below. In addition to that, the user may also modify the values
+in the other columns, if desired, in order to calculate the effect these
+variables have on the water balance.</p>
+<p>For example,</p>
+<ul>
+<li>the composition of different pavement types is controlled by the
+variables <code>srf1_pvd</code>, <code>srf2_pvd</code>,
+<code>srf3_pvd</code>, <code>srf4_pvd</code>, and <code>srf5_pvd</code>
+(their sum represents the total paved area and must be equal to 1.0).
+Each class is assigned a pair of model parameters, runoff factor and
+Bagrov value, respectively, that are defined in the configuration object
+(see above).</li>
+<li>changing the value of <code>roof</code>, can be useful to simulate
+the effect of new buildings or demolitions.</li>
+<li>the parameter <code>veg_class</code> can be adjusted to test the
+impact of vegetation on the water balance, keeping in mind that a
+veg_class of 50 corresponds to a typical urban park with trees, while a
+value of 75 corresponds to a forested area.</li>
 </ul>
 <div class="section level4">
 <h4 id="simulate-green-roofs">Simulate green roofs<a class="anchor" aria-label="anchor" href="#simulate-green-roofs"></a>
