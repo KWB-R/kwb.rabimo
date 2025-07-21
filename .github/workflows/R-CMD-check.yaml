@@ -59,7 +59,7 @@ jobs:
 
       - name: Install system dependencies on Linux
         if: runner.os == 'Linux'
-        run: apt-get -y update && apt-get install -y libudunits2-dev
+        run: sudo apt-get -y update && sudo apt-get install -y libudunits2-dev
 
       - name: Install system dependencies
         if: runner.os == 'Linux (no, skip!)'
