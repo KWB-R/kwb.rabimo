@@ -91,11 +91,23 @@ The object `abimo_inputs` is a list with two elements:
 
 - `abimo_inputs$data` is a data frame containing the actual input data. Each row 
 represents a block area and each column represents a block area's property.
-- `abimo_inputs$config` is a list that configures runoff factors (for 
-runoff calculation) and Bagrov values (for evapotranspiration calculation) for 
-different surface types and the swale evaporation factor that determines which
-fraction of the water going into a swale becomes evaporation (the rest becomes
-infiltration).
+- `abimo_inputs$config` is a list of parameters that configure the calculation 
+of runoff and evapotranspiration, respectively, and the infiltration swale model.
+
+Please refer to the help page of `rabimo_inputs_2025` for further information
+on the different input columns and model parameters.
+
+To open the help page, run
+
+```{r help_input, eval = FALSE}
+?kwb.rabimo::rabimo_inputs_2025
+```
+
+In addition to the short descriptions given on the help page you may refer
+
+- to the [description of the original ABIMO model approaches given by Berlin's
+  Senate Department for Urban Development, Building and Housing (in German)](https://www.berlin.de/umweltatlas/wasser/wasserhaushalt/2017/methode/) or
+- to the [original ABIMO user manual (in German)](https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf).
 
 **Note:** We provide also an object `rabimo_inputs_2020`, that refers to an 
 older version of the Berlin data set. It can be used in almost the same way as
@@ -115,13 +127,6 @@ and you may print the whole configuration object with
 
 ```{r view_input_config}
 abimo_inputs$config
-```
-
-Please refer to the help page of `rabimo_inputs_2025` for further information. 
-To open the help page, run
-
-```{r help_input, eval = FALSE}
-?kwb.rabimo::rabimo_inputs_2025
 ```
 
 ### Visualise the input data
@@ -321,6 +326,25 @@ R-Abimo currently allows to simulate three rainwater management measures:
 - green roofs,
 - unsealing of paved areas,
 - infiltration swales.
+
+These rainwater management measures are shortly demonstrated in the sections 
+below. In addition to that, the user may also modify the values in the other 
+columns, if desired, in order to calculate the effect these variables have on 
+the water balance. 
+
+For example, 
+
+- the composition of different pavement types is controlled by the variables 
+  `srf1_pvd`, `srf2_pvd`, `srf3_pvd`, `srf4_pvd`, and `srf5_pvd` (their sum 
+  represents the total paved area and must be equal to 1.0). Each class is 
+  assigned a pair of model parameters, runoff factor and Bagrov value, 
+  respectively, that are defined in the configuration object (see above). 
+- changing the value of `roof`, can be useful to simulate the effect of new 
+  buildings or demolitions. 
+- the parameter `veg_class` can be adjusted to test the impact of vegetation on 
+  the water balance, keeping in mind that a veg_class of 50 corresponds to a 
+  typical urban park with trees, while a value of 75 corresponds to a forested 
+  area.
 
 #### Simulate green roofs
 

@@ -51,7 +51,8 @@ run_rabimo <- function(
   }
 
   data <- remove_geo_column_if_required(data)
-  # Save eventual geometry data that the above function stored as an attribute
+  
+  # Save geometry data that may have stored in attribute "geometry"
   geometry <- attr(data, "geometry")
 
   # If road-area-specific columns are missing, create them
@@ -73,7 +74,7 @@ run_rabimo <- function(
     get_climate(data)
   )
 
-  # Create accessor functions to data columns and config elements
+  # Create access functions to data columns and config elements
   fetch_data <- create_accessor(data)
   fetch_config <- create_accessor(config)
   fetch_climate <- create_accessor(climate)
@@ -94,7 +95,7 @@ run_rabimo <- function(
     )
   )
 
-  # Pre-calculate all results of realEvapoTranspiration()
+  # Precalculate actual evapotranspirations for impervious areas
   evaporation_sealed <- cat_and_run(
     dbg = !silent,
     "Precalculating actual evapotranspirations for impervious areas",
@@ -110,7 +111,7 @@ run_rabimo <- function(
       do.call(what = data.frame)
   )
 
-  # Pre-calculate all results of actualEvaporationWaterbodyOrPervious()
+  # Precalculate actual evapotranspirations for waterbodies or pervious areas
   evaporation_unsealed <- cat_and_run(
     dbg = !silent,
     paste(
