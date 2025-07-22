@@ -64,7 +64,7 @@ jobs:
       - name: Install system dependencies on Linux
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get -y install cmake libssl-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libudunits2-dev
+          sudo apt-get install -y libgdal-dev libudunits2-dev
 
       - name: Install R package dependencies
         shell: Rscript {0}
