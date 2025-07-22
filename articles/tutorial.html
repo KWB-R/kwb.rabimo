@@ -218,11 +218,7 @@ of the input data with</p>
 information we can plot the spatial distribution of a variable (e.g. the
 annual precipitation) in the form of a map:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load the sf package to allow for geo plotting</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linking to GEOS 3.13.1, GDAL 3.11.0, PROJ 9.6.0; sf_use_s2() is TRUE</span></span>
-<span></span>
-<span><span class="co"># Provide a subset of the data representing a zoom into the centre of Berlin</span></span>
+<code class="sourceCode R"><span><span class="co"># Provide a subset of the data representing a zoom into the centre of Berlin</span></span>
 <span><span class="va">berlin_zoom</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/crop_box.html">crop_box</a></span><span class="op">(</span><span class="va">abimo_inputs</span><span class="op">$</span><span class="va">data</span>, </span>
 <span>  xoffset <span class="op">=</span> <span class="fl">0.35</span>, </span>
 <span>  yoffset <span class="op">=</span> <span class="fl">0.5</span>, </span>
