@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/404.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/articles/index.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/authors.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/index.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/LICENSE-text.html</loc></url>
@@ -7,6 +9,7 @@
 <url><loc>https://kwb-r.github.io/kwb.rabimo/news/index.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/reference/actual_evaporation_waterbody_or_pervious.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/reference/calculate_delta_W.html</loc></url>
+<url><loc>https://kwb-r.github.io/kwb.rabimo/reference/crop_box.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/reference/data_to_natural.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/reference/define_controls.html</loc></url>
 <url><loc>https://kwb-r.github.io/kwb.rabimo/reference/distribute_measures.html</loc></url>
