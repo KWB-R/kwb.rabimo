@@ -128,6 +128,9 @@ we can plot the spatial distribution of a variable (e.g. the annual
 precipitation) in the form of a map:
 
 ```{r, fig.width = FIGURE_WIDTH}
+# Load the sf package to allow for geo plotting
+library(sf)
+
 # Provide a subset of the data representing a zoom into the centre of Berlin
 berlin_zoom <- kwb.rabimo::crop_box(abimo_inputs$data, 
   xoffset = 0.35, 
