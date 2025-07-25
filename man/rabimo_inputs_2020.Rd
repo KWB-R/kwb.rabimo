@@ -93,9 +93,7 @@ Data frame and configuration object that are required by the R-Abimo main
 function \code{\link{run_rabimo}}.
 }
 \details{
-See the following table for the meaning of the surface classes and their Bagrov values and runoff factors used for Berlin.
-\if{html}{\figure{configuration_table_berlin.png}{options: width="80\%" alt="Figure: configuration_table_berlin.png"}}
-\if{latex}{\figure{configuration_table_berlin.pdf}{options: width=16.8cm}}\tabular{clrr}{
+See the following table for the meaning of the surface classes and their Bagrov values and runoff factors used for Berlin.\tabular{clrr}{
    \strong{Surface Class} \tab \strong{Surface Type} \tab \strong{Bagrov Value} \tab \strong{Runoff Factor} \cr
    - \tab Roof surfaces \tab 0.05 \tab 1.00 \cr
    - \tab Extensive vegetated roofs \tab 0.65 \tab 0.10 \cr

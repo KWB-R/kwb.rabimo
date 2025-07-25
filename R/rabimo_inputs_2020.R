@@ -77,8 +77,6 @@
 #' }
 #' @details
 #' See the following table for the meaning of the surface classes and their Bagrov values and runoff factors used for Berlin.
-#' \if{html}{\figure{configuration_table_berlin.png}{options: width="80\%" alt="Figure: configuration_table_berlin.png"}}
-#' \if{latex}{\figure{configuration_table_berlin.pdf}{options: width=16.8cm}}
 #' |**Surface Class**|**Surface Type**                                                                                                      |**Bagrov Value**|**Runoff Factor**|
 #' |:------------:|:------------------------------------------------------------------------------------------------------------------------|------------:|-------------:|
 #' |-             |Roof surfaces                                                                                                            |         0.05|          1.00|
