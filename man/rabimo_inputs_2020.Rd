@@ -96,7 +96,7 @@ function \code{\link{run_rabimo}}.
 See the following table for the meaning of the surface classes and their Bagrov values and runoff factors used for Berlin.\tabular{clrr}{
    \strong{Surface Class} \tab \strong{Surface Type} \tab \strong{Bagrov Value} \tab \strong{Runoff Factor} \cr
    - \tab Roof surfaces \tab 0.05 \tab 1.00 \cr
-   - \tab Extensive vegetated roofs \tab 0.65 \tab 0.10 \cr
+   - \tab Extensive vegetated roofs \tab 0.65 \tab 1.00 \cr
    1 \tab Asphalt, concrete, paving with joint sealing or concrete base, synthetic surfaces \tab 0.11 \tab 0.90 \cr
    2 \tab Artificial stone and slab coverings (side length > 8 cm), concrete interlocking pavers, clinker, medium and large pavers \tab 0.11 \tab 0.70 \cr
    3 \tab Small and mosaic pavers (side length < 8 cm) \tab 0.25 \tab 0.40 \cr

@@ -74,7 +74,7 @@
 #' |**Surface Class**|**Surface Type**                                                                                                      |**Bagrov Value**|**Runoff Factor**|
 #' |:------------:|:------------------------------------------------------------------------------------------------------------------------|------------:|-------------:|
 #' |-             |Roof surfaces                                                                                                            |         0.05|          1.00|
-#' |-             |Extensive vegetated roofs                                                                                                |         0.65|          0.10|
+#' |-             |Extensive vegetated roofs                                                                                                |         0.65|          1.00|
 #' |1             |Asphalt, concrete, paving with joint sealing or concrete base, synthetic surfaces                                        |         0.11|          0.90|
 #' |2             |Artificial stone and slab coverings (side length > 8 cm), concrete interlocking pavers, clinker, medium and large pavers |         0.11|          0.70|
 #' |3             |Small and mosaic pavers (side length < 8 cm)                                                                             |         0.25|          0.40|
