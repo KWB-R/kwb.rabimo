@@ -72,6 +72,9 @@ vector of numeric with currently one value, named
 fraction of the water going into a swale becomes evapotranspiration (the
 rest becomes infiltration).}
 }
+See the following table for the meaning of the surface classes and their Bagrov values and runoff factors used for Berlin.
+\if{html}{\figure{configuration_table_berlin.png}{options: width="80\%" alt="Figure: configuration_table_berlin.png"}}
+\if{latex}{\figure{configuration_table_berlin.pdf}{options: width=16.8cm}}
 }
 }
 \source{
