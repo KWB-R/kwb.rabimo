@@ -56,6 +56,7 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
   # the measures.
   a_total <- blocks$total_area
   a_roof <- blocks$total_area * blocks$roof
+  a_total_sum <- sum(a_total)
   
   # 1. Handle measure "green roof"
   if (!is.na(measures$green_roof)) {
@@ -63,7 +64,7 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
     a_green_roof <- a_roof * blocks$green_roof
     
     # Total green roof area to add (if value >= 0) or to remove (if value < 0)
-    a_green_roof_change <- sum(measures$green_roof * a_total) - sum(a_green_roof)
+    a_green_roof_change <- measures$green_roof * a_total_sum - sum(a_green_roof)
     
     # Roof area that can be converted to green roof area
     if (a_green_roof_change >= 0) {
@@ -106,7 +107,7 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
     a_unpaved <- a_total - a_roof - a_paved
 
     # Required increase/decrease in unpaved area
-    a_unpaved_change <- measures$unpaved * sum(a_total) - sum(a_unpaved)
+    a_unpaved_change <- measures$unpaved * a_total_sum - sum(a_unpaved)
     unpave <- a_unpaved_change >= 0
     
     debug(sprintf(
@@ -151,7 +152,7 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
   if (!is.na(measures$to_swale)) {
     a_sealed <- a_roof + a_total * blocks$pvd
     a_to_swale <- blocks$to_swale * a_sealed
-    a_to_swale_change <- sum(measures$to_swale * a_total) - sum(a_to_swale)
+    a_to_swale_change <- measures$to_swale * a_total_sum - sum(a_to_swale)
     
     increase <- a_to_swale_change >= 0
     
