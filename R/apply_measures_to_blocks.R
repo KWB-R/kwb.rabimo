@@ -70,30 +70,30 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
     if (a_green_roof_change >= 0) {
       
       # increase green roof area
-      a_green_roof_potential <- a_roof - a_green_roof
+      a_potential <- a_roof - a_green_roof
       
-      if (a_green_roof_change > sum(a_green_roof_potential)) {
+      if (a_green_roof_change > sum(a_potential)) {
         report_problem(sprintf(
           "Not enough (non-green) roof area available (%0.2f m2 missing)",
-          a_green_roof_change - sum(a_green_roof_potential)
+          a_green_roof_change - sum(a_potential)
         ))
       }
       
     } else {
       
       # decrease green roof area
-      a_green_roof_potential <- a_green_roof
+      a_potential <- a_green_roof
       
-      if (- a_green_roof_change > sum(a_green_roof_potential)) {
+      if (- a_green_roof_change > sum(a_potential)) {
         report_problem(sprintf(
           "Not enough green roof area available (%0.2f m2 missing)",
-          - a_green_roof_change - sum(a_green_roof_potential)
+          - a_green_roof_change - sum(a_potential)
         ))
       }    
     }
     
     # Distribute change in green roof area to the different blocks    
-    a_green_roof_new <- a_green_roof + share_of_sum(a_green_roof_potential) * a_green_roof_change
+    a_green_roof_new <- a_green_roof + share_of_sum(a_potential) * a_green_roof_change
     
     # Update column "green_roof" (as fraction of roof area)
     blocks$green_roof <- ifelse(a_roof == 0, 0, a_green_roof_new / a_roof)
@@ -164,30 +164,30 @@ apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALS
     
     if (increase) {
       
-      a_to_swale_potential <- a_sealed - a_to_swale
+      a_potential <- a_sealed - a_to_swale
       
-      if (a_to_swale_change > sum(a_to_swale_potential)) {
+      if (a_to_swale_change > sum(a_potential)) {
         report_problem(sprintf(
           "Not enough sealed area available to be connected to swales (%0.2f m2 missing)",
-          a_to_swale_change - sum(a_to_swale_potential)
+          a_to_swale_change - sum(a_potential)
         ))
       }
       
     } else {
       
       # a_to_swale_change is negative here
-      a_to_swale_potential <- a_to_swale
+      a_potential <- a_to_swale
       
-      if (- a_to_swale_change > sum(a_to_swale_potential)) {
+      if (- a_to_swale_change > sum(a_potential)) {
         report_problem(sprintf(
           "Not enough swale-connected sealed area available to be disconnected (%0.2f m2 missing)",
-          abs(a_to_swale_change) - sum(a_to_swale_potential)
+          abs(a_to_swale_change) - sum(a_potential)
         ))
       }
     }
     
     # distribute
-    a_to_swale_new <- a_to_swale + share_of_sum(a_to_swale_potential) * a_to_swale_change
+    a_to_swale_new <- a_to_swale + share_of_sum(a_potential) * a_to_swale_change
     
     # Update column "to_swale"
     blocks$to_swale <- ifelse(a_sealed == 0, 0, a_to_swale_new / a_sealed)
