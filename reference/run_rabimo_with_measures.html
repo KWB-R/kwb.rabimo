@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Distribute Rainwater Management Measures and run R-Abimo</h1>
-      <small class="dont-index">Source: <a href="https://github.com/KWB-R/kwb.rabimo/blob/main/R/run_rabimo_with_measures.R" class="external-link"><code>R/run_rabimo_with_measures.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KWB-R/kwb.rabimo/blob/dev/R/run_rabimo_with_measures.R" class="external-link"><code>R/run_rabimo_with_measures.R</code></a></small>
       <div class="d-none name"><code>run_rabimo_with_measures.Rd</code></div>
     </div>
 
@@ -52,7 +52,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo_with_measures</span><span class="op">(</span></span>
 <span>  <span class="va">blocks</span>,</span>
 <span>  <span class="va">measures</span>,</span>
-<span>  config <span class="op">=</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="rabimo_inputs_2020.html">rabimo_inputs_2020</a></span><span class="op">$</span><span class="va">config</span></span>
+<span>  config <span class="op">=</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="rabimo_inputs_2020.html">rabimo_inputs_2020</a></span><span class="op">$</span><span class="va">config</span>,</span>
+<span>  old_version <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,6 +75,12 @@ corresponding to each measure</p></dd>
 <dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
 <dd><p>configuration object, default:
 <code><a href="rabimo_inputs_2020.html">rabimo_inputs_2020</a>$config</code></p></dd>
+
+
+<dt id="arg-old-version">old_version<a class="anchor" aria-label="anchor" href="#arg-old-version"></a></dt>
+<dd><p>if <code>TRUE</code> the old, erroneous version of this function
+is used (not correctly considering the updated pvd value before calculating
+the new to_swale values). The default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
 
