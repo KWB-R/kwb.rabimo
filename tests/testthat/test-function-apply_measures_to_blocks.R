@@ -32,7 +32,7 @@ test_that("apply_measures_to_blocks() sets pvd (alone) correctly", {
 
   # roof = 0.2 -> max. unpaved = 0.8
   blocks <- data.frame(total_area = 100, roof = 0.2, pvd = seq(0, 0.8, 0.1))
-  result <- apply_measures(blocks, unpaved = 0.8)
+  result <- apply_measures(blocks, global_share_unpaved = 0.8)
   expected <- blocks
   expected$pvd <- 0
   expect_equal(result, expected)
@@ -41,7 +41,7 @@ test_that("apply_measures_to_blocks() sets pvd (alone) correctly", {
 
   # roof = 0 -> max. paved = 1
   blocks <- data.frame(total_area = 100, roof = 0, pvd = seq(0, 1, 0.1))
-  result <- apply_measures(blocks, unpaved = 0)
+  result <- apply_measures(blocks, global_share_unpaved = 0)
   expected <- blocks
   expected$pvd <- 1
   expect_equal(result, expected)
