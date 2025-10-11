@@ -99,3 +99,17 @@ test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
   expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
   expect_true("sf" %in% class(result))
 })
+
+test_that("Full connection to swales results in zero runoff", {
+  generate <- kwb.rabimo::generate_rabimo_area
+  data <- rbind(
+    generate("area_0"), 
+    generate("all_swale", to_swale = 1), 
+    generate("all_swale_plus_green_roof", green_roof = 1, to_swale = 1), 
+    generate("all_swale_plus_green_roof", pvd = 0, to_swale = 1), 
+    kwb.rabimo::generate_rabimo_area("all_swale_plus_both", pvd = 0, green_roof = 1, to_swale = 1)
+  )
+  config <- kwb.rabimo::rabimo_inputs_2025$config
+  result <- kwb.rabimo::run_rabimo(data, config, silent = TRUE)
+  expect_true(all(result$runoff[startsWith(result$code, "all_swale")] == 0))
+})

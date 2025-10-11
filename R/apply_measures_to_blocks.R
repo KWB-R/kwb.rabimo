@@ -1,7 +1,19 @@
 # @param measures list with elements green_roof, unpaved, to_swale representing 
-#   the target percentages of the total areas corresponding to each measure.
+#   the target shares of the total areas corresponding to each measure.
 #   A value of NA means that the corresponding measure column is not touched.
-apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALSE)
+apply_measures_to_blocks <- function(
+    blocks, 
+    measures = list(
+      green_roof = global_share_green_roof,
+      unpaved = global_share_unpaved,
+      to_swale = global_share_to_swale
+    ), 
+    dbg = FALSE, 
+    check = FALSE,
+    global_share_green_roof = NA,
+    global_share_unpaved = NA,
+    global_share_to_swale = NA
+)
 {
   #dbg = TRUE; check = TRUE
   

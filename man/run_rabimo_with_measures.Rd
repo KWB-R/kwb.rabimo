@@ -8,7 +8,8 @@ run_rabimo_with_measures(
   blocks,
   measures,
   config = kwb.rabimo::rabimo_inputs_2020$config,
-  old_version = FALSE
+  old_version = FALSE,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ corresponding to each measure}
 \item{old_version}{if \code{TRUE} the old, erroneous version of this function
 is used (not correctly considering the updated pvd value before calculating
 the new to_swale values). The default is \code{FALSE}.}
+
+\item{\dots}{further arguments passed to \code{\link{run_rabimo}}, such as
+\code{silent = TRUE}}
 }
 \description{
 Distribute Rainwater Management Measures and run R-Abimo

@@ -88,11 +88,11 @@ features <- kwb.rabimo:::check_or_convert_data_types(
 )
 
 test_that("run_rabimo_with_measures(old_version = TRUE) works", {
-
+  
   run_rabimo_with_measures <- kwb.rabimo::run_rabimo_with_measures
-
+  
   expect_error(run_rabimo_with_measures())
-
+  
   test_me <- function(data) {
     blocks <- data[sample(seq_len(nrow(data)), 10L), ]
     stats <- kwb.rabimo:::get_measure_stats(blocks)
@@ -159,4 +159,45 @@ test_that("run_rabimo_with_measures(old_version = TRUE) works", {
       old_version = TRUE
     )
   )
+})
+
+test_that("Full connection to swales results in zero runoff", {
+
+  generate <- kwb.rabimo::generate_rabimo_area
+  get_stats <- kwb.rabimo:::get_measure_stats
+  apply_measures <- kwb.rabimo:::apply_measures_to_blocks
+  
+  run <- function(blocks, measures) {
+    kwb.rabimo::run_rabimo_with_measures(
+      blocks = blocks, 
+      measures = measures, 
+      config = kwb.rabimo::rabimo_inputs_2025$config, 
+      silent = TRUE
+    )
+  }
+  
+  # different versions of sealed = 0.3
+  blocks <- generate(
+    code = as.character(1:3), 
+    roof = c(0.0, 0.1, 0.2), 
+    pvd  = c(0.3, 0.2, 0.1)
+  )
+  
+  measures <- list(green_roof = NA, unpaved = NA, to_swale = 0.3)
+  result <- run(blocks, measures)
+  expect_true(all(result$runoff == 0))
+  
+  # max. green_roof = mean(roof) = 0.1
+  max_green_roof <- get_stats(blocks)$green_roof$max
+  # max. unpaved = mean(1 - roof) = 0.9
+  max_unpaved <- get_stats(blocks)$unpaved$max
+  # max. to_swale = mean(roof) = 0.1 (in case of max. removal of pavement)
+  max_to_swale <- get_stats(
+    apply_measures(blocks, global_share_unpaved = max_unpaved)
+  )$to_swale$max
+
+  measures <- list(green_roof = 0.1, unpaved = 0.9, to_swale = 0.1)
+  result <- run(blocks, measures)
+  expect_true(all(result$runoff == 0))
+  
 })
