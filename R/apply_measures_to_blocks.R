@@ -3,7 +3,7 @@
 #   A value of NA means that the corresponding measure column is not touched.
 apply_measures_to_blocks <- function(blocks, measures, dbg = FALSE, check = FALSE)
 {
-  #dbg = FALSE; check = FALSE
+  #dbg = TRUE; check = TRUE
   
   # Define helper functions
   {
