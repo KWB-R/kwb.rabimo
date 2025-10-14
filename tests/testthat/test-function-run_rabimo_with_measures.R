@@ -88,20 +88,11 @@
     )
   )
   
+  #FEATURES
   SAFETY_FACTOR <- 0.9999
-  RUN_NEW <- function(...) kwb.rabimo::run_rabimo_with_measures(..., silent = TRUE)
-  RUN_OLD <- function(...) RUN_NEW(..., old_version = TRUE)
+  RUN <- function(...) kwb.rabimo::run_rabimo_with_measures(..., silent = TRUE)
   GET_MAX <- function(x) lapply(kwb.rabimo:::get_measure_stats(x), `[[`, "max")
   APPLY_MEASURES <- kwb.rabimo:::apply_measures_to_blocks
-  DATASETS <- lapply(
-    X = list(
-      d2020 = kwb.rabimo::rabimo_inputs_2020$data,
-      d2025 = kwb.rabimo::rabimo_inputs_2025$data
-    ), 
-    FUN = function(df) {
-      df[sample(seq_len(nrow(df)), 10L), ]
-    }
-  )
   ADD_DELTA <- function(x, element, delta) {
     x[[element]] <- x[[element]] + 0.01
     x
@@ -115,42 +106,57 @@
 
 test_that("run_rabimo_with_measures(old_version = TRUE) works", {
   
-  expect_error(RUN_OLD())
-  expect_error(RUN_NEW())
+  expect_error(RUN())
   
-  for (blocks in DATASETS) {
+  sample_size <- 100L
+  
+  for (seed in sample(1e10, 5)) {
     
-    #blocks <- DATASETS$d2020
-    m_max <- as.list(SAFETY_FACTOR * unlist(GET_MAX(blocks)))
+    #seed <- seeds[1L]
+    writeLines(paste("seed:", seed))
     
-    # The maximum values were ok in the old version
-    expect_no_error(result <- RUN_OLD(blocks, measures = m_max))
-    expect_true(all(result$surface_runoff == 0))
-
-    # Exceeding any maximum value results in an error
-    expect_error(RUN_OLD(blocks, measures = ADD_DELTA(m_max, "green_roof")))
-    expect_error(RUN_OLD(blocks, measures = ADD_DELTA(m_max, "unpaved")))
-    expect_error(RUN_OLD(blocks, measures = ADD_DELTA(m_max, "to_swale")))
-    
-    # The maximum values lead to an error in the new version because after
-    # maximum unpaving there is nothing left to be connected to swales
-    expect_error(expect_warning(RUN_NEW(blocks, measures = m_max)))
-
-    # However, we can recalculate the maximum "to_swale"
-    expect_no_error(
-      result <- RUN_NEW(blocks, measures = CORRECT_TO_SWALE_MAX(m_max, blocks))
+    DATASETS <- lapply(
+      X = list(
+        d2020 = kwb.rabimo::rabimo_inputs_2020$data,
+        d2025 = kwb.rabimo::rabimo_inputs_2025$data
+      ), 
+      FUN = function(df) {
+        df[sample(seq_len(nrow(df)), sample_size), ]
+      }
     )
-    expect_true(all(result$runoff < 0.1))
+    
+    for (blocks in DATASETS) {
+      
+      #blocks <- DATASETS$d2025
+      m_max_old <- as.list(SAFETY_FACTOR * unlist(GET_MAX(blocks)))
+      m_max_new <- CORRECT_TO_SWALE_MAX(m_max_old, blocks)
 
-  } # end of for (data in DATASETS)
-  
+      # The maximum values lead to an error in the new version because after
+      # maximum unpaving there is nothing left to be connected to swales
+      expect_error(suppressWarnings(RUN(blocks, measures = m_max_old)))
+      
+      # However, with the corrected maximum value for "to_swale" it works
+      # The new version should not produce runoff with the well-calculated values
+      expect_no_error(suppressWarnings(result <- RUN(blocks, measures = m_max_new)))
+
+      expect_true(all(result$runoff == 0))
+      #expect_true(all(result$runoff < 0.1))
+
+      # Exceeding any maximum value results in an error
+      expect_error(suppressWarnings(RUN(blocks, measures = ADD_DELTA(m_max_new, "green_roof"))))
+      expect_error(suppressWarnings(RUN(blocks, measures = ADD_DELTA(m_max_new, "unpaved"))))
+      expect_error(suppressWarnings(RUN(blocks, measures = ADD_DELTA(m_max_new, "to_swale"))))
+
+    } # end of for (data in DATASETS)
+  }
+
+  # Testing the features that caused problems as reported by Luise
   measures <- list(green_roof = 0.009, to_swale = 0, unpaved = 0.3)
-  expect_no_error(RUN_OLD(FEATURES, measures = measures))
-  expect_error(RUN_OLD(FEATURES, measures = ADD_DELTA(measures, "green_roof")))
+  expect_no_error(RUN(FEATURES, measures = measures))
+  expect_error(suppressWarnings(RUN(FEATURES, measures = ADD_DELTA(measures, "green_roof"))))
 
-  expect_no_error(RUN_NEW(FEATURES, measures))
-  expect_error(RUN_NEW(FEATURES, ADD_DELTA(measures, "green_roof")))
-  
+  expect_no_error(RUN(FEATURES, measures))
+  expect_error(suppressWarnings(RUN(FEATURES, ADD_DELTA(measures, "green_roof"))))
 })
 
 test_that("Full connection to swales results in zero runoff", {
@@ -164,18 +170,18 @@ test_that("Full connection to swales results in zero runoff", {
     pvd  = c(0.3, 0.2, 0.1)
   )
   
-  check_result <- function(result) {
+  check_for_no_runoff <- function(result) {
     expect_true(all(result$runoff == 0))
   }
 
   measures <- list(green_roof = NA, unpaved = NA, to_swale = 0.3)
-  result <- RUN_NEW(blocks, measures, config = CONFIG)
-  check_result(result)
+  result <- RUN(blocks, measures, config = CONFIG)
+  check_for_no_runoff(result)
 
   # max. green_roof = mean(roof) = 0.1
   # max. unpaved = mean(1 - roof) = 0.9
   # correct max. to_swale
   m_max <- CORRECT_TO_SWALE_MAX(GET_MAX(blocks), blocks)
-  result <- RUN_NEW(blocks, m_max, config = CONFIG)
-  check_result(result)
+  result <- RUN(blocks, m_max, config = CONFIG)
+  check_for_no_runoff(result)
 })

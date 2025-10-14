@@ -67,8 +67,8 @@ apply_measures_to_blocks <- function(
   # Provide the total areas and roof areas in advance. They are not changed by 
   # the measures.
   a_total <- blocks$total_area
-  a_roof <- blocks$total_area * blocks$roof
   a_total_sum <- sum(a_total)
+  a_roof <- a_total * blocks$roof
   
   # 1. Handle measure "green roof"
   if (!is.na(measures$green_roof)) {
@@ -125,7 +125,7 @@ apply_measures_to_blocks <- function(
     debug(sprintf(
       "%s area to be %s: %0.2f m2", 
       ifelse(unpave, "Paved", "Unpaved"),
-      ifelse(unpave, "unpaved", "paved"),
+      ifelse(unpave, "Unpaved", "paved"),
       abs(a_unpaved_change)
     ))
     
@@ -162,6 +162,7 @@ apply_measures_to_blocks <- function(
   
   # 3. Handle measure "Connection to swales"
   if (!is.na(measures$to_swale)) {
+    
     a_sealed <- a_roof + a_total * blocks$pvd
     a_to_swale <- blocks$to_swale * a_sealed
     a_to_swale_change <- measures$to_swale * a_total_sum - sum(a_to_swale)
@@ -208,7 +209,7 @@ apply_measures_to_blocks <- function(
   # Targets reached?
   if (check) {
     for (measure in names(measures)[!is.na(measures)]) {
-      check_if_target_was_reached(blocks, measure)  
+      check_if_target_was_reached(blocks, measure)
       check_for_negative_values(blocks, measure)
     }
   }
