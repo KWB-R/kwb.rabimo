@@ -107,9 +107,20 @@ test_that("Full connection to swales results in zero runoff", {
     generate("all_swale", to_swale = 1), 
     generate("all_swale_plus_green_roof", green_roof = 1, to_swale = 1), 
     generate("all_swale_plus_green_roof", pvd = 0, to_swale = 1), 
-    kwb.rabimo::generate_rabimo_area("all_swale_plus_both", pvd = 0, green_roof = 1, to_swale = 1)
+    generate("all_swale_plus_both", pvd = 0, green_roof = 1, to_swale = 1)
   )
   config <- kwb.rabimo::rabimo_inputs_2025$config
   result <- kwb.rabimo::run_rabimo(data, config, silent = TRUE)
   expect_true(all(result$runoff[startsWith(result$code, "all_swale")] == 0))
+})
+
+test_that("Abimo can simulate intensive green roofs", {
+  # generate <- kwb.rabimo::generate_rabimo_area
+  # data <- rbind(
+  #   generate("area_0"), 
+  #   generate("area_1")
+  # )
+  # config <- kwb.rabimo::rabimo_inputs_2025$config
+  # result <- kwb.rabimo::run_rabimo(data, config, silent = TRUE)
+  # expect_true(all(result$runoff[startsWith(result$code, "all_swale")] == 0))
 })

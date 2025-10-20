@@ -9,6 +9,7 @@ total_area,,,Total block area,m2,required,numeric,100
 main_frac,,,Non-road fraction of total_area,0..1,,numeric,1.0
 roof,PROBAU,x,Roof fraction of non-road built area,0..1,required,numeric,0.2
 green_roof,,,Green roof fraction of roof area,0..1,required,numeric,0.0
+green_roof_int,,,Fraction of green roof area that refers to intenive green roofs,0..1,,numeric,0.0
 swg_roof,KAN_BEB,x,Fraction of roof area connected to the sewer ,0..1,required,numeric,1.0
 pvd,PROVGU,x, Paved fraction of non-road area,0..1,required,numeric,0.6
 swg_pvd,KAN_VGU,x,Fraction of paved area connected to the sewer,0..1,required,numeric,0.7

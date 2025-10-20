@@ -15,10 +15,9 @@ stop_on_invalid_config <- function(config)
   bagrov_values <- select_elements(config, "bagrov_values")
   runoff_factors <- select_elements(config, "runoff_factors")
 
-  x <- config$bagrov_values
-  check_values_for_surface_types(x)
-
-  x <- config$runoff_factors
-  check_values_for_surface_types(x)
+  check_values_for_surface_types(x = bagrov_values)
+  stopifnot("green_roof" %in% names(bagrov_values))
+  
+  check_values_for_surface_types(x = runoff_factors)
 }
 

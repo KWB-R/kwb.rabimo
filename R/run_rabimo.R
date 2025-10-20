@@ -47,6 +47,7 @@ run_rabimo <- function(
     data <- kwb.rabimo::rabimo_inputs_2025$data
     config <- kwb.rabimo::rabimo_inputs_2025$config
     controls <- define_controls()
+    silent <- FALSE
     `%>%` <- magrittr::`%>%`
   }
 
@@ -56,8 +57,11 @@ run_rabimo <- function(
   geometry <- attr(data, "geometry")
 
   # If road-area-specific columns are missing, create them
-  data <- handle_missing_columns(data)
+  data <- handle_missing_columns(data, silent = silent)
 
+  # If model parameters are missing, create them
+  config <- handle_missing_config_entries(config)
+  
   # Provide function to access the list of controls
   control <- create_accessor(controls)
 
@@ -140,7 +144,7 @@ run_rabimo <- function(
   # total runoff of roof areas
   # (total runoff, contains both surface runoff and infiltration components)
   runoff_roof <- select_columns(runoff_all, "roof")
-  runoff_green_roof <- select_columns(runoff_all, "green_roof")
+  runoff_green_roof <- select_columns(runoff_all, c("green_roof", "green_roof_int"))
 
   # Provide runoff coefficients for impervious surfaces
   runoff_factors <- fetch_config("runoff_factors")
@@ -154,20 +158,24 @@ run_rabimo <- function(
   # actual runoff from green roof surface (area based, with no infiltration)
   runoff_green_roof_actual <- with(
     data, 
-    main_frac * roof * green_roof * swg_roof
-  ) * runoff_factors[["roof"]] * runoff_green_roof
-
+    main_frac * roof * swg_roof * green_roof * cbind(1, green_roof_int)
+  ) * 
+    runoff_factors[["roof"]] * 
+    runoff_green_roof
+  
   # actual infiltration from roof surface (area based, with no runoff)
   infiltration_roof_actual <- with(
-    data, main_frac * roof * (1-green_roof) * (1-swg_roof)
+    data, 
+    main_frac * roof * (1-green_roof) * (1-swg_roof)
   ) * runoff_roof
 
   # actual infiltration from green_roof surface (area based, with no runoff)
   infiltration_green_roof_actual <- with(
     data, 
-    main_frac * roof * green_roof * (1-swg_roof)
-  ) * runoff_green_roof
-
+    main_frac * roof * (1-swg_roof) * green_roof * cbind(1, green_roof_int)
+  ) * 
+    runoff_green_roof
+  
   # Calculate runoff for all surface classes at once
   # (contains both surface runoff and infiltration components)
 
@@ -227,14 +235,15 @@ run_rabimo <- function(
 
   # Calculate runoff 'ROW' for entire block area (FLGES + STR_FLGES) (mm/a)
   total_surface_runoff <- (
-    runoff_roof_actual + runoff_green_roof_actual +
+    runoff_roof_actual + 
+      rowSums(runoff_green_roof_actual) +
       #orig.: runoff_unsealed_roads <- was set to zero in the master branch
       rowSums(runoff_sealed_actual))
 
   # Calculate infiltration rate 'RI' for entire block partial area (mm/a)
   total_infiltration <-
     (infiltration_roof_actual +
-       infiltration_green_roof_actual +
+       rowSums(infiltration_green_roof_actual) +
        infiltration_unsealed_surfaces +
        infiltration_unsealed_roads +
        rowSums(infiltration_sealed_actual))
@@ -356,8 +365,16 @@ run_rabimo <- function(
 }
 
 # handle_missing_columns -------------------------------------------------------
-handle_missing_columns <- function(data)
+handle_missing_columns <- function(data, silent = FALSE)
 {
+  init_column <- function(data, column, default) {
+    if (!silent) {
+      message(sprintf("Initialising new column '%s' with %0.1f", column, default))
+    }
+    data[[column]] <- default
+    data
+  }
+  
   road_specific_columns <- c(
     "road_frac", "pvd_r", "swg_pvd_r",
     "srf1_pvd_r", "srf2_pvd_r", "srf3_pvd_r", "srf4_pvd_r"
@@ -367,15 +384,31 @@ handle_missing_columns <- function(data)
 
   if (length(missing_road_columns)) {
     for (column in missing_road_columns) {
-      data[[column]] <- 0
+      data <- init_column(data, column, 0)
     }
   }
 
-  if (! "main_frac" %in% names(data)) {
-    data$main_frac <- 1
+  column <- "main_frac"
+  if (! column %in% names(data)) {
+    data <- init_column(data, column, 1)
   }
 
+  column <- "green_roof_int"
+  if (! column %in% names(data)) {
+    data <- init_column(data, column, 0)
+  }
+  
   data
+}
+
+# handle_missing_config_entries ------------------------------------------------
+handle_missing_config_entries <- function(config)
+{
+  if (!"green_roof_int" %in% names(config$bagrov_values)) {
+    config$bagrov_values["green_roof_int"] <- config$bagrov_values["green_roof"]
+  }
+  
+  config
 }
 
 # get_climate: provides climate relevant input data ----------------------------
