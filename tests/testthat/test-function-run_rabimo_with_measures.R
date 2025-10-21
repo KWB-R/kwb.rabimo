@@ -113,7 +113,7 @@ test_that("run_rabimo_with_measures(old_version = TRUE) works", {
   for (seed in sample(1e10, 5)) {
     
     #seed <- seeds[1L]
-    writeLines(paste("seed:", seed))
+    #writeLines(paste("seed:", seed))
     
     DATASETS <- lapply(
       X = list(

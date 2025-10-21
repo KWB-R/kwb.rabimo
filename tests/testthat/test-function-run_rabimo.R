@@ -96,7 +96,9 @@ test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
   inputs <- kwb.rabimo::rabimo_inputs_2025
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
   expect_true("sf" %in% class(data))
-  expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
+  expect_output(suppressMessages(
+    result <- kwb.rabimo::run_rabimo(data, config = inputs$config)
+  ))
   expect_true("sf" %in% class(result))
 })
 
