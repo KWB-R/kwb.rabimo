@@ -1,0 +1,82 @@
+# kwb.rabimo
+
+R-implementation of a simple water balance model for urban areas,
+
+- based on “Wasserhaushaltsmodell Berlin ABIMO 3.2” (see Documentation
+  below) and
+- further developed by [KWB](https://kompetenz-wasser.de) within
+  [BMBF](https://www.bmbf.de/EN/Home/home_node.html)-funded research
+  project [AMAREX](https://amarex-projekt.de/en).
+
+For our Tutorial, click
+[here](https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html) (see
+also Documentation below).
+
+## Installation
+
+``` r
+# Install package "remotes" from CRAN
+install.packages("remotes", repos = "https://cloud.r-project.org")
+
+# Install package "kwb.rabimo" (latest "release") from GitHub
+remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
+```
+
+## Basic Usage
+
+### Provide input data and configuration
+
+For Berlin, the capital of Germany, we provide input data and model
+parameters in the package:
+
+``` r
+# Load Berlin data in the original Abimo format
+abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
+```
+
+### Run R-Abimo for the status quo
+
+``` r
+# Run R-Abimo, the R-implementation of Abimo
+rabimo_result <- kwb.rabimo::run_rabimo(
+  data = abimo_inputs$data, 
+  config = abimo_inputs$config
+)
+
+# Have a look at the first lines of the result data frame
+head(rabimo_result)
+```
+
+### Run R-Abimo for a natural state scenario
+
+``` r
+rabimo_result_natural <- kwb.rabimo::run_rabimo(
+  data = kwb.rabimo::data_to_natural(abimo_inputs$data), 
+  config = new_inputs$config
+)
+```
+
+### Calculate “Delta-W”
+
+For the first ten blocks, calculate the deviation from the natural
+state:
+
+``` r
+kwb.rabimo::calculate_delta_w(
+  urban = rabimo_result[1:10, ],
+  natural = rabimo_result_natural
+)
+```
+
+## Documentation
+
+### R-package kwb.rabimo
+
+- Package Home: <https://kwb-r.github.io/kwb.rabimo>
+- Tutorial: <https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html>
+
+### Original software “Wasserhaushaltsmodell Berlin ABIMO 3.2”
+
+- Source code (C++): <https://github.com/umweltatlas/abimo>,
+- User manual (in German):
+  <https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf>

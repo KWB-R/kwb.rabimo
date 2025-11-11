@@ -230,7 +230,7 @@ annual precipitation) in the form of a map:</p>
 <span></span>
 <span><span class="co"># Plot annual precipitation</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">berlin_zoom</span><span class="op">[</span>, <span class="st">"prec_yr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual precipitation in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-2-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="run-r-abimo-for-the-status-quo-urban-state">Run R-Abimo for the status quo (urban state)<a class="anchor" aria-label="anchor" href="#run-r-abimo-for-the-status-quo-urban-state"></a>
@@ -245,9 +245,9 @@ function:</p>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.09 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.02 secs)</span></span>
+<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.02 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
+<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
@@ -283,15 +283,15 @@ results can be plotted in terms of maps:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot model output "runoff"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"runoff"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual runoff in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_result_runoff-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/plot_rabimo_result_runoff-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot model output "infiltration"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"infiltr"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual infiltration in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_result_infiltration-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/plot_rabimo_result_infiltration-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot model output "evaporation"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">[</span>, <span class="st">"evapor"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Annual evaporation in mm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/plot_rabimo_result_evaporation-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/plot_rabimo_result_evaporation-1.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="generate-your-own-block-areas">Generate your own block areas<a class="anchor" aria-label="anchor" href="#generate-your-own-block-areas"></a>
@@ -349,7 +349,7 @@ columns:</p>
 <span></span>
 <span><span class="co"># How does the roof area influence the runoff?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">art_blocks</span><span class="op">$</span><span class="va">roof</span>, <span class="va">art_water_balance</span><span class="op">$</span><span class="va">runoff</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/generate_block_areas-1.png" width="700"></p>
+<p><img src="tutorial_files/figure-html/generate_block_areas-1.png" class="r-plt" width="700"></p>
 <p>You may use this function to do some sensitivity analysis of the
 R-Abimo model.</p>
 </div>
@@ -454,7 +454,7 @@ Delta-W with a nice colour palette:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot deviation from natural water balance</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w</span>, main <span class="op">=</span> <span class="st">"Deviation from natural water balance in %"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-6-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="simulate-rainwater-management-measures">Simulate rainwater management measures<a class="anchor" aria-label="anchor" href="#simulate-rainwater-management-measures"></a>
@@ -526,11 +526,11 @@ green roofs is at least 50 percent:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the status quo</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w</span>, main <span class="op">=</span> <span class="st">"Delta-W (status quo)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-8-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the green roof scenario</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w_green_roof</span>, main <span class="op">=</span> <span class="st">"Delta-W (&gt;= 50 % green roofs)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-9-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="480"></p>
 <p>The colours become brighter referring to lower Delta-W values i.e. 
 more “natural” water balances.</p>
 </div>
@@ -563,11 +563,11 @@ we reduce the fractions by 50 percent:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the status quo</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w</span>, main <span class="op">=</span> <span class="st">"Delta-W (status quo)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-11-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the green roof scenario</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w_unsealed</span>, main <span class="op">=</span> <span class="st">"Delta-W (pavement reduced by 50 %)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-12-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="480"></p>
 <p>We see an effect similar to that of the green roof scenario: colours
 become brighter referring to smaller Delta-W values.</p>
 </div>
@@ -609,11 +609,11 @@ would that change Delta-W?</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the status quo</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w</span>, main <span class="op">=</span> <span class="st">"Delta-W (status quo)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-14-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot Delta-W for the green roof scenario</span></span>
 <span><span class="fu">plot_delta_w</span><span class="op">(</span><span class="va">delta_w_swale</span>, main <span class="op">=</span> <span class="st">"Delta-W (50% of sealed connected to swale)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-15-1.png" width="480"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" width="480"></p>
 <p>We let it as an exercise to the user to assess which of the three
 measures has the biggest impact!</p>
 </div>
@@ -630,7 +630,7 @@ measures has the biggest impact!</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
