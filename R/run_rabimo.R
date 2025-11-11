@@ -60,6 +60,11 @@ run_rabimo <- function(
   # Save geometry data that may have stored in attribute "geometry"
   geometry <- attr(data, "geometry")
   
+  # if config is provided in old format, convert to new format
+  if (is.null(config$measures)) {
+    config <- reconfigure(config)
+  }
+  
   # If road-area-specific columns are missing, create them
   data <- handle_missing_columns(data, silent = silent, measures = config$measures)
   
@@ -101,32 +106,19 @@ run_rabimo <- function(
   )
   
   # Precalculate actual evapotranspirations for impervious areas
+  # Here we expect the new config format (config$measures must exist!)
+  green_roof_columns <- sapply(
+    config$measures$green_roof, "[[", "roof_fraction_column"
+  )
   
-  if (is.null(config$measures)) {
-    
-    # old configuration format:
-    
-    # - column name is fix
-    green_roof_columns <- "green_roof"
-    
-    # - Bagrov value for green roofs is stored within config$bagrov_values
-    bagrov_values <- fetch_config("bagrov_values")
-    
-  } else {
-    
-    # new configuration format: 
-    
-    # - column names are explicitly given
-    green_roof_columns <- sapply(
-      config$measures$green_roof, "[[", "roof_fraction_column"
-    )
-    
-    # - Bagrov values are stored within config$measures$green_roof
-    bagrov_values <- c(fetch_config("bagrov_values"), stats::setNames(
+  # - Bagrov values are stored within config$measures$green_roof
+  bagrov_values <- c(
+    fetch_config("bagrov_values"), 
+    stats::setNames(
       sapply(config$measures$green_roof, "[[", "bagrov_value"), 
       green_roof_columns
-    ))
-  }
+    )
+  )
   
   evaporation_sealed <- cat_and_run(
     dbg = !silent,
@@ -274,19 +266,9 @@ run_rabimo <- function(
     infiltration_unsealed_roads +
     rowSums(infiltration_sealed_actual)
   
+  # Here we expect the new config format!
   # Provide information on the infiltration measure(s)
-  infiltration_configs <- if (is.null(config$measures)) {
-    # old configuration format
-    list(
-      list(
-        area_fraction_column = "to_swale",
-        evaporation_factor = config$swale[["swale_evaporation_factor"]]
-      )
-    )
-  } else {
-    # new configuration format
-    config$measures$infiltration
-  }
+  infiltration_configs <- config$measures$infiltration
   
   deltas <- lapply(infiltration_configs, function(pars) {
     #pars <- infiltration_configs[[1L]]
@@ -301,7 +283,7 @@ run_rabimo <- function(
   
   # name the entries according to the fraction columns, just for convenience
   names(deltas) <- sapply(infiltration_configs, `[[`, "area_fraction_column")
-    
+  
   deltas_surface_runoff <- do.call(cbind, lapply(deltas, `[[`, "surface_runoff"))
   deltas_infiltration <- do.call(cbind, lapply(deltas, `[[`, "infiltration"))
   
@@ -448,10 +430,20 @@ handle_missing_columns <- function(data, silent = FALSE, measures = NULL)
     }    
   }
   
+  # measures
+  #   $green_roof
+  #     [[1]]
+  #       $roof_fraction_column = "green_roof_ext"
+  #     [[2]]
+  #       $roof_fraction_column = "green_roof_int"
+  #   $infiltration
+  #     [[1]]
+  #       $area_fraction_column = "to_swale"
+  
   if (!is.null(measures)) {
     columns_green_roof <- sapply(measures$green_roof, "[[", "roof_fraction_column")
     columns_infiltration <- sapply(measures$infiltration, "[[", "area_fraction_column")
-    for (column in c(columns_green_roof, columns_green_roof)) {
+    for (column in c(columns_green_roof, columns_infiltration)) {
       if (! column %in% names(data)) {
         data <- init_column(data, column, 0)
       }

@@ -11,12 +11,12 @@ test_that("run_rabimo() reproduces previous results", {
 
 test_that("run_rabimo() works", {
 
-  f <- kwb.rabimo::run_rabimo
+  run <- kwb.rabimo::run_rabimo
 
-  expect_error(f())
+  expect_error(run())
 
   data <- data.frame(
-    code = "a",
+    code = "area_1",
     land_type = "a",
     prec_yr = 100L,
     prec_s = 100L,
@@ -74,10 +74,10 @@ test_that("run_rabimo() works", {
   )
 
   expect_output(
-    result_1 <- f(data, config, controls = define_controls())
+    result_1 <- run(data, config, controls = define_controls())
   )
   expect_silent(
-    result_2 <- f(data, config, controls = define_controls(), silent = TRUE)
+    result_2 <- run(data, config, controls = define_controls(), silent = TRUE)
   )
 
   expect_s3_class(result_1, "data.frame")
@@ -105,11 +105,11 @@ test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
 test_that("Full connection to swales results in zero runoff", {
   generate <- kwb.rabimo::generate_rabimo_area
   data <- rbind(
-    generate("area_0"), 
-    generate("all_swale", to_swale = 1), 
+    generate("area_0",                    green_roof = 0, to_swale = 0), 
+    generate("all_swale",                 green_roof = 0, to_swale = 1), 
     generate("all_swale_plus_green_roof", green_roof = 1, to_swale = 1), 
-    generate("all_swale_plus_green_roof", pvd = 0, to_swale = 1), 
-    generate("all_swale_plus_both", pvd = 0, green_roof = 1, to_swale = 1)
+    generate("all_swale_plus_green_roof", green_roof = 0, to_swale = 1, pvd = 0), 
+    generate("all_swale_plus_both",       green_roof = 1, to_swale = 1, pvd = 0)
   )
   config <- kwb.rabimo::rabimo_inputs_2025$config
   result <- kwb.rabimo::run_rabimo(data, config, silent = TRUE)

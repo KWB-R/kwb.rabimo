@@ -210,7 +210,10 @@ art_blocks <- kwb.rabimo::generate_rabimo_area(
 art_blocks
 
 # Run R-Abimo on the block areas
-art_water_balance <- kwb.rabimo::run_rabimo(art_blocks, config = abimo_inputs$config)
+art_water_balance <- kwb.rabimo::run_rabimo(
+  data = art_blocks, 
+  config = abimo_inputs$config
+)
 
 # How does the roof area influence the runoff?
 plot(art_blocks$roof, art_water_balance$runoff)

@@ -109,8 +109,9 @@ test_that("run_rabimo_with_measures(old_version = TRUE) works", {
   expect_error(RUN())
   
   sample_size <- 100L
+  seeds <- sample(1e10, 5)
   
-  for (seed in sample(1e10, 5)) {
+  for (seed in seeds) {
     
     #seed <- seeds[1L]
     #writeLines(paste("seed:", seed))
