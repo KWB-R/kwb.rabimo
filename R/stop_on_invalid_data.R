@@ -1,7 +1,7 @@
 # stop_on_invalid_data ---------------------------------------------------------
 #' @importFrom rlang .data
 #' @importFrom kwb.utils stopFormatted
-stop_on_invalid_data <- function(data)
+stop_on_invalid_data <- function(data, measures = NULL)
 {
   # Read information on column names and types
   column_info <- read_column_info()
@@ -40,7 +40,7 @@ stop_on_invalid_data <- function(data)
     convert = FALSE
   )
 
-  # Do not accept any NA
+  # Do not accept any NA in required columns of type numeric
   check_columns(
     data = data,
     columns = names(data) %>%
@@ -80,6 +80,23 @@ stop_on_invalid_data <- function(data)
 
   if (length(columns <- matching_names(data, pattern_roads()))) {
     check_sum_up_to_1_or_0(data, columns)
+  }
+  
+  # If measures are given, check that related fractions do not sum up to
+  # value above 1
+  if (!is.null(measures)) {
+    columns_green_roof <- sapply(
+      select_elements(measures, "green_roof"), 
+      FUN = select_elements, 
+      "roof_fraction_column"
+    )
+    columns_infiltration <- sapply(
+      select_elements(measures, "infiltration"), 
+      FUN = select_elements, 
+      "area_fraction_column"
+    )
+    check_sum_up_to_1_or_0(data, columns_green_roof)
+    check_sum_up_to_1_or_0(data, columns_infiltration)
   }
 }
 

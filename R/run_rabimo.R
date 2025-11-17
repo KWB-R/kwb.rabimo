@@ -44,12 +44,19 @@ run_rabimo <- function(
   if (FALSE)
   {
     kwb.utils::assignPackageObjects("kwb.rabimo")
-    data <- kwb.rabimo::rabimo_inputs_2025$data
+    data <- kwb.utils::removeColumns(kwb.rabimo::rabimo_inputs_2025$data, "to_swale")
     config <- reconfigure(kwb.rabimo::rabimo_inputs_2025$config)
     config$measures$green_roof[[2]] <- list(
       roof_fraction_column = "green_roof_int",
       bagrov_value = 0.7
     )
+    config$measures$infiltration[[1]]$overflow_factor <- 0.2
+    config$measures$infiltration[[2]] <- list(
+      area_fraction_column = "to_swale_2",
+      evaporation_factor = 0.2,
+      overflow_factor = 0.15
+    )
+    #str(config$measures$infiltration)
     controls <- define_controls()
     silent <- FALSE
     `%>%` <- magrittr::`%>%`
@@ -73,8 +80,8 @@ run_rabimo <- function(
   
   # Check whether data and config have the expected structures
   if (isTRUE(control("check"))) {
-    stop_on_invalid_data(data)
     stop_on_invalid_config(config)
+    stop_on_invalid_data(data, measures = config$measures)
   }
   
   # Get climate data
@@ -202,7 +209,7 @@ run_rabimo <- function(
   surface_cols_no_rd <- matching_names(data, pattern_no_roads())
   surface_cols_rd <- matching_names(data, pattern_roads())
   digits <- gsub("\\D", "", surface_cols_no_rd)
-  surface_class_names <- paste0("surface",digits)
+  surface_class_names <- paste0("surface", digits)
   
   # choose columns related to surface classes
   runoff_sealed <- select_columns(runoff_all, surface_class_names)
@@ -272,10 +279,8 @@ run_rabimo <- function(
   
   deltas <- lapply(infiltration_configs, function(pars) {
     #pars <- infiltration_configs[[1L]]
-    # TODO: handle overflow
-    #pars$overflow...
     area_fraction_connected <- fetch_data(pars$area_fraction_column)
-    total_surface_runoff * data.frame(
+    total_surface_runoff * (1 - pars$overflow_factor) * data.frame(
       surface_runoff = area_fraction_connected * (-1),
       infiltration = area_fraction_connected * (1 - pars$evaporation_factor)
     )
