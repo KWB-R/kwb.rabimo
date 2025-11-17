@@ -279,6 +279,12 @@ run_rabimo <- function(
   
   deltas <- lapply(infiltration_configs, function(pars) {
     #pars <- infiltration_configs[[1L]]
+    # check for all required elements
+    pars <- select_elements(pars, c(
+      "area_fraction_column", 
+      "evaporation_factor", 
+      "overflow_factor"
+    ))
     area_fraction_connected <- fetch_data(pars$area_fraction_column)
     total_surface_runoff * (1 - pars$overflow_factor) * data.frame(
       surface_runoff = area_fraction_connected * (-1),
