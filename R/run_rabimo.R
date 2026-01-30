@@ -36,7 +36,7 @@
 #'   
 #' plot(results_2025[, -1L])
 run_rabimo <- function(
-    data, config, controls = define_controls(), silent = FALSE
+    data, config, controls = define_controls(), silent = TRUE
 )
 {
   # Provide functions and variables for debugging
@@ -47,16 +47,26 @@ run_rabimo <- function(
     data <- kwb.utils::removeColumns(kwb.rabimo::rabimo_inputs_2025$data, "to_swale")
     config <- reconfigure(kwb.rabimo::rabimo_inputs_2025$config)
     config$measures$green_roof[[2]] <- list(
-      roof_fraction_column = "green_roof_int",
+      # column is expected to contain fractions of roof fraction
+      input_column = "green_roof_int",
       bagrov_value = 0.7
     )
     config$measures$infiltration[[1]]$overflow_factor <- 0.2
     config$measures$infiltration[[2]] <- list(
-      area_fraction_column = "to_swale_2",
+      input_column = "to_swale_2",
       evaporation_factor = 0.2,
       overflow_factor = 0.15
     )
-    #str(config$measures$infiltration)
+    config$measures$retention <- list(
+      list(
+        input_column <- "watertank_1",
+        overflow_factor = 0.3
+      ),
+      list(
+        input_column <- "watertank_2",
+        overflow_factor = 0.5
+      )
+    )
     controls <- define_controls()
     silent <- FALSE
     `%>%` <- magrittr::`%>%`
@@ -69,6 +79,7 @@ run_rabimo <- function(
   
   # if config is provided in old format, convert to new format
   if (is.null(config$measures)) {
+    message("You are using an old configuration. No problem, I convert it.")
     config <- reconfigure(config)
   }
   
@@ -115,7 +126,7 @@ run_rabimo <- function(
   # Precalculate actual evapotranspirations for impervious areas
   # Here we expect the new config format (config$measures must exist!)
   green_roof_columns <- sapply(
-    config$measures$green_roof, "[[", "roof_fraction_column"
+    config$measures$green_roof, "[[", "input_column"
   )
   
   # - Bagrov values are stored within config$measures$green_roof
@@ -275,25 +286,38 @@ run_rabimo <- function(
   
   # Here we expect the new config format!
   # Provide information on the infiltration measure(s)
-  infiltration_configs <- config$measures$infiltration
+  infiltration_configs <- select_elements(config$measures, "infiltration")
+
+  # For simplicity, we treat the retention as a form of infiltration measure.
+  # Here, the evaporation factor is always one (100 %), i.e. everything 
+  # evaporates, and nothing actually infiltrates
+  retention_configs <- lapply(
+    select_elements(config$measures, "retention"),
+    function(pars) {
+      pars$evaporation_factor <- 1
+      pars
+    }
+  )
   
-  deltas <- lapply(infiltration_configs, function(pars) {
-    #pars <- infiltration_configs[[1L]]
-    # check for all required elements
-    pars <- select_elements(pars, c(
-      "area_fraction_column", 
-      "evaporation_factor", 
-      "overflow_factor"
-    ))
-    area_fraction_connected <- fetch_data(pars$area_fraction_column)
-    total_surface_runoff * (1 - pars$overflow_factor) * data.frame(
-      surface_runoff = area_fraction_connected * (-1),
-      infiltration = area_fraction_connected * (1 - pars$evaporation_factor)
-    )
+  # Combine the configurations of both measure types
+  infiltration_or_retention_configs <- c(
+    infiltration_configs, 
+    retention_configs
+  )
+  
+  deltas <- lapply(infiltration_or_retention_configs, function(pars) {
+    area_fraction_connected <- fetch_data(select_elements(pars, "input_column"))
+    total_surface_runoff * 
+      (1 - select_elements(pars, "overflow_factor")) * 
+      data.frame(
+        surface_runoff = area_fraction_connected * (-1),
+        infiltration = area_fraction_connected * 
+          (1 - select_elements(pars, "evaporation_factor"))
+      )
   })
   
   # name the entries according to the fraction columns, just for convenience
-  names(deltas) <- sapply(infiltration_configs, `[[`, "area_fraction_column")
+  names(deltas) <- sapply(infiltration_or_retention_configs, `[[`, "input_column")
   
   deltas_surface_runoff <- do.call(cbind, lapply(deltas, `[[`, "surface_runoff"))
   deltas_infiltration <- do.call(cbind, lapply(deltas, `[[`, "infiltration"))
@@ -412,7 +436,7 @@ run_rabimo <- function(
 }
 
 # handle_missing_columns -------------------------------------------------------
-handle_missing_columns <- function(data, silent = FALSE, measures = NULL)
+handle_missing_columns <- function(data, silent = TRUE, measures = NULL)
 {
   init_column <- function(data, column, default) {
     if (!silent) {
@@ -441,20 +465,17 @@ handle_missing_columns <- function(data, silent = FALSE, measures = NULL)
     }    
   }
   
-  # measures
-  #   $green_roof
-  #     [[1]]
-  #       $roof_fraction_column = "green_roof_ext"
-  #     [[2]]
-  #       $roof_fraction_column = "green_roof_int"
-  #   $infiltration
-  #     [[1]]
-  #       $area_fraction_column = "to_swale"
-  
+  # Columns that appear as "input_column" fields in the argument "measures"
+  # are required and initialised with zero if missing
   if (!is.null(measures)) {
-    columns_green_roof <- sapply(measures$green_roof, "[[", "roof_fraction_column")
-    columns_infiltration <- sapply(measures$infiltration, "[[", "area_fraction_column")
-    for (column in c(columns_green_roof, columns_infiltration)) {
+    
+    required_columns <- c(
+      sapply(measures$green_roof, "[[", "input_column"), 
+      sapply(measures$infiltration, "[[", "input_column"),
+      sapply(measures$retention, "[[", "input_column")
+    )
+    
+    for (column in required_columns) {
       if (! column %in% names(data)) {
         data <- init_column(data, column, 0)
       }

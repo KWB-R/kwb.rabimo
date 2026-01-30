@@ -24,22 +24,22 @@ stop_on_invalid_config <- function(config)
     columns_green_roof <- sapply(
       green_roof_configs, 
       FUN = select_elements,
-      elements = "roof_fraction_column"
+      elements = "input_column"
     )
     columns_infiltration <- sapply(
       infiltration_configs, 
       FUN = select_elements, 
-      elements = "area_fraction_column"
+      elements = "input_column"
     )
     if (length(columns_green_roof) != length(unique(columns_green_roof))) {
       kwb.utils::stopFormatted(
-        "The <roof_fraction_column>s in config$measures$green_roof (%s) are not unique as expected.", 
+        "The <input_column>s in config$measures$green_roof (%s) are not unique as expected.", 
         kwb.utils::stringList(columns_green_roof)
       )
     }
     if (length(columns_infiltration) != length(unique(columns_infiltration))) {
       kwb.utils::stopFormatted(
-        "The <area_fraction_column>s in config$measures$infiltration (%s) are not unique as expected.", 
+        "The <input_column>s in config$measures$infiltration (%s) are not unique as expected.", 
         kwb.utils::stringList(columns_infiltration)
       )
     }

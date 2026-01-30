@@ -88,15 +88,15 @@ stop_on_invalid_data <- function(data, measures = NULL)
     columns_green_roof <- sapply(
       select_elements(measures, "green_roof"), 
       FUN = select_elements, 
-      "roof_fraction_column"
+      "input_column"
     )
     columns_infiltration <- sapply(
       select_elements(measures, "infiltration"), 
       FUN = select_elements, 
-      "area_fraction_column"
+      "input_column"
     )
-    check_sum_is_below_1(data, columns_green_roof)
-    check_sum_is_below_1(data, columns_infiltration)
+    check_sum_is_less_equal_1(data, columns = columns_green_roof)
+    check_sum_is_less_equal_1(data, columns = columns_infiltration)
   }
 }
 
@@ -167,8 +167,8 @@ check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
   ))
 }
 
-# check_sum_is_below_1 -------------------------------------------------------
-check_sum_is_below_1 <- function(data, columns)
+# check_sum_is_less_equal_1 ----------------------------------------------------
+check_sum_is_less_equal_1 <- function(data, columns)
 {
   select_columns <- kwb.utils::selectColumns
   
@@ -176,8 +176,7 @@ check_sum_is_below_1 <- function(data, columns)
 
   stop_on_non_numeric_columns(column_data)
   
-  sums <- rowSums(column_data)
-  ok <- sums < 1
+  ok <- (rowSums(column_data) <= 1)
   
   if (all(ok)) {
     return()

@@ -29,29 +29,29 @@ test_that("stop_on_invalid_config() works", {
     f(c(base_config, list(
       measures = list(
         green_roof = list(
-          list(roof_fraction_column = "column-1"),
-          list(roof_fraction_column = "column-1")
+          list(input_column = "column-1"),
+          list(input_column = "column-1")
         ),
         infiltration = list()
       )
     ))), 
-    "roof_fraction_column.*are not unique as expected"
+    "input_column.*are not unique as expected"
   )
   
   expect_error(
     f(c(base_config, list(
       measures = list(
         green_roof = list(
-          list(roof_fraction_column = "column-1"),
-          list(roof_fraction_column = "column-2")
+          list(input_column = "column-1"),
+          list(input_column = "column-2")
         ),
         infiltration = list(
-          list(area_fraction_column = "column-1"),
-          list(area_fraction_column = "column-1")
+          list(input_column = "column-1"),
+          list(input_column = "column-1")
         )
       )
     ))), 
-    "area_fraction_column.*are not unique"
+    "input_column.*are not unique as expected"
   )
   
 })
