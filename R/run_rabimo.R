@@ -507,6 +507,8 @@ yearly_height_to_volume_flow <- function(height, area)
   height * 3.171 * area / 100000.0
 }
 
+# define_controls --------------------------------------------------------------
+
 #' Define List of "Controls"
 #'
 #' Define a list of settings that control how the main function
@@ -562,6 +564,8 @@ define_controls <- function(
   )
 }
 
+# crop_box ---------------------------------------------------------------------
+
 #' Crop a box out of a shape
 #' 
 #' @param x sf object
@@ -578,6 +582,8 @@ crop_box <- function(x, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0
     bbox = sf::st_bbox(x), xoffset, yoffset, xscale, yscale
   )))
 }
+
+# scale_bbox -------------------------------------------------------------------
 
 scale_bbox <- function(bbox, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
 {

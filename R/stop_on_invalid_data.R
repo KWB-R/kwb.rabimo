@@ -82,22 +82,27 @@ stop_on_invalid_data <- function(data, measures = NULL)
     check_sum_up_to_1_or_0(data, columns)
   }
   
+  if (is.null(measures)) {
+    return()
+  }
+  
+  columns_for_measure <- function(measure_type) {
+    if (is.null(params <- measures[[measure_type]])) {
+      return(character(0L))
+    }
+    sapply(params, kwb.utils::selectElements, "input_column")
+  }
+  
   # If measures are given, check that related fractions do not sum up to
   # value above 1
-  if (!is.null(measures)) {
-    columns_green_roof <- sapply(
-      select_elements(measures, "green_roof"), 
-      FUN = select_elements, 
-      "input_column"
-    )
-    columns_infiltration <- sapply(
-      select_elements(measures, "infiltration"), 
-      FUN = select_elements, 
-      "input_column"
-    )
-    check_sum_is_less_equal_1(data, columns = columns_green_roof)
-    check_sum_is_less_equal_1(data, columns = columns_infiltration)
-  }
+  check_sum_is_less_equal_1(data, columns = c(
+    columns_for_measure(measure_type = "green_roof")
+  ))
+  
+  check_sum_is_less_equal_1(data, columns = c(
+    columns_for_measure(measure_type = "infiltration"), 
+    columns_for_measure(measure_type = "retention")
+  ))
 }
 
 # get_expected_data_type -------------------------------------------------------
@@ -170,12 +175,12 @@ check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
 # check_sum_is_less_equal_1 ----------------------------------------------------
 check_sum_is_less_equal_1 <- function(data, columns)
 {
-  select_columns <- kwb.utils::selectColumns
+  if (length(columns) == 0L) {
+    return()
+  }
   
-  column_data <- select_columns(data, columns, drop = FALSE)
-
+  column_data <- kwb.utils::selectColumns(data, columns, drop = FALSE)
   stop_on_non_numeric_columns(column_data)
-  
   ok <- (rowSums(column_data) <= 1)
   
   if (all(ok)) {
@@ -183,8 +188,7 @@ check_sum_is_less_equal_1 <- function(data, columns)
   }
   
   cat("(First) invalid rows:\n")
-  
-  select_columns(data, c("code", columns))[!ok, ] %>%
+  kwb.utils::selectColumns(data, c("code", columns))[!ok, ] %>%
     utils::head() %>%
     print()
   
