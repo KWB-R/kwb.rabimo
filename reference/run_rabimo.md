@@ -63,9 +63,9 @@ data <- crop_box(inputs_2025$data)
 # Run R-Abimo
 results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
 #> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.18 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.27 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.05 secs) 
+#> Preparing soil property data for all block areas ... ok. (0.08 secs) 
+#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.28 secs) 
+#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.06 secs) 
   
 plot(results_2025[, -1L])
 ```

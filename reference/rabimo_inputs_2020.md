@@ -247,13 +247,13 @@ A list with 5 named elements:
 See the following table for the meaning of the surface classes and their
 Bagrov values and runoff factors used for Berlin.
 
-|                   |                                                                                                                           |                  |                   |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------|------------------|-------------------|
-| **Surface Class** | **Surface Type**                                                                                                          | **Bagrov Value** | **Runoff Factor** |
-| \-                | Roof surfaces                                                                                                             | 0.05             | 1.00              |
-| \-                | Extensive vegetated roofs                                                                                                 | 0.65             | 1.00              |
-| 1                 | Asphalt, concrete, paving with joint sealing or concrete base, synthetic surfaces                                         | 0.11             | 0.90              |
-| 2                 | Artificial stone and slab coverings (side length \> 8 cm), concrete interlocking pavers, clinker, medium and large pavers | 0.11             | 0.70              |
-| 3                 | Small and mosaic pavers (side length \< 8 cm)                                                                             | 0.25             | 0.40              |
-| 4                 | Grass pavers, bound gravel surfaces, gravel lawns                                                                         | 0.40             | 0.10              |
-| 5                 | Unknown type (average parameters)                                                                                         | 0.25             | 0.48              |
+|  |  |  |  |
+|----|----|----|----|
+| **Surface Class** | **Surface Type** | **Bagrov Value** | **Runoff Factor** |
+| \- | Roof surfaces | 0.05 | 1.00 |
+| \- | Extensive vegetated roofs | 0.65 | 1.00 |
+| 1 | Asphalt, concrete, paving with joint sealing or concrete base, synthetic surfaces | 0.11 | 0.90 |
+| 2 | Artificial stone and slab coverings (side length \> 8 cm), concrete interlocking pavers, clinker, medium and large pavers | 0.11 | 0.70 |
+| 3 | Small and mosaic pavers (side length \< 8 cm) | 0.25 | 0.40 |
+| 4 | Grass pavers, bound gravel surfaces, gravel lawns | 0.40 | 0.10 |
+| 5 | Unknown type (average parameters) | 0.25 | 0.48 |

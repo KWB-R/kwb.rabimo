@@ -15,6 +15,7 @@ also Documentation below).
 ## Installation
 
 ``` r
+
 # Install package "remotes" from CRAN
 install.packages("remotes", repos = "https://cloud.r-project.org")
 
@@ -30,6 +31,7 @@ For Berlin, the capital of Germany, we provide input data and model
 parameters in the package:
 
 ``` r
+
 # Load Berlin data in the original Abimo format
 abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
 ```
@@ -37,6 +39,7 @@ abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
 ### Run R-Abimo for the status quo
 
 ``` r
+
 # Run R-Abimo, the R-implementation of Abimo
 rabimo_result <- kwb.rabimo::run_rabimo(
   data = abimo_inputs$data, 
@@ -50,6 +53,7 @@ head(rabimo_result)
 ### Run R-Abimo for a natural state scenario
 
 ``` r
+
 rabimo_result_natural <- kwb.rabimo::run_rabimo(
   data = kwb.rabimo::data_to_natural(abimo_inputs$data), 
   config = new_inputs$config
@@ -62,6 +66,7 @@ For the first ten blocks, calculate the deviation from the natural
 state:
 
 ``` r
+
 kwb.rabimo::calculate_delta_w(
   urban = rabimo_result[1:10, ],
   natural = rabimo_result_natural

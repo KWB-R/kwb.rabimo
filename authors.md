@@ -15,14 +15,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/KWB-R/kwb.rabimo/blob/dev/DESCRIPTION)
 
-Sonnenberg H, Del Punta F (2025). *kwb.rabimo: R Implementation of Water
+Sonnenberg H, Del Punta F (2026). *kwb.rabimo: R Implementation of Water
 Balance Model Abimo*. R package version 2.1.0,
 <https://github.com/KWB-R/kwb.rabimo>.
 
     @Manual{,
       title = {kwb.rabimo: R Implementation of Water Balance Model Abimo},
       author = {Hauke Sonnenberg and Francesco {Del Punta}},
-      year = {2025},
+      year = {2026},
       note = {R package version 2.1.0},
       url = {https://github.com/KWB-R/kwb.rabimo},
     }

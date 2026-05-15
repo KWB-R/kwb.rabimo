@@ -45,6 +45,7 @@ In order to install kwb.rabimo directly from our GitHub account
 package remotes first:
 
 ``` r
+
 # Install package "remotes" from CRAN
 install.packages("remotes")
 ```
@@ -52,6 +53,7 @@ install.packages("remotes")
 You can then install kwb.rabimo in the latest “official” version:
 
 ``` r
+
 # Install package "kwb.rabimo" (latest "release") from GitHub
 remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
 ```
@@ -68,6 +70,7 @@ structures of input data, output data and configuration. For Berlin,
 Germany, we provide data in the new structures in the package:
 
 ``` r
+
 # Load Berlin data in the original Abimo format
 abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
 ```
@@ -87,6 +90,7 @@ information on the different input columns and model parameters.
 To open the help page, run
 
 ``` r
+
 ?kwb.rabimo::rabimo_inputs_2025
 ```
 
@@ -113,6 +117,7 @@ You may inspect the first rows (and only the most relevant columns) of
 the input data with
 
 ``` r
+
 head(as.data.frame(abimo_inputs$data)[, 1:24])
 #>               code prec_yr prec_s epot_yr epot_s district total_area      roof
 #> 1 0100980011000100     608    324     666    509        1   4623.972 0.3243243
@@ -140,6 +145,7 @@ head(as.data.frame(abimo_inputs$data)[, 1:24])
 and you may print the whole configuration object with
 
 ``` r
+
 abimo_inputs$config
 #> $runoff_factors
 #>     roof surface1 surface2 surface3 surface4 surface5 
@@ -161,6 +167,7 @@ information we can plot the spatial distribution of a variable (e.g. the
 annual precipitation) in the form of a map:
 
 ``` r
+
 # Provide a subset of the data representing a zoom into the centre of Berlin
 berlin_zoom <- kwb.rabimo::crop_box(abimo_inputs$data, 
   xoffset = 0.35, 
@@ -185,6 +192,7 @@ by passing both the input data and the configuration object to the
 function:
 
 ``` r
+
 # Run R-Abimo
 water_balance_urban <- kwb.rabimo::run_rabimo(
   data = berlin_zoom, 
@@ -224,6 +232,7 @@ that information is restored in the output so that the model results can
 be plotted in terms of maps:
 
 ``` r
+
 # Plot model output "runoff"
 plot(water_balance_urban[, "runoff"], main = "Annual runoff in mm")
 ```
@@ -231,6 +240,7 @@ plot(water_balance_urban[, "runoff"], main = "Annual runoff in mm")
 ![](tutorial_files/figure-html/plot_rabimo_result_runoff-1.png)
 
 ``` r
+
 # Plot model output "infiltration"
 plot(water_balance_urban[, "infiltr"], main = "Annual infiltration in mm")
 ```
@@ -238,6 +248,7 @@ plot(water_balance_urban[, "infiltr"], main = "Annual infiltration in mm")
 ![](tutorial_files/figure-html/plot_rabimo_result_infiltration-1.png)
 
 ``` r
+
 # Plot model output "evaporation"
 plot(water_balance_urban[, "evapor"], main = "Annual evaporation in mm")
 ```
@@ -256,6 +267,7 @@ values. However, you can override the default values by passing
 arguments that are named according to the names of the input columns:
 
 ``` r
+
 # Generate artificial block areas, using default values and differing only in 
 # the fractions of the areas that refer to roofs
 codes <- paste0("area-", 1:5)
@@ -356,6 +368,7 @@ calls to
 we will set `silent = TRUE` so that console outputs are suppressed.
 
 ``` r
+
 # Convert urban state to "natural" state
 berlin_zoom_natural <- kwb.rabimo::data_to_natural(berlin_zoom)
 
@@ -372,6 +385,7 @@ water_balance_natural <- kwb.rabimo::run_rabimo(
 Calculate the deviation from the natural state in percent:
 
 ``` r
+
 delta_w <- kwb.rabimo::calculate_delta_w(
   urban = water_balance_urban,
   natural = water_balance_natural
@@ -384,6 +398,7 @@ The function `claculate_delta_w` returns a data frame with two columns:
 - `delta_w` - the value of \\\Delta W\\ in percent.
 
 ``` r
+
 # Show the first rows of the delta_w data frame (without geometry) 
 head(sf::st_drop_geometry(delta_w))
 #>               code delta_w
@@ -403,6 +418,7 @@ In order to do so, we first define a helper function for plotting
 Delta-W with a nice colour palette:
 
 ``` r
+
 # Define function to plot Delta-W
 plot_delta_w <- function(data, main) {
   palette <- colorRampPalette(c("white", "#a9e0ff", '#7b7bbc', "#350005"))(15)
@@ -414,6 +430,7 @@ plot_delta_w <- function(data, main) {
 Now let’s use the function to plot the Delta-W values in a map:
 
 ``` r
+
 # Plot deviation from natural water balance
 plot_delta_w(delta_w, main = "Deviation from natural water balance in %")
 ```
@@ -463,6 +480,7 @@ assume that in each block the fraction of roof areas that belong to
 green roofs is at least 50 percent:
 
 ``` r
+
 # Make a copy of the original input data
 zoom_green_roof <- berlin_zoom
 
@@ -490,6 +508,7 @@ delta_w_green_roof <- kwb.rabimo::calculate_delta_w(
 ```
 
 ``` r
+
 # Plot Delta-W for the status quo
 plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ```
@@ -497,6 +516,7 @@ plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ![](tutorial_files/figure-html/unnamed-chunk-8-1.png)
 
 ``` r
+
 # Plot Delta-W for the green roof scenario
 plot_delta_w(delta_w_green_roof, main = "Delta-W (>= 50 % green roofs)")
 ```
@@ -514,6 +534,7 @@ the fractions of paved areas by a constant factor, let’s say we reduce
 the fractions by 50 percent:
 
 ``` r
+
 # Make a copy of the original input data
 zoom_unsealed <- berlin_zoom
 
@@ -535,6 +556,7 @@ delta_w_unsealed <- kwb.rabimo::calculate_delta_w(
 ```
 
 ``` r
+
 # Plot Delta-W for the status quo
 plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ```
@@ -542,6 +564,7 @@ plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ![](tutorial_files/figure-html/unnamed-chunk-11-1.png)
 
 ``` r
+
 # Plot Delta-W for the green roof scenario
 plot_delta_w(delta_w_unsealed, main = "Delta-W (pavement reduced by 50 %)")
 ```
@@ -569,6 +592,7 @@ connect 50 percent of the sealed area to an infiltration swale. How
 would that change Delta-W?
 
 ``` r
+
 # Make a copy of the original input data
 zoom_swale <- berlin_zoom
 
@@ -590,6 +614,7 @@ delta_w_swale <- kwb.rabimo::calculate_delta_w(
 ```
 
 ``` r
+
 # Plot Delta-W for the status quo
 plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ```
@@ -597,6 +622,7 @@ plot_delta_w(delta_w, main = "Delta-W (status quo)")
 ![](tutorial_files/figure-html/unnamed-chunk-14-1.png)
 
 ``` r
+
 # Plot Delta-W for the green roof scenario
 plot_delta_w(delta_w_swale, main = "Delta-W (50% of sealed connected to swale)")
 ```
