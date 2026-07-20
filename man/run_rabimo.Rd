@@ -4,7 +4,7 @@
 \alias{run_rabimo}
 \title{Run R-Abimo, the R-implementation of Water Balance Model Abimo}
 \usage{
-run_rabimo(data, config, controls = define_controls(), silent = FALSE)
+run_rabimo(data, config, controls = define_controls(), silent = TRUE)
 }
 \arguments{
 \item{data}{data frame similar to

@@ -36,7 +36,7 @@
 #'   
 #' plot(results_2025[, -1L])
 run_rabimo <- function(
-  data, config, controls = define_controls(), silent = FALSE
+    data, config, controls = define_controls(), silent = TRUE
 )
 {
   # Provide functions and variables for debugging
@@ -44,41 +44,69 @@ run_rabimo <- function(
   if (FALSE)
   {
     kwb.utils::assignPackageObjects("kwb.rabimo")
-    data <- kwb.rabimo::rabimo_inputs_2025$data
-    config <- kwb.rabimo::rabimo_inputs_2025$config
+    data <- kwb.utils::removeColumns(kwb.rabimo::rabimo_inputs_2025$data, "to_swale")
+    config <- reconfigure(kwb.rabimo::rabimo_inputs_2025$config)
+    config$measures$green_roof[[2]] <- list(
+      # column is expected to contain fractions of roof fraction
+      input_column = "green_roof_int",
+      bagrov_value = 0.7
+    )
+    config$measures$infiltration[[1]]$overflow_factor <- 0.2
+    config$measures$infiltration[[2]] <- list(
+      input_column = "to_swale_2",
+      evaporation_factor = 0.2,
+      overflow_factor = 0.15
+    )
+    config$measures$retention <- list(
+      list(
+        input_column <- "watertank_1",
+        overflow_factor = 0.3
+      ),
+      list(
+        input_column <- "watertank_2",
+        overflow_factor = 0.5
+      )
+    )
     controls <- define_controls()
+    silent <- FALSE
     `%>%` <- magrittr::`%>%`
   }
-
+  
   data <- remove_geo_column_if_required(data)
   
   # Save geometry data that may have stored in attribute "geometry"
   geometry <- attr(data, "geometry")
-
+  
+  # if config is provided in old format, convert to new format
+  if (is.null(config$measures)) {
+    message("You are using an old configuration. No problem, I convert it.")
+    config <- reconfigure(config)
+  }
+  
   # If road-area-specific columns are missing, create them
-  data <- handle_missing_columns(data)
-
+  data <- handle_missing_columns(data, silent = silent, measures = config$measures)
+  
   # Provide function to access the list of controls
   control <- create_accessor(controls)
-
+  
   # Check whether data and config have the expected structures
   if (isTRUE(control("check"))) {
-    stop_on_invalid_data(data)
     stop_on_invalid_config(config)
+    stop_on_invalid_data(data, measures = config$measures)
   }
-
+  
   # Get climate data
   climate <- cat_and_run(
     dbg = !silent,
     "Collecting climate related data",
     get_climate(data)
   )
-
+  
   # Create access functions to data columns and config elements
   fetch_data <- create_accessor(data)
   fetch_config <- create_accessor(config)
   fetch_climate <- create_accessor(climate)
-
+  
   # Prepare soil properties for all rows. They are required to calculate the
   # actual evapotranspiration of unsealed areas. In the case of water bodies,
   # all values are 0.0. (hsonne: really?)
@@ -94,12 +122,26 @@ run_rabimo <- function(
       dbg = FALSE
     )
   )
-
+  
   # Precalculate actual evapotranspirations for impervious areas
+  # Here we expect the new config format (config$measures must exist!)
+  green_roof_columns <- sapply(
+    config$measures$green_roof, "[[", "input_column"
+  )
+  
+  # - Bagrov values are stored within config$measures$green_roof
+  bagrov_values <- c(
+    fetch_config("bagrov_values"), 
+    stats::setNames(
+      sapply(config$measures$green_roof, "[[", "bagrov_value"), 
+      green_roof_columns
+    )
+  )
+  
   evaporation_sealed <- cat_and_run(
     dbg = !silent,
     "Precalculating actual evapotranspirations for impervious areas",
-    expr = fetch_config("bagrov_values") %>%
+    expr = bagrov_values %>%
       lapply(function(x) {
         real_evapo_transpiration(
           potential_evaporation = fetch_climate("epot_yr"),
@@ -110,7 +152,7 @@ run_rabimo <- function(
       }) %>%
       do.call(what = data.frame)
   )
-
+  
   # Precalculate actual evapotranspirations for waterbodies or pervious areas
   evaporation_unsealed <- cat_and_run(
     dbg = !silent,
@@ -127,150 +169,188 @@ run_rabimo <- function(
       use_abimo_algorithm = control("use_abimo_bagrov_solver")
     )
   )
-
+  
   runoff_all <- fetch_climate("prec_yr") - cbind(
     evaporation_sealed,
     unsealed = evaporation_unsealed
   )
-
+  
   # Runoff for all sealed areas (including roofs)
-
+  
   # Calculate roof related variables
-
+  
   # total runoff of roof areas
   # (total runoff, contains both surface runoff and infiltration components)
   runoff_roof <- select_columns(runoff_all, "roof")
-  runoff_green_roof <- select_columns(runoff_all, "green_roof")
-
+  
+  # Selection of green-roof related columns (fractions of the roof area)
+  runoff_green_roof <- select_columns(runoff_all, green_roof_columns, drop = FALSE)
+  fractions_green_roof <- fetch_data(green_roof_columns, drop = FALSE)
+  
   # Provide runoff coefficients for impervious surfaces
   runoff_factors <- fetch_config("runoff_factors")
-
+  
   # actual runoff from roof surface (area based, with no infiltration)
-  runoff_roof_actual <- with(
-    data, 
-    main_frac * roof * (1 - green_roof) * swg_roof
-  ) * runoff_factors[["roof"]] * runoff_roof
-
+  non_green_roof <- (1 - rowSums(fractions_green_roof))
+  runoff_roof_actual <- with(data, main_frac * roof * swg_roof) * 
+    non_green_roof * 
+    runoff_factors[["roof"]] * 
+    runoff_roof
+  
   # actual runoff from green roof surface (area based, with no infiltration)
-  runoff_green_roof_actual <- with(
-    data, 
-    main_frac * roof * green_roof * swg_roof
-  ) * runoff_factors[["roof"]] * runoff_green_roof
-
+  runoff_green_roof_actual <- with(data, main_frac * roof * swg_roof) * 
+    fractions_green_roof *
+    runoff_factors[["roof"]] * 
+    runoff_green_roof
+  
   # actual infiltration from roof surface (area based, with no runoff)
-  infiltration_roof_actual <- with(
-    data, main_frac * roof * (1-green_roof) * (1-swg_roof)
-  ) * runoff_roof
-
+  infiltration_roof_actual <- with(data, main_frac * roof * (1 - swg_roof)) * 
+    non_green_roof * 
+    runoff_roof
+  
   # actual infiltration from green_roof surface (area based, with no runoff)
-  infiltration_green_roof_actual <- with(
-    data, 
-    main_frac * roof * green_roof * (1-swg_roof)
-  ) * runoff_green_roof
-
+  infiltration_green_roof_actual <- with(data, main_frac * roof * (1 - swg_roof)) * 
+    fractions_green_roof *
+    runoff_green_roof
+  
   # Calculate runoff for all surface classes at once
   # (contains both surface runoff and infiltration components)
-
+  
   # Identify active surface class columns in input data
   surface_cols_no_rd <- matching_names(data, pattern_no_roads())
   surface_cols_rd <- matching_names(data, pattern_roads())
   digits <- gsub("\\D", "", surface_cols_no_rd)
-  surface_class_names <- paste0("surface",digits)
-
+  surface_class_names <- paste0("surface", digits)
+  
   # choose columns related to surface classes
   runoff_sealed <- select_columns(runoff_all, surface_class_names)
   # head(runoff_sealed)
-
+  
   # Runoff from the actual partial areas that are sealed and connected
   # (road and non-road) areas (for all surface classes at once)
-
+  
   runoff_factor_matrix <- expand_to_matrix(
     x = runoff_factors[surface_class_names],
     nrow = nrow(data)
   )
-
+  
   unbuilt_surface_fractions <- fetch_data(surface_cols_no_rd)
   road_surface_fractions <- fetch_data(surface_cols_rd)
-
+  
   # add an empty column in road_surface_fraction to match dimension if needed
   if (!identical(length(surface_cols_no_rd), length(surface_cols_rd))) {
     road_surface_fractions$srf5_pvd_r <- 0
   }
-
+  
   runoff_sealed_actual <-  runoff_sealed * (
     with(data, main_frac * pvd * swg_pvd) * unbuilt_surface_fractions +
       with(data, road_frac * pvd_r * swg_pvd_r) * road_surface_fractions
   ) *
     runoff_factor_matrix
-
+  
   # infiltration of sealed surfaces
   # (road and non-road) areas (for all surface classes at once)
   infiltration_sealed_actual <- runoff_sealed * (
     with(data, main_frac * pvd) * unbuilt_surface_fractions +
       with(data, road_frac * pvd_r) * road_surface_fractions) -
     runoff_sealed_actual
-
+  
   # Total Runoff of unsealed surfaces (unsealedSurface_RUV)
-  runoff_unsealed <- fetch_climate("prec_yr") - as.numeric(evaporation_unsealed) # why as.numeric()?
-
+  # as.numeric() removes attribute "bagrovUnsealed" with intermediate values
+  runoff_unsealed <- fetch_climate("prec_yr") - as.numeric(evaporation_unsealed)
+  
   # Infiltration of road (unsealed areas)
   infiltration_unsealed_roads <-
     with(data, road_frac * (1 - pvd_r)) *
     runoff_sealed[, ncol(runoff_sealed)] # last (less sealed) surface class
-
+  
   fraction_unsealed <- with(
     data,
     ifelse(control("reproduce_abimo_error"), 1, main_frac) * (1 - (roof + pvd))
   )
-
+  
   infiltration_unsealed_surfaces <- fraction_unsealed * runoff_unsealed
-
+  
   # Calculate runoff 'ROW' for entire block area (FLGES + STR_FLGES) (mm/a)
-  total_surface_runoff <- (
-    runoff_roof_actual + runoff_green_roof_actual +
-      #orig.: runoff_unsealed_roads <- was set to zero in the master branch
-      rowSums(runoff_sealed_actual))
-
+  total_surface_runoff <- runoff_roof_actual + 
+    rowSums(runoff_green_roof_actual) +
+    #orig.: runoff_unsealed_roads <- was set to zero in the master branch
+    rowSums(runoff_sealed_actual)
+  
   # Calculate infiltration rate 'RI' for entire block partial area (mm/a)
-  total_infiltration <-
-    (infiltration_roof_actual +
-       infiltration_green_roof_actual +
-       infiltration_unsealed_surfaces +
-       infiltration_unsealed_roads +
-       rowSums(infiltration_sealed_actual))
+  total_infiltration <- infiltration_roof_actual +
+    rowSums(infiltration_green_roof_actual) +
+    infiltration_unsealed_surfaces +
+    infiltration_unsealed_roads +
+    rowSums(infiltration_sealed_actual)
+  
+  # Here we expect the new config format!
+  # Provide information on the infiltration measure(s)
+  infiltration_configs <- select_elements(config$measures, "infiltration")
 
+  # For simplicity, we treat the retention as a form of infiltration measure.
+  # Here, the evaporation factor is always one (100 %), i.e. everything 
+  # evaporates, and nothing actually infiltrates
+  retention_configs <- lapply(
+    select_elements(config$measures, "retention"),
+    function(pars) {
+      pars$evaporation_factor <- 1
+      pars
+    }
+  )
+  
+  # Combine the configurations of both measure types
+  infiltration_or_retention_configs <- c(
+    infiltration_configs, 
+    retention_configs
+  )
+  
+  deltas <- lapply(infiltration_or_retention_configs, function(pars) {
+    area_fraction_connected <- fetch_data(select_elements(pars, "input_column"))
+    total_surface_runoff * 
+      (1 - select_elements(pars, "overflow_factor")) * 
+      data.frame(
+        surface_runoff = area_fraction_connected * (-1),
+        infiltration = area_fraction_connected * 
+          (1 - select_elements(pars, "evaporation_factor"))
+      )
+  })
+  
+  # name the entries according to the fraction columns, just for convenience
+  names(deltas) <- sapply(infiltration_or_retention_configs, `[[`, "input_column")
+  
+  deltas_surface_runoff <- do.call(cbind, lapply(deltas, `[[`, "surface_runoff"))
+  deltas_infiltration <- do.call(cbind, lapply(deltas, `[[`, "infiltration"))
+  
   # Correct Surface Runoff and Infiltration if area has an infiltration swale
-  swale_delta <- total_surface_runoff * (fetch_data("to_swale"))
-  total_surface_runoff <- total_surface_runoff - swale_delta
-  total_infiltration <- total_infiltration +
-    swale_delta * (1 - fetch_config("swale")[["swale_evaporation_factor"]])
-
+  total_surface_runoff <- total_surface_runoff + rowSums(deltas_surface_runoff)
+  total_infiltration <- total_infiltration + rowSums(deltas_infiltration)
+  
   # Calculate "total system losses" 'R' due to runoff and infiltration
   # for entire block partial area
   total_runoff <- total_surface_runoff + total_infiltration
-
+  
   # Calculate evaporation 'VERDUNST' by subtracting 'R', the sum of
-  # runoff and infiltration from precipitation of entire year,
-  # multiplied by precipitation correction factor
+  # runoff and infiltration from (corrected) precipitation of entire year
   total_evaporation <- climate[["prec_yr"]] - total_runoff
-
+  
   # Provide total area for calculation of "flows"
   total_area <- fetch_data("total_area")
-
+  
   # Calculate volume 'rowvol' from runoff (qcm/s)
   surface_runoff_flow <- yearly_height_to_volume_flow(
     total_surface_runoff, total_area
   )
-
+  
   # Calculate volume 'rivol' from infiltration rate (qcm/s)
   infiltration_flow <- yearly_height_to_volume_flow(
     total_infiltration, total_area
   )
-
+  
   # Calculate volume of "system losses" 'rvol' due to surface runoff and
   # infiltration
   total_runoff_flow <- surface_runoff_flow + infiltration_flow
-
+  
   # Provide mapping between local variable names and ABIMO-output columns
   name_mapping <- list(
     code = "CODE",
@@ -283,23 +363,23 @@ run_rabimo <- function(
     total_area = "FLAECHE",
     total_evaporation = "VERDUNSTUN"
   )
-
+  
   # Compose result data frame. Use mget() to get the result vectors from the
   # local environment and put them into the data frame
   result_data_raw <- cbind(
     fetch_data("code", drop = FALSE),
     mget(names(name_mapping)[-1L])
   )
-
+  
   output_format <- control("output_format")
-
+  
   result_data <- if (output_format == "abimo") {
-
+    
     # Provide the same columns as Abimo does
     rename_columns(result_data_raw, name_mapping)
-
+    
   } else if (output_format == "rabimo") {
-
+    
     data.frame(
       code = result_data_raw$code,
       area = result_data_raw$total_area,
@@ -307,23 +387,23 @@ run_rabimo <- function(
       infiltr = result_data_raw$total_infiltration,
       evapor = result_data_raw$total_evaporation
     )
-
+    
   } else {
-
+    
     clean_stop("controls$output_format must be either 'abimo' or 'rabimo'.")
   }
-
+  
   # Round all columns to three digits (skip first column: "code")
   result_data[-1L] <- lapply(result_data[-1L], round, 3L)
-
+  
   result_data <- restore_geo_column_if_required(
     result_data, geometry = geometry
   )
-
+  
   if (isFALSE(control("intermediates"))) {
     return(result_data)
   }
-
+  
   # Return intermediate results as attributes
   structure(
     result_data,
@@ -356,25 +436,52 @@ run_rabimo <- function(
 }
 
 # handle_missing_columns -------------------------------------------------------
-handle_missing_columns <- function(data)
+handle_missing_columns <- function(data, silent = TRUE, measures = NULL)
 {
-  road_specific_columns <- c(
-    "road_frac", "pvd_r", "swg_pvd_r",
-    "srf1_pvd_r", "srf2_pvd_r", "srf3_pvd_r", "srf4_pvd_r"
+  init_column <- function(data, column, default) {
+    if (!silent) {
+      message(sprintf("Initialising new column '%s' with %0.1f", column, default))
+    }
+    data[[column]] <- default
+    data
+  }
+  
+  defaults <- list(
+    # road_specific_columns
+    road_frac = 0, 
+    pvd_r = 0, 
+    swg_pvd_r = 0,
+    srf1_pvd_r = 0, 
+    srf2_pvd_r = 0, 
+    srf3_pvd_r = 0, 
+    srf4_pvd_r = 0,
+    # (non-road) fraction
+    main_frac = 1
   )
-
-  missing_road_columns <- setdiff(road_specific_columns, names(data))
-
-  if (length(missing_road_columns)) {
-    for (column in missing_road_columns) {
-      data[[column]] <- 0
+  
+  for (column in names(defaults)) {
+    if (!column %in% names(data)) {
+      data <- init_column(data, column, defaults[[column]])
+    }    
+  }
+  
+  # Columns that appear as "input_column" fields in the argument "measures"
+  # are required and initialised with zero if missing
+  if (!is.null(measures)) {
+    
+    required_columns <- c(
+      sapply(measures$green_roof, "[[", "input_column"), 
+      sapply(measures$infiltration, "[[", "input_column"),
+      sapply(measures$retention, "[[", "input_column")
+    )
+    
+    for (column in required_columns) {
+      if (! column %in% names(data)) {
+        data <- init_column(data, column, 0)
+      }
     }
   }
-
-  if (! "main_frac" %in% names(data)) {
-    data$main_frac <- 1
-  }
-
+  
   data
 }
 
@@ -382,9 +489,9 @@ handle_missing_columns <- function(data)
 get_climate <- function(input)
 {
   climate <- select_columns(input, c("prec_yr", "prec_s", "epot_yr", "epot_s"))
-
+  
   climate[["x_ratio"]] <- climate[["prec_yr"]] / climate[["epot_yr"]]
-
+  
   climate
 }
 
@@ -399,6 +506,8 @@ yearly_height_to_volume_flow <- function(height, area)
 {
   height * 3.171 * area / 100000.0
 }
+
+# define_controls --------------------------------------------------------------
 
 #' Define List of "Controls"
 #'
@@ -455,6 +564,8 @@ define_controls <- function(
   )
 }
 
+# crop_box ---------------------------------------------------------------------
+
 #' Crop a box out of a shape
 #' 
 #' @param x sf object
@@ -471,6 +582,8 @@ crop_box <- function(x, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0
     bbox = sf::st_bbox(x), xoffset, yoffset, xscale, yscale
   )))
 }
+
+# scale_bbox -------------------------------------------------------------------
 
 scale_bbox <- function(bbox, xoffset = 0.45, yoffset = 0.45, xscale = 0.1, yscale = 0.1)
 {

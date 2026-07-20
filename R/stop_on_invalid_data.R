@@ -1,7 +1,7 @@
 # stop_on_invalid_data ---------------------------------------------------------
 #' @importFrom rlang .data
 #' @importFrom kwb.utils stopFormatted
-stop_on_invalid_data <- function(data)
+stop_on_invalid_data <- function(data, measures = NULL)
 {
   # Read information on column names and types
   column_info <- read_column_info()
@@ -40,7 +40,7 @@ stop_on_invalid_data <- function(data)
     convert = FALSE
   )
 
-  # Do not accept any NA
+  # Do not accept any NA in required columns of type numeric
   check_columns(
     data = data,
     columns = names(data) %>%
@@ -81,6 +81,28 @@ stop_on_invalid_data <- function(data)
   if (length(columns <- matching_names(data, pattern_roads()))) {
     check_sum_up_to_1_or_0(data, columns)
   }
+  
+  if (is.null(measures)) {
+    return()
+  }
+  
+  columns_for_measure <- function(measure_type) {
+    if (is.null(params <- measures[[measure_type]])) {
+      return(character(0L))
+    }
+    sapply(params, kwb.utils::selectElements, "input_column")
+  }
+  
+  # If measures are given, check that related fractions do not sum up to
+  # value above 1
+  check_sum_is_less_equal_1(data, columns = c(
+    columns_for_measure(measure_type = "green_roof")
+  ))
+  
+  check_sum_is_less_equal_1(data, columns = c(
+    columns_for_measure(measure_type = "infiltration"), 
+    columns_for_measure(measure_type = "retention")
+  ))
 }
 
 # get_expected_data_type -------------------------------------------------------
@@ -104,6 +126,20 @@ get_expected_data_type <- function(columns = NULL)
   type_info[intersect(names(type_info), columns)]
 }
 
+# stop_on_non_numeric_columns --------------------------------------------------
+stop_on_non_numeric_columns <- function(data)
+{
+  is_numeric <- sapply(data, is.numeric)
+  
+  if (any(!is_numeric)) {
+    kwb.utils::stopFormatted(
+      "There are non-numeric columns in %s: %s",
+      deparse(substitute(data)),
+      kwb.utils::stringList(names(data)[!is_numeric])
+    )
+  }
+}
+
 # check_sum_up_to_1_or_0 -------------------------------------------------------
 #' @importFrom kwb.utils stopFormatted stringList
 check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
@@ -115,14 +151,7 @@ check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
 
   column_data <- select_columns(data, columns, drop = FALSE)
   
-  # Check for non-numeric columns
-  is_numeric <- sapply(column_data, is.numeric)
-  if (any(!is_numeric)) {
-    clean_stop(
-      "There are non-numeric columns in check_sum_up_to_1_or_0(): ",
-      kwb.utils::stringList(columns[!is_numeric])
-    )
-  }
+  stop_on_non_numeric_columns(column_data)
   
   sums <- rowSums(column_data)
   ok <- equals(sums, 0) | equals(sums, 1)
@@ -141,4 +170,33 @@ check_sum_up_to_1_or_0 <- function(data, columns, tolerance = 0.005)
     "The sum of columns %s is not 1 or 0 in each row as expected",
     "(see above). The tolerance was: %f"
   ))
+}
+
+# check_sum_is_less_equal_1 ----------------------------------------------------
+check_sum_is_less_equal_1 <- function(data, columns)
+{
+  if (length(columns) == 0L) {
+    return()
+  }
+  
+  column_data <- kwb.utils::selectColumns(data, columns, drop = FALSE)
+  stop_on_non_numeric_columns(column_data)
+  ok <- (rowSums(column_data) <= 1)
+  
+  if (all(ok)) {
+    return()
+  }
+  
+  cat("(First) invalid rows:\n")
+  kwb.utils::selectColumns(data, c("code", columns))[!ok, ] %>%
+    utils::head() %>%
+    print()
+  
+  kwb.utils::stopFormatted(
+    paste(
+      "The sum of columns %s is not less than or equal to 1 in each row",
+      "as expected (see above)."
+    ),
+    kwb.utils::stringList(columns)
+  )
 }
