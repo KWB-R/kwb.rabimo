@@ -30,7 +30,8 @@ data_to_natural(data, type = "undeveloped", veg_class = 50)
 
 - veg_class:
 
-  vegetation class to assign to each row in `data`. Default: 50
+  vegetation class to assign to each row in `data` if current value is
+  lower. Default: 50
 
 ## Value
 
