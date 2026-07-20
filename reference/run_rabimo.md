@@ -5,7 +5,7 @@ Run R-Abimo, the R-implementation of Water Balance Model Abimo
 ## Usage
 
 ``` r
-run_rabimo(data, config, controls = define_controls(), silent = FALSE)
+run_rabimo(data, config, controls = define_controls(), silent = TRUE)
 ```
 
 ## Arguments
@@ -48,10 +48,7 @@ data <- data[sample(seq_len(nrow(data)), size = 1000L), ]
 
 # Run R-Abimo
 results_2020 <- kwb.rabimo::run_rabimo(data, inputs_2020$config)
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.02 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.13 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs) 
+#> You are using an old configuration. No problem, I convert it.
 
 # Get input data and config for Berlin (version 2025)
 inputs_2025 <- kwb.rabimo::rabimo_inputs_2025
@@ -62,10 +59,7 @@ data <- crop_box(inputs_2025$data)
 
 # Run R-Abimo
 results_2025 <- kwb.rabimo::run_rabimo(data, inputs_2025$config)
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.08 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.28 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.06 secs) 
+#> You are using an old configuration. No problem, I convert it.
   
 plot(results_2025[, -1L])
 ```

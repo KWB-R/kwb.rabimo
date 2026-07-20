@@ -5,14 +5,15 @@ All default values can be overridden by entering new key-value pairs.
 ## Usage
 
 ``` r
-generate_rabimo_area(code, ..., column_info = read_column_info())
+generate_rabimo_area(code = NULL, ..., column_info = read_column_info())
 ```
 
 ## Arguments
 
 - code:
 
-  identifier of area
+  vector of unique area identifiers. If NULL, default codes are created:
+  area_1, area_2, ...
 
 - ...:
 

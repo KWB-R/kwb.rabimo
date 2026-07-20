@@ -13,8 +13,8 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="How to Simulate Water Balance with R-Abimo">
 </head>
@@ -244,10 +244,7 @@ function:</p>
 <span>  data <span class="op">=</span> <span class="va">berlin_zoom</span>, </span>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.02 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span>
 <span></span>
 <span><span class="co"># Have a look at the first lines of the result data frame</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">water_balance_urban</span><span class="op">)</span><span class="op">)</span></span>
@@ -321,31 +318,31 @@ columns:</p>
 <span><span class="co">#&gt; 3 area-3     600    300     700    500        0        100         1 0.50</span></span>
 <span><span class="co">#&gt; 4 area-4     600    300     700    500        0        100         1 0.75</span></span>
 <span><span class="co">#&gt; 5 area-5     600    300     700    500        0        100         1 1.00</span></span>
-<span><span class="co">#&gt;   green_roof swg_roof pvd swg_pvd srf1_pvd srf2_pvd srf3_pvd srf4_pvd srf5_pvd</span></span>
-<span><span class="co">#&gt; 1          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
-<span><span class="co">#&gt; 2          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
-<span><span class="co">#&gt; 3          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
-<span><span class="co">#&gt; 4          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
-<span><span class="co">#&gt; 5          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1</span></span>
-<span><span class="co">#&gt;   road_frac pvd_r swg_pvd_r srf1_pvd_r srf2_pvd_r srf3_pvd_r srf4_pvd_r</span></span>
-<span><span class="co">#&gt; 1         0   0.9         1        0.9        0.1          0          0</span></span>
-<span><span class="co">#&gt; 2         0   0.9         1        0.9        0.1          0          0</span></span>
-<span><span class="co">#&gt; 3         0   0.9         1        0.9        0.1          0          0</span></span>
-<span><span class="co">#&gt; 4         0   0.9         1        0.9        0.1          0          0</span></span>
-<span><span class="co">#&gt; 5         0   0.9         1        0.9        0.1          0          0</span></span>
-<span><span class="co">#&gt;   to_swale gw_dist ufc30 ufc150 land_type veg_class irrigation</span></span>
-<span><span class="co">#&gt; 1        0       3    13     13     urban        35          0</span></span>
-<span><span class="co">#&gt; 2        0       3    13     13     urban        35          0</span></span>
-<span><span class="co">#&gt; 3        0       3    13     13     urban        35          0</span></span>
-<span><span class="co">#&gt; 4        0       3    13     13     urban        35          0</span></span>
-<span><span class="co">#&gt; 5        0       3    13     13     urban        35          0</span></span>
+<span><span class="co">#&gt;   swg_roof pvd swg_pvd srf1_pvd srf2_pvd srf3_pvd srf4_pvd srf5_pvd road_frac</span></span>
+<span><span class="co">#&gt; 1        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0</span></span>
+<span><span class="co">#&gt; 2        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0</span></span>
+<span><span class="co">#&gt; 3        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0</span></span>
+<span><span class="co">#&gt; 4        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0</span></span>
+<span><span class="co">#&gt; 5        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0</span></span>
+<span><span class="co">#&gt;   pvd_r swg_pvd_r srf1_pvd_r srf2_pvd_r srf3_pvd_r srf4_pvd_r gw_dist ufc30</span></span>
+<span><span class="co">#&gt; 1   0.9         1        0.9        0.1          0          0       3    13</span></span>
+<span><span class="co">#&gt; 2   0.9         1        0.9        0.1          0          0       3    13</span></span>
+<span><span class="co">#&gt; 3   0.9         1        0.9        0.1          0          0       3    13</span></span>
+<span><span class="co">#&gt; 4   0.9         1        0.9        0.1          0          0       3    13</span></span>
+<span><span class="co">#&gt; 5   0.9         1        0.9        0.1          0          0       3    13</span></span>
+<span><span class="co">#&gt;   ufc150 land_type veg_class irrigation</span></span>
+<span><span class="co">#&gt; 1     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 2     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 3     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 4     13     urban        35          0</span></span>
+<span><span class="co">#&gt; 5     13     urban        35          0</span></span>
 <span></span>
 <span><span class="co"># Run R-Abimo on the block areas</span></span>
-<span><span class="va">art_water_balance</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span><span class="va">art_blocks</span>, config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Collecting climate related data ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Preparing soil property data for all block areas ... ok. (0.00 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for impervious areas ... ok. (0.01 secs) </span></span>
-<span><span class="co">#&gt; Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.00 secs)</span></span>
+<span><span class="va">art_water_balance</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/run_rabimo.html">run_rabimo</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">art_blocks</span>, </span>
+<span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span>
 <span></span>
 <span><span class="co"># How does the roof area influence the runoff?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">art_blocks</span><span class="op">$</span><span class="va">roof</span>, <span class="va">art_water_balance</span><span class="op">$</span><span class="va">runoff</span><span class="op">)</span></span></code></pre></div>
@@ -409,7 +406,8 @@ following calls to <code><a href="../reference/run_rabimo.html">run_rabimo()</a>
 <span>  data <span class="op">=</span> <span class="va">berlin_zoom_natural</span>, </span>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="calculate-and-plot-delta-w">Calculate and plot “Delta-W”<a class="anchor" aria-label="anchor" href="#calculate-and-plot-delta-w"></a>
@@ -517,6 +515,7 @@ green roofs is at least 50 percent:</p>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_green_roof</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
@@ -554,6 +553,7 @@ we reduce the fractions by 50 percent:</p>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_unsealed</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
@@ -600,6 +600,7 @@ would that change Delta-W?</p>
 <span>  config <span class="op">=</span> <span class="va">abimo_inputs</span><span class="op">$</span><span class="va">config</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; You are using an old configuration. No problem, I convert it.</span></span>
 <span></span>
 <span><span class="co"># Calculate Delta-W</span></span>
 <span><span class="va">delta_w_swale</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu"><a href="../reference/calculate_delta_W.html">calculate_delta_w</a></span><span class="op">(</span></span>
@@ -630,7 +631,7 @@ measures has the biggest impact!</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

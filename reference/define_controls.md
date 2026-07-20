@@ -59,21 +59,15 @@ controls_no_solver <- define_controls(use_abimo_bagrov_solver = FALSE)
 system.time(result_default <- kwb.rabimo::run_rabimo(
   test_data, inputs$config, controls_default
 ))
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.02 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.14 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs) 
+#> You are using an old configuration. No problem, I convert it.
 #>    user  system elapsed 
-#>    0.22    0.00    0.22 
+#>    0.20    0.00    0.21 
 system.time(result_no_check <- kwb.rabimo::run_rabimo(
   test_data, inputs$config, controls_no_check
 ))
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.02 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.15 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs) 
+#> You are using an old configuration. No problem, I convert it.
 #>    user  system elapsed 
-#>    0.20    0.00    0.22 
+#>    0.19    0.00    0.19 
 identical(result_default, result_no_check)
 #> [1] TRUE
 if (FALSE) { # \dontrun{

@@ -198,10 +198,7 @@ water_balance_urban <- kwb.rabimo::run_rabimo(
   data = berlin_zoom, 
   config = abimo_inputs$config
 )
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.02 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.10 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs)
+#> You are using an old configuration. No problem, I convert it.
 
 # Have a look at the first lines of the result data frame
 head(sf::st_drop_geometry(water_balance_urban))
@@ -284,31 +281,31 @@ art_blocks
 #> 3 area-3     600    300     700    500        0        100         1 0.50
 #> 4 area-4     600    300     700    500        0        100         1 0.75
 #> 5 area-5     600    300     700    500        0        100         1 1.00
-#>   green_roof swg_roof pvd swg_pvd srf1_pvd srf2_pvd srf3_pvd srf4_pvd srf5_pvd
-#> 1          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1
-#> 2          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1
-#> 3          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1
-#> 4          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1
-#> 5          0        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1
-#>   road_frac pvd_r swg_pvd_r srf1_pvd_r srf2_pvd_r srf3_pvd_r srf4_pvd_r
-#> 1         0   0.9         1        0.9        0.1          0          0
-#> 2         0   0.9         1        0.9        0.1          0          0
-#> 3         0   0.9         1        0.9        0.1          0          0
-#> 4         0   0.9         1        0.9        0.1          0          0
-#> 5         0   0.9         1        0.9        0.1          0          0
-#>   to_swale gw_dist ufc30 ufc150 land_type veg_class irrigation
-#> 1        0       3    13     13     urban        35          0
-#> 2        0       3    13     13     urban        35          0
-#> 3        0       3    13     13     urban        35          0
-#> 4        0       3    13     13     urban        35          0
-#> 5        0       3    13     13     urban        35          0
+#>   swg_roof pvd swg_pvd srf1_pvd srf2_pvd srf3_pvd srf4_pvd srf5_pvd road_frac
+#> 1        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0
+#> 2        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0
+#> 3        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0
+#> 4        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0
+#> 5        1 0.6     0.7      0.5      0.2      0.1      0.1      0.1         0
+#>   pvd_r swg_pvd_r srf1_pvd_r srf2_pvd_r srf3_pvd_r srf4_pvd_r gw_dist ufc30
+#> 1   0.9         1        0.9        0.1          0          0       3    13
+#> 2   0.9         1        0.9        0.1          0          0       3    13
+#> 3   0.9         1        0.9        0.1          0          0       3    13
+#> 4   0.9         1        0.9        0.1          0          0       3    13
+#> 5   0.9         1        0.9        0.1          0          0       3    13
+#>   ufc150 land_type veg_class irrigation
+#> 1     13     urban        35          0
+#> 2     13     urban        35          0
+#> 3     13     urban        35          0
+#> 4     13     urban        35          0
+#> 5     13     urban        35          0
 
 # Run R-Abimo on the block areas
-art_water_balance <- kwb.rabimo::run_rabimo(art_blocks, config = abimo_inputs$config)
-#> Collecting climate related data ... ok. (0.00 secs) 
-#> Preparing soil property data for all block areas ... ok. (0.00 secs) 
-#> Precalculating actual evapotranspirations for impervious areas ... ok. (0.01 secs) 
-#> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.00 secs)
+art_water_balance <- kwb.rabimo::run_rabimo(
+  data = art_blocks, 
+  config = abimo_inputs$config
+)
+#> You are using an old configuration. No problem, I convert it.
 
 # How does the roof area influence the runoff?
 plot(art_blocks$roof, art_water_balance$runoff)
@@ -378,6 +375,7 @@ water_balance_natural <- kwb.rabimo::run_rabimo(
   config = abimo_inputs$config,
   silent = TRUE
 )
+#> You are using an old configuration. No problem, I convert it.
 ```
 
 ### Calculate and plot “Delta-W”
@@ -499,6 +497,7 @@ water_balance_green_roof <- kwb.rabimo::run_rabimo(
   config = abimo_inputs$config,
   silent = TRUE
 )
+#> You are using an old configuration. No problem, I convert it.
 
 # Calculate Delta-W
 delta_w_green_roof <- kwb.rabimo::calculate_delta_w(
@@ -547,6 +546,7 @@ water_balance_unsealed <- kwb.rabimo::run_rabimo(
   config = abimo_inputs$config,
   silent = TRUE
 )
+#> You are using an old configuration. No problem, I convert it.
 
 # Calculate Delta-W
 delta_w_unsealed <- kwb.rabimo::calculate_delta_w(
@@ -605,6 +605,7 @@ water_balance_swale <- kwb.rabimo::run_rabimo(
   config = abimo_inputs$config,
   silent = TRUE
 )
+#> You are using an old configuration. No problem, I convert it.
 
 # Calculate Delta-W
 delta_w_swale <- kwb.rabimo::calculate_delta_w(
