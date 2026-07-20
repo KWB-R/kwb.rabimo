@@ -13,8 +13,6 @@ created: area_1, area_2, ...}
 \item{\dots}{key = value pairs overriding the default column values}
 
 \item{column_info}{data frame as returned by \code{\link{read_column_info}}}
-
-\item{n}{number of areas to be created. Default: length of code vector (1 if code is NULL)}
 }
 \description{
 All default values can be overridden by entering new key-value pairs.

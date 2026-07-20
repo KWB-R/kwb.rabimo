@@ -6,7 +6,6 @@
 #'
 #' @param code vector of unique area identifiers. If NULL, default codes are 
 #'   created: area_1, area_2, ...
-#' @param n number of areas to be created. Default: length of code vector (1 if code is NULL)
 #' @param \dots key = value pairs overriding the default column values
 #' @param column_info data frame as returned by \code{\link{read_column_info}}
 #' @export

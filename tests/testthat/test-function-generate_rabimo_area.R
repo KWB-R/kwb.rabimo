@@ -6,11 +6,11 @@ test_that("generate_rabimo_area() works", {
 
   expect_no_error(data <- f())
 
-  expect_no_error(kwb.rabimo::run_rabimo(
+  expect_no_error(expect_message(kwb.rabimo::run_rabimo(
     silent = TRUE,
     data = data,
     config = kwb.rabimo::rabimo_inputs_2025$config,
     controls = kwb.rabimo::define_controls()
-  ))
+  )))
 
 })

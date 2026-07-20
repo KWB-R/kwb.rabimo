@@ -3,7 +3,7 @@
 test_that("run_rabimo() reproduces previous results", {
   config <- kwb.rabimo::rabimo_inputs_2020$config
   data <- kwb.rabimo::rabimo_inputs_2020$data
-  expect_output(results <- kwb.rabimo::run_rabimo(data, config))
+  expect_message(results <- kwb.rabimo::run_rabimo(data, config))
   result <- colMeans(results[, c("runoff", "infiltr", "evapor")])
   expected_result <- c(runoff = 162.5073, infiltr = 184.4515, evapor = 284.8178)
   expect_equal(round(result, 4L), expected_result)
@@ -73,10 +73,10 @@ test_that("run_rabimo() works", {
     )
   )
 
-  expect_output(
-    result_1 <- run(data, config, controls = define_controls())
-  )
-  expect_silent(
+  expect_output(suppressMessages(
+    result_1 <- run(data, config, controls = define_controls(), silent = FALSE)
+  ))
+  expect_message(
     result_2 <- run(data, config, controls = define_controls(), silent = TRUE)
   )
 
@@ -88,7 +88,7 @@ test_that("run_rabimo() works", {
 test_that("run_rabimo() keeps the row order", {
   inputs <- kwb.rabimo::rabimo_inputs_2020
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
-  expect_output(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
+  expect_message(result <- kwb.rabimo::run_rabimo(data, config = inputs$config))
   expect_identical(data$code, result$code)
 })
 
@@ -96,9 +96,9 @@ test_that("run_rabimo() keeps geometry if data inherits from 'sf'", {
   inputs <- kwb.rabimo::rabimo_inputs_2025
   data <- inputs$data[sample(nrow(inputs$data), 10L), ]
   expect_true("sf" %in% class(data))
-  expect_output(suppressMessages(
+  expect_message(
     result <- kwb.rabimo::run_rabimo(data, config = inputs$config)
-  ))
+  )
   expect_true("sf" %in% class(result))
 })
 

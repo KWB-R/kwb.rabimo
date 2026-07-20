@@ -10,7 +10,7 @@ test_that("handle_missing_columns() works", {
     columns = c("main_frac")
   )
 
-  expect_message(result_1 <- handle_missing(area_with_missing))
+  expect_message(result_1 <- handle_missing(area_with_missing, silent = FALSE))
   expect_silent(result_2 <- handle_missing(area_with_missing, silent = TRUE))
 
   expect_identical(result_1$main_frac, 1)
