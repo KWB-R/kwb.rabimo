@@ -5,7 +5,7 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo — run_rabimo"><meta name="description" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo"><meta property="og:description" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo"><meta name="robots" content="noindex"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo — run_rabimo"><meta name="description" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo"><meta property="og:description" content="Run R-Abimo, the R-implementation of Water Balance Model Abimo"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kwb.rabimo</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">config</span>, controls <span class="op">=</span> <span class="fu"><a href="define_controls.html">define_controls</a></span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">config</span>, controls <span class="op">=</span> <span class="fu"><a href="define_controls.html">define_controls</a></span><span class="op">(</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -93,10 +93,7 @@ the default is <code>FALSE</code></p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run R-Abimo</span></span></span>
 <span class="r-in"><span><span class="va">results_2020</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">inputs_2020</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Collecting climate related data ... ok. (0.00 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Preparing soil property data for all block areas ... ok. (0.02 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for impervious areas ... ok. (0.13 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.03 secs) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You are using an old configuration. No problem, I convert it.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get input data and config for Berlin (version 2025)</span></span></span>
 <span class="r-in"><span><span class="va">inputs_2025</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="va"><a href="rabimo_inputs_2025.html">rabimo_inputs_2025</a></span></span></span>
@@ -107,10 +104,7 @@ the default is <code>FALSE</code></p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run R-Abimo</span></span></span>
 <span class="r-in"><span><span class="va">results_2025</span> <span class="op">&lt;-</span> <span class="fu">kwb.rabimo</span><span class="fu">::</span><span class="fu">run_rabimo</span><span class="op">(</span><span class="va">data</span>, <span class="va">inputs_2025</span><span class="op">$</span><span class="va">config</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Collecting climate related data ... ok. (0.00 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Preparing soil property data for all block areas ... ok. (0.18 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for impervious areas ... ok. (0.27 secs) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precalculating actual evapotranspirations for waterbodies or pervious areas ... ok. (0.06 secs) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You are using an old configuration. No problem, I convert it.</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results_2025</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1L</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="run_rabimo-1.png" alt="" width="700" height="433"></span>
@@ -125,7 +119,7 @@ the default is <code>FALSE</code></p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

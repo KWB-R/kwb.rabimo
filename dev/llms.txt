@@ -1,0 +1,129 @@
+# kwb.rabimo
+
+R-implementation of a simple water balance model for urban areas,
+
+- based on “Wasserhaushaltsmodell Berlin ABIMO 3.2” (see Documentation
+  below) and
+- further developed by [KWB](https://kompetenz-wasser.de) within
+  [BMBF](https://www.bmbf.de/EN/Home/home_node.html)-funded research
+  project [AMAREX](https://amarex-projekt.de/en).
+
+For our Tutorial, click
+[here](https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html) (see
+also Documentation below).
+
+## Installation
+
+``` r
+
+# Install package "remotes" from CRAN
+install.packages("remotes", repos = "https://cloud.r-project.org")
+
+# Install package "kwb.rabimo" (latest "release") from GitHub
+remotes::install_github("KWB-R/kwb.rabimo", build_vignettes = TRUE)
+```
+
+## Basic Usage
+
+### Provide input data and configuration
+
+For Berlin, the capital of Germany, we provide input data and model
+parameters in the package:
+
+``` r
+
+# Load Berlin data in the original Abimo format
+abimo_inputs <- kwb.rabimo::rabimo_inputs_2025
+```
+
+### Run R-Abimo for the status quo
+
+``` r
+
+# Run R-Abimo, the R-implementation of Abimo
+rabimo_result <- kwb.rabimo::run_rabimo(
+  data = abimo_inputs$data, 
+  config = abimo_inputs$config
+)
+
+# Have a look at the first lines of the result data frame
+head(rabimo_result)
+```
+
+### Run R-Abimo for a natural state scenario
+
+``` r
+
+rabimo_result_natural <- kwb.rabimo::run_rabimo(
+  data = kwb.rabimo::data_to_natural(abimo_inputs$data), 
+  config = new_inputs$config
+)
+```
+
+### Calculate “Delta-W”
+
+For the first ten blocks, calculate the deviation from the natural
+state:
+
+``` r
+
+kwb.rabimo::calculate_delta_w(
+  urban = rabimo_result[1:10, ],
+  natural = rabimo_result_natural
+)
+```
+
+## Documentation
+
+### R-package kwb.rabimo
+
+- Package Home: <https://kwb-r.github.io/kwb.rabimo>
+- Tutorial: <https://kwb-r.github.io/kwb.rabimo/articles/tutorial.html>
+
+### Original software “Wasserhaushaltsmodell Berlin ABIMO 3.2”
+
+- Source code (C++): <https://github.com/umweltatlas/abimo>,
+- User manual (in German):
+  <https://www.berlin.de/umweltatlas/_assets/literatur/goedecke_et_al_abimo2019_doku.pdf>
+
+# Package index
+
+## All functions
+
+- [`calculate_delta_w()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/calculate_delta_W.md)
+  : Deviation from Natural Water Balance (Delta-W)
+- [`crop_box()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/crop_box.md)
+  : Crop a box out of a shape
+- [`data_to_natural()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/data_to_natural.md)
+  : Transform R-Abimo input Data into their natural scenario equivalent
+- [`define_controls()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/define_controls.md)
+  : Define List of "Controls"
+- [`generate_rabimo_area()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/generate_rabimo_area.md)
+  : Generate an area in R-Abimo format with default values
+- [`get_measure_stats()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/get_measure_stats.md)
+  : Get Mean/Max Statistics on Measures
+- [`get_soil_properties()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/get_soil_properties.md)
+  : Calculate Soil Properties
+- [`rabimo_inputs_2020`](https://kwb-r.github.io/kwb.rabimo/dev/reference/rabimo_inputs_2020.md)
+  : R-Abimo Inputs (Data and Config) for Berlin, 2020
+- [`rabimo_inputs_2025`](https://kwb-r.github.io/kwb.rabimo/dev/reference/rabimo_inputs_2025.md)
+  : R-Abimo Inputs (Data and Config) for Berlin, 2025.
+- [`read_column_info()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/read_column_info.md)
+  : Provide Meta Information About Input Columns
+- [`real_evapo_transpiration()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/real_evapo_transpiration.md)
+  : Calculate Actual Evapotranspiration with Bagrov
+- [`run_rabimo()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/run_rabimo.md)
+  : Run R-Abimo, the R-implementation of Water Balance Model Abimo
+- [`run_rabimo_with_measures()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/run_rabimo_with_measures.md)
+  : Distribute Rainwater Management Measures and run R-Abimo
+- [`test_plumber_api()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/test_plumber_api.md)
+  : Test the API to main functions using the plumber package and swagger
+- [`triangle_of_fractions()`](https://kwb-r.github.io/kwb.rabimo/dev/reference/triangle_of_fractions.md)
+  : Plot Triangle of Three Fractions
+
+# Articles
+
+### All vignettes
+
+- [How to Simulate Water Balance with
+  R-Abimo](https://kwb-r.github.io/kwb.rabimo/dev/articles/tutorial.md):
