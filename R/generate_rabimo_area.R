@@ -4,11 +4,12 @@
 #'
 #' All default values can be overridden by entering new key-value pairs.
 #'
-#' @param code identifier of area
+#' @param code vector of unique area identifiers. If NULL, default codes are 
+#'   created: area_1, area_2, ...
 #' @param \dots key = value pairs overriding the default column values
 #' @param column_info data frame as returned by \code{\link{read_column_info}}
 #' @export
-generate_rabimo_area <- function(code, ..., column_info = read_column_info())
+generate_rabimo_area <- function(code = NULL, ..., column_info = read_column_info())
 {
   #kwb.utils::assignPackageObjects("kwb.rabimo");column_info=read_column_info();`%>%`<-magrittr::`%>%`
 
@@ -39,7 +40,12 @@ generate_rabimo_area <- function(code, ..., column_info = read_column_info())
 
   result <- do.call(data.frame, args)
 
-  # Add column "code"
-  result["code"] <- code
+  # Overwrite column "code"
+  result["code"] <- if (is.null(code)) {
+    paste0("area_", seq_len(nrow(result)))
+  } else {
+    code
+  }
+  
   result
 }

@@ -15,7 +15,7 @@
 #' @param data the input data in R-Abimo format
 #' @param type a character object containing the name of natural scenario.
 #'   Defaults to "undeveloped"
-#' @param veg_class vegetation class to assign to each row in \code{data}.
+#' @param veg_class vegetation class to assign to each row in \code{data} if current value is lower.
 #'   Default: 50
 #' @return a dataframe with R-Abimo input data for the chosen natural scenario
 #' @export
@@ -37,8 +37,8 @@ data_to_natural <- function(data, type = "undeveloped", veg_class = 50)
   data[urban_columns] <- 0
 
   # set vegetation class
-  data["veg_class"] <- veg_class
-
+  data[["veg_class"]] <- pmax(data[["veg_class"]], veg_class, na.rm = TRUE)
+  
   if (type != "undeveloped") {
     land_types <- select_columns(data, "land_type")
     is_waterbody <- land_type_is_waterbody(land_types)

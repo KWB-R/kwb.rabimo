@@ -4,10 +4,11 @@
 \alias{generate_rabimo_area}
 \title{Generate an area in R-Abimo format with default values}
 \usage{
-generate_rabimo_area(code, ..., column_info = read_column_info())
+generate_rabimo_area(code = NULL, ..., column_info = read_column_info())
 }
 \arguments{
-\item{code}{identifier of area}
+\item{code}{vector of unique area identifiers. If NULL, default codes are
+created: area_1, area_2, ...}
 
 \item{\dots}{key = value pairs overriding the default column values}
 

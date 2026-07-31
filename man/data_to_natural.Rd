@@ -12,7 +12,7 @@ data_to_natural(data, type = "undeveloped", veg_class = 50)
 \item{type}{a character object containing the name of natural scenario.
 Defaults to "undeveloped"}
 
-\item{veg_class}{vegetation class to assign to each row in \code{data}.
+\item{veg_class}{vegetation class to assign to each row in \code{data} if current value is lower.
 Default: 50}
 }
 \value{

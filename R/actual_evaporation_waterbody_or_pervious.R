@@ -32,33 +32,33 @@ actual_evaporation_waterbody_or_pervious <- function(
   fetch_usage <- create_accessor(usage_tuple)
   fetch_climate <- create_accessor(climate)
   fetch_soil <- create_accessor(soil_properties)
-
+  
   rpot <- fetch_soil("mean_potential_capillary_rise_rate")
   epot_year <- fetch_climate("epot_yr")
-
+  
   # Check input(s)
   stopifnot(!anyNA(rpot))
-
+  
   # Initialise result vector
   y <- numeric(length(epot_year))
-
+  
   # For water bodies, use the potential evaporation
   land_types <- fetch_usage("land_type")
   is_waterbody <- land_type_is_waterbody(land_types)
-
+  
   y[is_waterbody] <- epot_year[is_waterbody]
-
+  
   # if all block areas are waterbodies, return
   if (all(is_waterbody)) {
     return(y)
   }
-
+  
   # indices of entries related to any other land_type
   i <- which(!is_waterbody)
-
+  
   # otherwise calculate the real evapotranspiration
   stopifnot(all(epot_year[i] > 0)) # ???
-
+  
   # determine the BAGROV parameter(s) for unsealed surfaces
   bagrov_values <- get_bagrov_parameter_unsealed(
     g02 = fetch_soil("g02")[i],
@@ -69,19 +69,19 @@ actual_evaporation_waterbody_or_pervious <- function(
     epot_summer = fetch_climate("epot_s")[i],
     mean_potential_capillary_rise_rate = rpot[i]
   )
-
+  
   if (!is.null(digits)) {
     bagrov_values <- cat_and_run(
       sprintf("Rounding BAGROV parameters to %d digits", digits),
       round(bagrov_values, digits)
     )
   }
-
+  
   available_water <-
     fetch_climate("prec_yr")[i] +
     rpot[i] +
     fetch_usage("irrigation")[i]
-
+  
   y[i] <- real_evapo_transpiration(
     potential_evaporation = epot_year[i],
     x_ratio = available_water / epot_year[i],
@@ -89,21 +89,25 @@ actual_evaporation_waterbody_or_pervious <- function(
     #, use_abimo_algorithm = TRUE
     , ...
   )
-
+  
   rises <- fetch_soil("potential_capillary_rise")
   depths <- fetch_soil("depth_to_water_table")
-
+  
   # indices of entries related to non-water land_type and capillary rises < 0
   j <- which(!is_waterbody & rises < 0)
-
+  
   y[j] <- y[j] + (epot_year[j] - y[j]) * exp(depths[j] / rises[j])
-
+  
   nas <- rep(NA_real_, length(y))
-
+  
   structure(y, bagrovUnsealed = data.frame(
     bagrov_eff = `[<-`(nas, i, bagrov_values),
-    factor_dry = `[<-`(nas, i, get_attribute(bagrov_values, "factor_dry")),
-    factor_wet = `[<-`(nas, i, get_attribute(bagrov_values, "factor_wet"))
+    correction_irrigation_and_unknown_summer = `[<-`(nas, i, get_attribute(
+      bagrov_values, "correction_irrigation_and_unknown_summer"
+    )),
+    correction_known_summer = `[<-`(nas, i, get_attribute(
+      bagrov_values, "correction_known_summer"
+    ))
   ))
 }
 
@@ -120,38 +124,38 @@ get_bagrov_parameter_unsealed <- function(
 {
   # Initialise result vector
   y <- numeric(length = length(g02))
-
+  
   is_forest <- land_type_is_forest(land_type)
   no_forest <- !is_forest
-
+  
   y[is_forest] <- lookup_bagrov_forest(g02[is_forest])
-
-  factor_dry <- ifelse(
-    test = irrigation > 0 & is_dry_summer(prec_summer, epot_summer),
-    yes = irrigation_in_dry_summer_correction_factor(irrigation[no_forest]),
+  
+  # It seems that in the original Abimo code, values of zero in the "summer" 
+  # columns were used to indicate "missing"
+  correction_irrigation_and_unknown_summer <- ifelse(
+    test = irrigation > 0 & (prec_summer <= 0 & epot_summer <= 0),
+    yes = irrigation_and_unknown_summer_correction(irrigation[no_forest]),
     no = 1
   )
-
+  
   y[no_forest] <- lookup_bagrov_unsealed(g02[no_forest], veg_class[no_forest]) *
-    factor_dry[no_forest]
-
-  # in case of a "wet" summer, correct the BAGROV parameter with a factor
-  factor_wet <- ifelse(
-    test = is_wet_summer(prec_summer, epot_summer),
-    yes = wet_summer_correction_factor(
-      water_availability =
-        prec_summer +
-        irrigation +
-        mean_potential_capillary_rise_rate,
+    correction_irrigation_and_unknown_summer[no_forest]
+  
+  # in case of known "summer" values for precipitation and evaporation, correct 
+  # the BAGROV parameter with a factor
+  correction_known_summer <- ifelse(
+    test = prec_summer > 0 & epot_summer > 0,
+    yes = summer_correction(
+      water_availability = prec_summer + irrigation + mean_potential_capillary_rise_rate,
       epot_summer = epot_summer
     ),
     no = 1
   )
-
+  
   structure(
-    y * factor_wet,
-    factor_dry = factor_dry,
-    factor_wet = factor_wet
+    y * correction_known_summer,
+    correction_irrigation_and_unknown_summer = correction_irrigation_and_unknown_summer,
+    correction_known_summer = correction_known_summer
   )
 }
 
@@ -159,14 +163,14 @@ get_bagrov_parameter_unsealed <- function(
 lookup_bagrov_forest <- function(g02)
 {
   n <- length(g02)
-
+  
   if (n == 0L) {
     return(numeric(0))
   }
-
+  
   breaks <- c(-Inf, 10.0, 25.0, Inf)
   values <- c(3.0,  4.0,  8.0)
-
+  
   index <- if (n > 1L) {
     findInterval(g02, breaks, left.open = TRUE)
   } else if (g02 <= breaks[2L]) {
@@ -176,7 +180,7 @@ lookup_bagrov_forest <- function(g02)
   } else {
     3L
   }
-
+  
   values[index]
 }
 
@@ -185,28 +189,28 @@ lookup_bagrov_unsealed <- function(g02, veg_class, do_correction = TRUE)
 {
   # Calculate the k index (integer)
   k <- veg_class_to_k_index(veg_class)
-
+  
   # Calculate result based on the k index
   y <-
     BAGROV_COEFFICIENTS[k] +
     BAGROV_COEFFICIENTS[k + 1L] * g02 +
     BAGROV_COEFFICIENTS[k + 2L] * g02^2
-
+  
   # Return y if no correction is required
   if (!do_correction) {
     return(y)
   }
-
+  
   # Apply correction where needed
   i <- which(
     (y >= 2.0 & veg_class < 60) |
       (g02 >= 20.0 & veg_class >= 60)
   )
-
+  
   y[i] <-
     BAGROV_COEFFICIENTS[k[i] - 2L] * g02[i] +
     BAGROV_COEFFICIENTS[k[i] - 1L]
-
+  
   y
 }
 
@@ -214,14 +218,14 @@ lookup_bagrov_unsealed <- function(g02, veg_class, do_correction = TRUE)
 veg_class_to_k_index <- function(veg_class)
 {
   k <- as.integer(ifelse(veg_class < 50, veg_class / 5, veg_class / 10 + 5))
-
+  
   # make sure that k is at least 1
   k <- pmax(1L, k)
-
+  
   # if k is at least 4, reduce it by one
   selected <- k >= 4L
   k[selected] <- k[selected] - 1L
-
+  
   5L * pmin(k, 13L) - 2L
 }
 
@@ -245,38 +249,22 @@ BAGROV_COEFFICIENTS <- c(
   0.33895,  3.721 , 6.69999, -0.07   , 0.013
 )
 
-# is_dry_summer ----------------------------------------------------------------
-# TODO: Remove redundancy with is_wet_summer.
-# Variables are (almost!) one another's opposite!
-is_dry_summer <- function(prec_summer, epot_summer)
-{
-  prec_summer <= 0 & epot_summer <= 0
-}
-
-# irrigation_in_dry_summer_correction_factor -----------------------------------
-irrigation_in_dry_summer_correction_factor <- function(irrigation)
+# irrigation_and_unknown_summer_correction -------------------------------------
+irrigation_and_unknown_summer_correction <- function(irrigation)
 {
   0.9985 + 0.00284 * irrigation - 0.00000379762 * irrigation^2
 }
 
-# is_wet_summer ----------------------------------------------------------------
-# TODO: Remove redundancy with is_dry_summer.
-# Variables are (almost!) one another's opposite!
-is_wet_summer <- function(prec_summer, epot_summer)
-{
-  prec_summer > 0 & epot_summer > 0
-}
-
-# wet_summer_correction_factor -------------------------------------------------
+# summer_correction ------------------------------------------------------------
 #' @importFrom stats approx
-wet_summer_correction_factor <- function(
+summer_correction <- function(
     water_availability, epot_summer, use_abimo_approx = TRUE
 )
 {
   xout <- water_availability / epot_summer
-  x <- WET_SUMMER_CORRECTION_MATRIX[, "water_availability"]
-  y <- WET_SUMMER_CORRECTION_MATRIX[, "correction_factor"]
-
+  x <- SUMMER_CORRECTION_MATRIX[, "water_availability"]
+  y <- SUMMER_CORRECTION_MATRIX[, "correction_factor"]
+  
   if (use_abimo_approx) {
     interpolate(x = x, y = y, xout = xout)
   } else {
@@ -284,8 +272,8 @@ wet_summer_correction_factor <- function(
   }
 }
 
-# WET_SUMMER_CORRECTION_MATRIX -------------------------------------------------
-WET_SUMMER_CORRECTION_MATRIX <- matrix(
+# SUMMER_CORRECTION_MATRIX -----------------------------------------------------
+SUMMER_CORRECTION_MATRIX <- matrix(
   ncol = 2L,
   byrow = TRUE,
   dimnames = list(

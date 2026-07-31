@@ -1,6 +1,6 @@
 Package: kwb.rabimo
 Title: R Implementation of Water Balance Model Abimo
-Version: 2.1.0
+Version: 2.2.0.9000
 Authors@R: c(
     person("Hauke", "Sonnenberg", , "hauke.sonnenberg@kompetenz-wasser.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9134-2871")),
@@ -15,7 +15,7 @@ URL: https://github.com/KWB-R/kwb.rabimo
 BugReports: https://github.com/KWB-R/kwb.rabimo/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     ggplot2,
     jsonlite,

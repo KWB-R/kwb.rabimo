@@ -1,3 +1,11 @@
+# kwb.rabimo 2.2.0 (2026-07-31)
+
+More different stormwater management measures can be configured. This version
+is required by KWB's package 
+[kwb.smartwater](https://github.com/KWB-R/kwb.smartwater) 
+that was developed during the research project 
+[SmartWater](https://kompetenz-wasser.de/de/forschung/projekte/smart-water).
+
 # kwb.rabimo 2.1.0 (2025-07-21)
 
 Contains a tutorial in the form of a vignette. To view the vignette, install

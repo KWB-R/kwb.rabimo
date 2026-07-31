@@ -15,6 +15,7 @@ test_that("rescale_target_values() works", {
   ))
 
   blocks <- kwb.rabimo::generate_rabimo_area("a", roof = 0)
+  
   # case reported by Luise
   new_targets <- list(green_roof = 0, unpaved = 0.995489083, to_swale = 0)
   expect_no_error(result <- f(new_targets, blocks = blocks))
@@ -25,6 +26,7 @@ test_that("rescale_target_values() works", {
   expect_identical(result$green_roof, 0)
 
   blocks <- kwb.rabimo::generate_rabimo_area("a", roof = 0, pvd = 0)
+  
   # case reported by Luise
   new_targets <- list(green_roof = 0, unpaved = 1, to_swale = 0)
   expect_no_error(result <- f(new_targets, blocks = blocks))
@@ -33,4 +35,15 @@ test_that("rescale_target_values() works", {
   new_targets <- list(green_roof = 0, unpaved = 1, to_swale = 0.1)
   expect_no_error(result <- f(new_targets, blocks = blocks))
   expect_identical(result$to_swale, 0)
+  
+  block <- data.frame(
+    code = "a", 
+    total_area = 100, 
+    roof = 0.1,
+    pvd = 0.1
+  )
+
+  given    <- list(green_roof = 0.1, unpaved = 0.1, to_swale = 0)
+  expected <- list(green_roof =   1, unpaved = 0.1, to_swale = 0)
+  expect_identical(f(given, block), expected)
 })
